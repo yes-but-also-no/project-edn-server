@@ -16,6 +16,12 @@ namespace GameServer.GeoEngine
         /// </summary>
         public static void LoadAllMaps()
         {
+            if (!Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), "Config/Maps/")) 
+                || Directory.GetFiles("Config/Maps/", "*.map").Length < 1)
+            {
+                throw new FileNotFoundException("Game map files (*.MAP) are missing! Please copy them to the Config/Maps directory or run the ProjectEDN configuration tool!");
+            }
+            
             foreach (var fileName in Directory.GetFiles("Config/Maps/", "*.map"))
             {
                 _maps.Add(

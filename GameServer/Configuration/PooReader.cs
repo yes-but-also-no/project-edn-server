@@ -32,6 +32,12 @@ namespace GameServer.Configuration
         /// </summary>
         public static void ReadPoo()
         {
+            if (!Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), "Config/Poo/")) 
+                || Directory.GetFiles("Config/Poo/", "*.csv").Length < 1)
+            {
+                throw new FileNotFoundException("Game data files (*.POO) are missing! Please copy them to the Config/Poo directory or run the ProjectEDN configuration tool!");
+            }
+            
             Head = Read<HeadStats>("head");
             Chest = Read<ChestStats>("chest");
             Arm = Read<ArmStats>("arms");
