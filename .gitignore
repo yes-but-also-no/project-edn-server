@@ -41,3 +41,7 @@ msbuild.wrn
 
 # logging
 Logs/
+
+# game files
+Config/Maps/
+Config/Poo/
