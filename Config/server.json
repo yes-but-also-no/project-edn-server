@@ -1,0 +1,10 @@
+{
+  "GamePort": 15152,
+  "WebPort": 15180,
+  "ProtocolVersion": 407,
+  "ServerName": "Exteel.Net Dev Server",
+  "GameFps": 30,
+  "UpdateFrameInterval": 10,
+  "ConsoleLogLevel": "Debug",
+  "LogAllPackets": false
+}

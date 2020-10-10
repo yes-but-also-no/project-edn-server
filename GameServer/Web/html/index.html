@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Colorlib Templates">
+    <meta name="author" content="Colorlib">
+    <meta name="keywords" content="Colorlib Templates">
+
+    <!-- Title Page-->
+    <title>ProjectEDN Sign Up</title>
+
+    <!-- Icons font CSS-->
+    <link href="vendor/mdi-font/css/material-design-iconic-font.min.css" rel="stylesheet" media="all">
+    <link href="vendor/font-awesome-4.7/css/font-awesome.min.css" rel="stylesheet" media="all">
+    <!-- Font special for pages-->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i" rel="stylesheet">
+
+    <!-- Vendor CSS-->
+    <link href="vendor/select2/select2.min.css" rel="stylesheet" media="all">
+    <link href="vendor/datepicker/daterangepicker.css" rel="stylesheet" media="all">
+
+    <!-- Main CSS-->
+    <link href="css/main.css" rel="stylesheet" media="all">
+</head>
+
+<body>
+    <div class="page-wrapper bg-red p-t-180 p-b-100 font-robo">
+        <div class="wrapper wrapper--w960">
+            <div class="card card-2">
+                <div class="card-heading"></div>
+                <div class="card-body">
+                    
+
+                    <div class="row row-space">
+                        <h1 style="color: red">HEY, HERES THE DEAL</h1>
+                        <p>There is some things you should know before you sign up:</p>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <ul>
+                            <li>This is a pet project. Stuff is gonna break. Servers are gonna crash. There are <b>ZERO</b> garauntees it will work the way you expect.</li>
+                            <li>I don't have a lot of time to maintain this. I really hope you enjoy it for the nostalgia, but bear in mind this is an alpha / proof of concept that has a lot of bugs</li>
+                            <li><b>Your account could go bye-bye at any time</b>. We're still in the early stages, so if we need to restructure the database, all accounts will go in the drain</li>
+                            <li>I can't be arsed to deal with encryption right now so <b style="color: orange">YOUR PASSWORD IS STORED AND TRANSMITTED IN PLAIN TEXT</b></li>
+                            <li>Let me repeat:</li>
+                            <li><b style="color: orange">YOUR PASSWORD IS STORED AND TRANSMITTED IN PLAIN TEXT</b></li>
+                            <li><b style="color: red">DO NOT USE A PASSWORD YOU CARE ABOUT</b></li>
+                            <li><b style="color: red">JUST MAKE SOMETHING UP</b></li>
+                            <li><b style="color: red">DO NOT USE A PASSWORD YOU CARE ABOUT</b></li>
+                            <li><b style="color: red">JUST MAKE SOMETHING UP</b></li>
+                            <li><b style="color: red">DO NOT USE A PASSWORD YOU CARE ABOUT</b></li>
+                        </ul>
+                        
+                        <br/>
+                        <br/>
+                        
+                        <p>
+                            With all that being said, I really hope you enjoy this. Its been a labor of love to even get this far, and I am excited to share this with anyone who loved Exteel as much as I did!
+                        </p>
+                    </div>
+                    
+                    <br />
+                    <br />
+
+                    <h4 class="title">Registration Info</h4>
+                    
+                    <form method="POST" action="/api/signup">
+                        <div class="input-group">
+                            <input class="input--style-2" type="text" placeholder="Callsign" name="callsign">
+                        </div>
+                        <div class="row row-space">
+                            <div class="col-2">
+                                <div class="input-group">
+                                    <input class="input--style-2" type="text" placeholder="Username" name="username">
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <div class="input-group">
+                                    <input class="input--style-2" type="text" placeholder="Password" name="password">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="p-t-30">
+                            <button class="btn btn--radius btn--green" type="submit">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Jquery JS-->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <!-- Vendor JS-->
+    <script src="vendor/select2/select2.min.js"></script>
+    <script src="vendor/datepicker/moment.min.js"></script>
+    <script src="vendor/datepicker/daterangepicker.js"></script>
+
+    <!-- Main JS-->
+    <script src="js/global.js"></script>
+
+</body><!-- This templates was made by Colorlib (https://colorlib.com) -->
+
+</html>
+<!-- end document-->
