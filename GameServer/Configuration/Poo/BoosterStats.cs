@@ -1,0 +1,10 @@
+namespace GameServer.Configuration.Poo
+{
+    /// <summary>
+    /// The poo file data for a booster item
+    /// </summary>
+    public class BoosterStats : PartStatsBase
+    {
+        
+    }
+}
