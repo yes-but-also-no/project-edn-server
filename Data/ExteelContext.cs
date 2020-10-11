@@ -68,9 +68,9 @@ namespace Data
                     u.HasData(new ExteelUser
                     {
                         Id = 1,
-                        Nickname = "JakeGadget",
-                        Username = "jake",
-                        Callsign = "jake",
+                        Nickname = "Pinkett",
+                        Username = "pinkett",
+                        Callsign = "pinkett",
                         Coins = 10000,
                         Credits = 100000,
                         Experience = 1000,
