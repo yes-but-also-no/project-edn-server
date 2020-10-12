@@ -23,6 +23,10 @@
         <None Include="..\Config\**\*" Link="Config\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="Always" />
     </ItemGroup>
 
+    <PropertyGroup>
+        <RunWorkingDirectory>..\</RunWorkingDirectory>
+    </PropertyGroup>
+
     <ItemGroup>
       <PackageReference Include="Colorful.Console" Version="1.2.10" />
       <PackageReference Include="CsvHelper" Version="15.0.5" />
