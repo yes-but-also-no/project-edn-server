@@ -1,4 +1,6 @@
+using GameServer.Configuration;
 using GameServer.Game;
+using Swan.Configuration;
 
 namespace GameServer.ServerPackets.Lobby
 {
@@ -7,6 +9,8 @@ namespace GameServer.ServerPackets.Lobby
     /// </summary>
     public class GameCreated : ServerBasePacket
     {
+        public static readonly SettingsProvider<ServerConfig> Configuration = SettingsProvider<ServerConfig>.Instance;
+        
         /// <summary>
         /// Room that was created
         /// </summary>
@@ -34,7 +38,7 @@ namespace GameServer.ServerPackets.Lobby
 
             this.WriteRoomInfo(_room);
             
-            WriteString("isishqduarte.mynetgear.com"); // host?
+            WriteString(Configuration.Global.GameHost); // host?
         }
     }
 }

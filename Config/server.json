@@ -1,4 +1,5 @@
 {
+  "GameHost": "127.0.0.1",
   "GamePort": 15152,
   "WebPort": 15180,
   "ProtocolVersion": 407,
