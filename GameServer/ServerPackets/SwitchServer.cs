@@ -1,3 +1,6 @@
+using GameServer.Configuration;
+using Swan.Configuration;
+
 namespace GameServer.ServerPackets
 {
     /// <summary>
@@ -5,6 +8,8 @@ namespace GameServer.ServerPackets
     /// </summary>
     public class SwitchServer : ServerBasePacket
     {
+        public static readonly SettingsProvider<ServerConfig> Configuration = SettingsProvider<ServerConfig>.Instance;
+        
         /// <summary>
         /// The job code for the user to switch over on
         /// </summary>
@@ -29,7 +34,7 @@ namespace GameServer.ServerPackets
         {
             WriteInt(0); // Unknown - return code?
             
-            WriteString("isishqduarte.mynetgear.com"); // Host
+            WriteString(Configuration.Global.GameHost); // Host
             
             WriteInt(_jobCode); // Unknown
         }

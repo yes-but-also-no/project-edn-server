@@ -7,6 +7,8 @@ namespace GameServer.Configuration
     /// </summary>
     public class ServerConfig
     {
+        public string GameHost { get; set; }
+        
         public int GamePort { get; set; }
         
         public int WebPort { get; set; }

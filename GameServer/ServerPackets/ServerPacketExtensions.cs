@@ -3,10 +3,12 @@ using System.Linq;
 using Colorful;
 using Data.Model;
 using Data.Model.Items;
+using GameServer.Configuration;
 using GameServer.Configuration.Poo;
 using GameServer.Game;
 using GameServer.Model.Parts;
 using GameServer.Model.Parts.Weapons;
+using Swan.Configuration;
 
 namespace GameServer.ServerPackets
 {
@@ -15,6 +17,8 @@ namespace GameServer.ServerPackets
     /// </summary>
     public static class ServerPacketExtensions
     {
+        public static readonly SettingsProvider<ServerConfig> Configuration = SettingsProvider<ServerConfig>.Instance;
+        
         /// <summary>
         /// Writes pilot info into a packet
         /// </summary>
@@ -210,8 +214,7 @@ namespace GameServer.ServerPackets
         /// <param name="room"></param>
         public static void WriteRoomInfo(this ServerBasePacket packet, RoomInstance room)
         {
-            // TODO: Move this to helper or maybe even room info obj
-            packet.WriteString("isishqduarte.mynetgear.com"); // Room server... If this does not match current server, it does a switch
+            packet.WriteString(Configuration.Global.GameHost); // Room server... If this does not match current server, it does a switch
             
             packet.WriteInt(room.Id); // Room Id
             packet.WriteInt(room.MasterId); // Unknown - maybe master?
