@@ -166,8 +166,7 @@ namespace Data
                     TemplateId = (uint)1500003,
                     Parameters = (ushort)1,
                     Color = Color.Gray,
-                    Type = (byte)1,
-                    Discriminator = "Part"
+                    Type = (byte)1
                 }, new
                 {
                     UserInventoryId = 1,
@@ -175,8 +174,7 @@ namespace Data
                     TemplateId = (uint)2500003,
                     Parameters = (ushort)1,
                     Color = Color.Gray,
-                    Type = (byte)2,
-                    Discriminator = "Part"
+                    Type = (byte)2
                 }, new
                 {
                     UserInventoryId = 1,
@@ -184,8 +182,7 @@ namespace Data
                     TemplateId = (uint)3500010,
                     Parameters = (ushort)1,
                     Color = Color.Gray,
-                    Type = (byte)3,
-                    Discriminator = "Part"
+                    Type = (byte)3
                 }, new
                 {
                     UserInventoryId = 1,
@@ -193,8 +190,7 @@ namespace Data
                     TemplateId = (uint)4500003,
                     Parameters = (ushort)1,
                     Color = Color.Gray,
-                    Type = (byte)4,
-                    Discriminator = "Part"
+                    Type = (byte)4
                 }, new
                 {
                     UserInventoryId = 1,
@@ -202,8 +198,7 @@ namespace Data
                     TemplateId = (uint)5600003,
                     Parameters = (ushort)1,
                     Color = Color.Gray,
-                    Type = (byte)5,
-                    Discriminator = "Part"
+                    Type = (byte)5
                 }, new
                 {
                     UserInventoryId = 1,
@@ -211,8 +206,7 @@ namespace Data
                     TemplateId = (uint)7770002,
                     Parameters = (ushort)1,
                     Color = Color.Red,
-                    Type = (byte)7,
-                    Discriminator = "Weapon"
+                    Type = (byte)7
                 }, new
                 {
                     UserInventoryId = 1,
@@ -229,8 +223,7 @@ namespace Data
                     TemplateId = (uint)6660001,
                     Parameters = (ushort)4,
                     Color = Color.Red,
-                    Type = (byte)6,
-                    Discriminator = "Weapon"
+                    Type = (byte)6
                 }, new
                 {
                     UserInventoryId = 1,
@@ -238,8 +231,7 @@ namespace Data
                     TemplateId = (uint)6660002,
                     Parameters = (ushort)1,
                     Color = Color.Red,
-                    Type = (byte)6,
-                    Discriminator = "Weapon"
+                    Type = (byte)6
                 }, new
                 {
                     UserInventoryId = 1,
@@ -247,8 +239,7 @@ namespace Data
                     TemplateId = (uint)6660001,
                     Parameters = (ushort)1,
                     Color = Color.Red,
-                    Type = (byte)6,
-                    Discriminator = "Weapon"
+                    Type = (byte)6
                 }, new
                 {
                     UserInventoryId = 1,
@@ -256,8 +247,7 @@ namespace Data
                     TemplateId = (uint)9,
                     Parameters = (ushort)1,
                     Color = Color.Red,
-                    Type = (byte)9,
-                    Discriminator = "Code"
+                    Type = (byte)9
                 });
             
 
@@ -269,7 +259,7 @@ namespace Data
                     Id = 1001,
                     UserInventoryId = 1,
                     LaunchOrder = 0,
-                    Name = "JakeUnit",
+                    Name = "Pinky",
                     HeadId = 1,
                     ChestId = 2,
                     ArmsId = 3,
