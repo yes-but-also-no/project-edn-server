@@ -45,3 +45,6 @@ Logs/
 # game files
 Config/Maps/
 Config/Poo/
+
+# user content
+UserImages/

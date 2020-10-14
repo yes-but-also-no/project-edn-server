@@ -1,5 +1,7 @@
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Numerics;
+using System.Text;
 using Data.Model.Items;
 
 namespace Data.Model
@@ -115,32 +117,46 @@ namespace Data.Model
         /// </summary>
         public PartRecord Skill4 { get; set; }
         public int? Skill4Id { get; set; }
-        
-        /// <summary>
-        /// Stores the time value the client has sent us. This will be used to calculate cooldowns i think
-        /// </summary>
-//        private uint _lastTick = 0;
 
         /// <summary>
-        /// Gets the players last tick
+        /// This will generate the matching file name for this units setup, which should be uploaded by the client
         /// </summary>
-//        public uint GetLastTick => _lastTick;
+        public string ImageName
+        {
+            get
+            {
+                // Create the base string
+                var baseString = new StringBuilder()
+                    .AppendFormat("H{0}{1:x2}{2:x2}{3:x2}", Head.TemplateId, Head.Color.R, Head.Color.G, Head.Color.B)
+                    .AppendFormat("C{0}{1:x2}{2:x2}{3:x2}", Chest.TemplateId, Chest.Color.R, Chest.Color.G, Chest.Color.B)
+                    .AppendFormat("A{0}{1:x2}{2:x2}{3:x2}", Arms.TemplateId, Arms.Color.R, Arms.Color.G, Arms.Color.B)
+                    .AppendFormat("L{0}{1:x2}{2:x2}{3:x2}", Legs.TemplateId, Legs.Color.R, Legs.Color.G, Legs.Color.B)
+                    .AppendFormat("B{0}{1:x2}{2:x2}{3:x2}", Backpack.TemplateId, Backpack.Color.R, Backpack.Color.G, Backpack.Color.B)
+                    .AppendFormat("W{0}{1:x2}{2:x2}{3:x2}", WeaponSet1Left.TemplateId, WeaponSet1Left.Color.R, WeaponSet1Left.Color.G, WeaponSet1Left.Color.B)
+                    .AppendFormat("W{0}{1:x2}{2:x2}{3:x2}", WeaponSet1Right.TemplateId, WeaponSet1Right.Color.R, WeaponSet1Right.Color.G, WeaponSet1Right.Color.B)
+                    .ToString();
+                
+                // Convert to bytes
+                var bytes = Encoding.UTF8.GetBytes(baseString);
+                uint checksum = 0;
+                
+                // Encode it
+                foreach(byte b in bytes) {
+                    checksum = checksum * 0x10 + b;
+                    var uVar3 = checksum & 0xf0000000;
+                    if (uVar3 != 0) {
+                        checksum = checksum ^ uVar3 >> 0x18 ^ uVar3;
+                    }
+                }
 
-        /// <summary>
-        /// Called when we get an updated timestamp. Will trickle down tick calls with delta to stuff
-        /// TODO: Should this be an abstract class for all items?
-        /// </summary>
-        /// <param name="timeStamp"></param>
-//        public float UpdatePing(uint timeStamp)
-//        {
-//            // Calculate delta
-//            var delta = timeStamp - _lastTick;
-//            
-//            // Update timestamp
-//            _lastTick = timeStamp;
-//            
-//            // Return delta
-//            return delta;
-//        }
+                checksum = checksum % 1000;
+                
+                // TEMP: This is based on the "image upload code" in the clients localization.ini
+                const int regionCode = 26;
+
+                // Return the new string
+                return $"{regionCode:0000}{checksum:0000}{baseString}.jpg";
+            }
+        }
     }
 }
