@@ -36,10 +36,13 @@ namespace GameServer.Web
                     .WithMode(HttpListenerMode.EmbedIO))
 
                 // First, we will configure our web server by adding Modules.
-                .WithWebApi("/api", m => m
-                    .WithController<AccountController>())
-                    .WithStaticFolder("/", HtmlRootPath, true, m => m
+                .WithWebApi("/api", m => 
+                    m.WithController<AccountController>())
+                .WithWebApi("/char", m => 
+                    m.WithController<CharacterController>())
+                .WithStaticFolder("/", HtmlRootPath, true, m => m
                     .WithContentCaching(true)); // Add static files after other modules to avoid conflicts
+                
 
             // Listen for state changes.
             server.StateChanged += (s, e) => $"WebServer New State - {e.NewState}".Info();
