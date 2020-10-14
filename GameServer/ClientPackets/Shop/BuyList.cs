@@ -65,19 +65,16 @@ namespace GameServer.ClientPackets.Shop
                     // Check if its a code
                     if (templateId < 300)
                     {
-                        partRecord = new Code();
-                        partRecord.Type = (byte) 9;
+                        partRecord = new PartRecord {Type = 9};
                     }
                     // Check for weapon
                     else if (partsType == 6 || partsType == 7 || partsType == 8)
                     {
-                        partRecord = new Weapon();
-                        partRecord.Type = (byte) partsType;
+                        partRecord = new PartRecord {Type = (byte) partsType};
                     }
                     else
                     {
-                        partRecord = new PartRecord();
-                        partRecord.Type = (byte) partsType;
+                        partRecord = new PartRecord {Type = (byte) partsType};
                     }
 
                     // Populate info

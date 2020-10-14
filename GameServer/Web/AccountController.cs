@@ -154,28 +154,28 @@ namespace GameServer.Web
                         Color = Color.Gray,
                         Type = 5
                     },
-                    new Weapon
+                    new PartRecord
                     {
                         TemplateId = 7770016,
                         Parameters = 1,
                         Color = Color.Gray,
                         Type = 7
                     },
-                    new Weapon
+                    new PartRecord
                     {
                         TemplateId = 7770016,
                         Parameters = 1,
                         Color = Color.Gray,
                         Type = 7
                     },
-                    new Weapon
+                    new PartRecord
                     {
                         TemplateId = 7770016,
                         Parameters = 4,
                         Color = Color.Gray,
                         Type = 7
                     },
-                    new Weapon
+                    new PartRecord
                     {
                         TemplateId = 7770016,
                         Parameters = 1,
@@ -195,10 +195,10 @@ namespace GameServer.Web
                         Arms = newUser.Inventory.Parts[2],
                         Legs = newUser.Inventory.Parts[3],
                         Backpack = newUser.Inventory.Parts[4],
-                        WeaponSet1Left = newUser.Inventory.Parts[5] as Weapon,
-                        WeaponSet1Right = newUser.Inventory.Parts[6] as Weapon,
-                        WeaponSet2Left = newUser.Inventory.Parts[7] as Weapon,
-                        WeaponSet2Right = newUser.Inventory.Parts[8] as Weapon
+                        WeaponSet1Left = newUser.Inventory.Parts[5],
+                        WeaponSet1Right = newUser.Inventory.Parts[6],
+                        WeaponSet2Left = newUser.Inventory.Parts[7],
+                        WeaponSet2Right = newUser.Inventory.Parts[8]
                     }
                 };
 
