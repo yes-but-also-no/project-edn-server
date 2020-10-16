@@ -21,6 +21,8 @@ namespace Data.Model.Items
 
         /// <summary>
         /// Unknown, pulled from client binary
+        /// For now, not used in any packets, so can be safely ignored
+        /// Left in for future use
         /// </summary>
         public ushort Parameters { get; set; }
 
@@ -31,6 +33,8 @@ namespace Data.Model.Items
 
         /// <summary>
         /// Unknown, pulled from client binary
+        /// For now, not used in any packets, so can be safely ignored
+        /// Left in for future use
         /// </summary>
         public byte Type { get; set; }
 

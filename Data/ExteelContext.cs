@@ -59,7 +59,19 @@ namespace Data
                 .Property(e => e.Color)
                 .HasConversion(
                     v => v.ToArgb(),
-                    v => Color.FromArgb(v));
+                    v => Color.FromArgb(v))
+                .HasDefaultValue(Color.White);
+
+            // Until we know what these do, they can get a dummy value
+            modelBuilder
+                .Entity<PartRecord>()
+                .Property(e => e.Parameters)
+                .HasDefaultValue(1);
+            
+            modelBuilder
+                .Entity<PartRecord>()
+                .Property(e => e.Type)
+                .HasDefaultValue(1);
 
             // Seed default users
             modelBuilder
@@ -78,7 +90,7 @@ namespace Data
                         Rank = 23,
                         Password = "password",
                         InventoryId = 1,
-                        //RoomId = 50,
+                        OperatorId = 13,
                         DefaultUnitId = 1001
                     });
 
@@ -146,7 +158,8 @@ namespace Data
                 {
                     Id = 1,
                     InventorySize = 100,
-                    UnitSlots = 1
+                    UnitSlots = 1,
+                    RepairPoints = 100
                 });
 
             // Seed default user parts
@@ -248,6 +261,19 @@ namespace Data
                     Parameters = (ushort)1,
                     Color = Color.Red,
                     Type = (byte)9
+                }, new // White paint - Note: If the user does not have at least ONE paint item, they cannot get their repair points. Ain't that a bitch?
+                {
+                    UserInventoryId = 1,
+                    Id = 12,
+                    TemplateId = (uint)1002,
+                    Parameters = (ushort)1,
+                    Color = Color.White,
+                    Type = (byte)9
+                }, new // Operator sarah
+                {
+                    UserInventoryId = 1,
+                    Id = 13,
+                    TemplateId = (uint)6001,
                 });
             
 

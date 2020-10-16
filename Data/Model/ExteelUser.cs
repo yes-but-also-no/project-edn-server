@@ -96,6 +96,12 @@ namespace Data.Model
         public int DefaultUnitId { get; set; }
         
         /// <summary>
+        /// The users active operator
+        /// </summary>
+        public PartRecord Operator { get; set; }
+        public int OperatorId { get; set; }
+        
+        /// <summary>
         /// The team this user is on
         /// Only used at runtime
         /// </summary>
