@@ -27,7 +27,7 @@ namespace GameServer.ServerPackets.Inventory
 
         protected override void WriteImpl()
         {
-            var parts = Inventory.Parts.Where(p => !p.IsCode).ToList();
+            var parts = Inventory.Parts.Where(p => p.IsUnitPart).ToList();
             
             WriteInt(parts.Count);
 

@@ -35,8 +35,24 @@ namespace Data.Model.Items
         public byte Type { get; set; }
 
         /// <summary>
-        /// To determine if it is a skill or not
+        /// Determines if this item is a special item, which all have template id's between 1001 - 6000
         /// </summary>
-        public bool IsCode => TemplateId < 100000;
+        public bool IsSpecialPart => TemplateId > 1000 && TemplateId <= 6000;
+        
+        /// <summary>
+        /// Determines if this item is an operator, which all have template id's between 
+        /// </summary>
+        public bool IsOperator => TemplateId > 6000 && TemplateId <= 7000;
+        
+        /// <summary>
+        /// To determine if it is a skill or not. Skills are weird, player skills are all under ~200,
+        /// but npc skills are in the 10000 - 50000 range
+        /// </summary>
+        public bool IsCode => TemplateId < 100000 && !IsSpecialPart && !IsOperator;
+
+        /// <summary>
+        /// Inverse of the above, all other parts are normal parts
+        /// </summary>
+        public bool IsUnitPart => !IsCode && !IsSpecialPart && !IsOperator;
     }
 }

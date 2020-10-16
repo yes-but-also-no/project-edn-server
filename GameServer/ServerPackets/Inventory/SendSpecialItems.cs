@@ -1,3 +1,4 @@
+using System.Linq;
 using Data.Model;
 
 namespace GameServer.ServerPackets.Inventory
@@ -25,7 +26,20 @@ namespace GameServer.ServerPackets.Inventory
 
         protected override void WriteImpl()
         {
-            WriteInt(0); // Unknown - Special item count?
+            var parts = Inventory.Parts.Where(p => p.IsSpecialPart).ToList();
+            
+            WriteInt(parts.Count);
+
+            foreach (var part in parts)
+            {
+                WriteInt(part.Id); // ID
+                WriteUInt(part.TemplateId); // Template Id
+                WriteInt(4000); // Unknown - From pcap. Maybe sell price?
+                WriteInt(-1); // Remaining durability / time?
+                WriteInt(0x14997000); // Max durability? - value from pcap
+                WriteInt(2); // Probably contract type - from pcap
+                WriteInt(0); // Unknown - from pcap
+            }
         }
     }
 }

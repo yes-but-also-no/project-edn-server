@@ -154,6 +154,7 @@ namespace GameServer
                 Name = "EXTEEL.NET❤️",
                 OnConnect = (s, c) =>
                 {
+                    // This doesnt work yet. possibly sending too early?
                     c.SendMessageToSession(s, "Welcome to the Exteel.Net private server!");
                 }
             });
