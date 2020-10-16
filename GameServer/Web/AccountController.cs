@@ -114,7 +114,8 @@ namespace GameServer.Web
                 newUser.Inventory = new UserInventory
                 {
                     InventorySize = 100,
-                    UnitSlots = 1
+                    UnitSlots = 1,
+                    RepairPoints = 100
                 };
                 
                 newUser.Inventory.Parts = new List<PartRecord>
@@ -181,6 +182,15 @@ namespace GameServer.Web
                         Parameters = 1,
                         Color = Color.Gray,
                         Type = 7
+                    }, new PartRecord
+                    {
+                        TemplateId = 1002,
+                        Parameters = 1,
+                        Color = Color.White,
+                        Type = 9
+                    }, new PartRecord
+                    {
+                        TemplateId = 6001,
                     }
                 };
                 
@@ -202,6 +212,7 @@ namespace GameServer.Web
                     }
                 };
 
+                newUser.Operator = newUser.Inventory.Parts[10];
                 newUser.DefaultUnit = newUser.Inventory.Units[0];
 
                 db.Users.Add(newUser);

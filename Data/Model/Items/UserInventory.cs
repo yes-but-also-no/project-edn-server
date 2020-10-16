@@ -38,6 +38,11 @@ namespace Data.Model.Items
         /// The maximum size of this users inventory
         /// </summary>
         public uint InventorySize { get; set; }
+        
+        /// <summary>
+        /// The amount of repair points this user has
+        /// </summary>
+        public uint RepairPoints { get; set; }
 
         /// <summary>
         /// The current number of items in the users inventory

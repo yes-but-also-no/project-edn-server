@@ -34,7 +34,7 @@ namespace GameServer.ServerPackets.Inventory
             {
                 WriteInt(part.Id); // ID
                 WriteUInt(part.TemplateId); // Template Id
-                WriteInt(4000); // Unknown - From pcap. Maybe sell price?
+                WriteInt(50000); // Unknown - From pcap. Maybe sell price?
                 WriteInt(-1); // Remaining durability / time?
                 WriteInt(0x14997000); // Max durability? - value from pcap
                 WriteInt(2); // Probably contract type - from pcap
