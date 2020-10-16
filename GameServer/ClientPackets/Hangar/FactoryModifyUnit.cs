@@ -1,7 +1,9 @@
 using System;
+using System.Drawing;
 using System.Linq;
 using Data;
 using Data.Model;
+using Data.Model.Items;
 using Console = Colorful.Console;
 
 namespace GameServer.ClientPackets.Hangar
@@ -18,6 +20,21 @@ namespace GameServer.ClientPackets.Hangar
         /// </summary>
         private readonly UnitRecord _patchUnit = new UnitRecord();
         
+        /// <summary>
+        /// Temp parts for patching
+        /// </summary>
+        private readonly PartRecord _patchHead = new PartRecord();
+        private readonly PartRecord _patchChest = new PartRecord();
+        private readonly PartRecord _patchArms = new PartRecord();
+        private readonly PartRecord _patchLegs = new PartRecord();
+        private readonly PartRecord _patchBackpack = new PartRecord();
+        
+        private readonly PartRecord _patchWeaponSet1Left = new PartRecord();
+        private readonly PartRecord _patchWeaponSet1Right = new PartRecord();
+        
+        private readonly PartRecord _patchWeaponSet2Left = new PartRecord();
+        private readonly PartRecord _patchWeaponSet2Right = new PartRecord();
+        
         public FactoryModifyUnit(byte[] data, GameSession client) : base(data, client)
         {
 //            debug = true;
@@ -29,17 +46,17 @@ namespace GameServer.ClientPackets.Hangar
             _patchUnit.Name = GetString();
             
             // Get part Ids
-            _patchUnit.HeadId = GetPartId();
-            _patchUnit.ChestId = GetPartId();
-            _patchUnit.ArmsId = GetPartId();
-            _patchUnit.LegsId = GetPartId();
-            _patchUnit.BackpackId = GetPartId();
-            
-            _patchUnit.WeaponSet1LeftId = GetPartId();
-            _patchUnit.WeaponSet1RightId = GetPartId();
-            
-            _patchUnit.WeaponSet2LeftId = GetPartId();
-            _patchUnit.WeaponSet2RightId = GetPartId();
+            (_patchUnit.HeadId, _patchHead.Color) = GetPartId();
+            (_patchUnit.ChestId, _patchChest.Color) = GetPartId();
+            (_patchUnit.ArmsId, _patchArms.Color) = GetPartId();
+            (_patchUnit.LegsId, _patchLegs.Color) = GetPartId();
+            (_patchUnit.BackpackId, _patchBackpack.Color) = GetPartId();
+
+            (_patchUnit.WeaponSet1LeftId, _patchWeaponSet1Left.Color) = GetPartId();
+            (_patchUnit.WeaponSet1RightId, _patchWeaponSet1Right.Color) = GetPartId();
+
+            (_patchUnit.WeaponSet2LeftId, _patchWeaponSet2Left.Color) = GetPartId();
+            (_patchUnit.WeaponSet2RightId, _patchWeaponSet2Right.Color) = GetPartId();
             
             // Get skills count
             var skillsCount = GetInt();
@@ -95,6 +112,36 @@ namespace GameServer.ClientPackets.Hangar
                 unit.Skill2Id = _patchUnit.Skill2Id;
                 unit.Skill3Id = _patchUnit.Skill3Id;
                 unit.Skill4Id = _patchUnit.Skill4Id;
+                
+                // Patch parts
+                var head = db.Parts.Single(p => p.Id == _patchUnit.HeadId);
+                head.Color = _patchHead.Color;
+                
+                var chest = db.Parts.Single(p => p.Id == _patchUnit.ChestId);
+                chest.Color = _patchChest.Color;
+                
+                var arms = db.Parts.Single(p => p.Id == _patchUnit.ArmsId);
+                arms.Color = _patchArms.Color;
+                
+                var legs = db.Parts.Single(p => p.Id == _patchUnit.LegsId);
+                legs.Color = _patchLegs.Color;
+                
+                var backpack = db.Parts.Single(p => p.Id == _patchUnit.BackpackId);
+                backpack.Color = _patchBackpack.Color;
+                
+                // Weapons
+                
+                var weaponSet1Left = db.Parts.Single(p => p.Id == _patchUnit.WeaponSet1LeftId);
+                weaponSet1Left.Color = _patchWeaponSet1Left.Color;
+                
+                var weaponSet1Right = db.Parts.Single(p => p.Id == _patchUnit.WeaponSet1RightId);
+                weaponSet1Right.Color = _patchWeaponSet1Right.Color;
+                
+                var weaponSet2Left = db.Parts.Single(p => p.Id == _patchUnit.WeaponSet2LeftId);
+                weaponSet2Left.Color = _patchWeaponSet2Left.Color;
+                
+                var weaponSet2Right = db.Parts.Single(p => p.Id == _patchUnit.WeaponSet2RightId);
+                weaponSet2Right.Color = _patchWeaponSet2Right.Color;
 
                 db.SaveChanges();
             }
@@ -106,7 +153,7 @@ namespace GameServer.ClientPackets.Hangar
         /// Temp to pull just the ID for now
         /// </summary>
         /// <returns></returns>
-        private int GetPartId()
+        private (int, Color) GetPartId()
         {
             var id = GetInt();
 
@@ -115,9 +162,12 @@ namespace GameServer.ClientPackets.Hangar
             GetUShort(); // Unknown?
             GetUShort(); // Unknown?
 
-            GetByte(); // R
-            GetByte(); // G
-            GetByte(); // B
+            // Color is now pulled in here
+            var col = Color.FromArgb(GetByte(), GetByte(), GetByte());
+            
+            // GetByte(); // R
+            // GetByte(); // G
+            // GetByte(); // B
             
             GetByte(); // Unknown
             GetByte(); // Unknown
@@ -130,7 +180,7 @@ namespace GameServer.ClientPackets.Hangar
             GetInt(); // Unknown
             GetInt(); // Unknown
 
-            return id;
+            return (id, col);
         }
     }
 }

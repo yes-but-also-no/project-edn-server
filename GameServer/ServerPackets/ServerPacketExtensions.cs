@@ -175,7 +175,7 @@ namespace GameServer.ServerPackets
 
                 packet.WriteInt(-1); // Expiry time / current durability
                 packet.WriteInt(0x14997000); // Max Durability - Value from server packet capture
-                packet.WriteInt(2); // If 1, durability, if 2, expired?
+                packet.WriteInt(2); // Contract type?
                 packet.WriteInt(0); // Unknown
             }
             else
