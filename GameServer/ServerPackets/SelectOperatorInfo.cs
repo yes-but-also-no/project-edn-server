@@ -8,9 +8,9 @@ namespace GameServer.ServerPackets
     public class SelectOperatorInfo : ServerBasePacket
     {
         // TODO: Pull actual operator from inv and handle result codes
-        private readonly uint _tempOp;
+        private readonly int _tempOp;
 
-        public SelectOperatorInfo(uint id)
+        public SelectOperatorInfo(int id)
         {
             _tempOp = id;
         }
@@ -28,7 +28,7 @@ namespace GameServer.ServerPackets
         protected override void WriteImpl()
         {
             WriteInt(0); // Result
-            WriteUInt(_tempOp); // Id
+            WriteInt(_tempOp); // Id
         }
     }
 }

@@ -42,8 +42,6 @@ namespace GameServer.ClientPackets.Shop
                     .Include(u => u.Inventory)
                         .ThenInclude(i => i.Parts)
                     .Single(u => u.Id == client.User.Id);
-                
-                Console.WriteLine("Found user " + user.Id);
 
                 // Lookup good
                 var good = ShopDataReader.GetGoodById(_goodId);
