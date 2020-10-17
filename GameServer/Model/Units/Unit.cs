@@ -37,7 +37,7 @@ namespace GameServer.Model.Units
         public readonly Part Booster;
 
         // TODO: Move into game objects
-        public readonly int[] Skills = {-1, -1, -1, -1};
+        public readonly int[] Skills;
 
         protected Unit(GameInstance instance, UnitRecord unitRecord)
         {
@@ -52,6 +52,14 @@ namespace GameServer.Model.Units
             Arms = new Arms(unitRecord.Arms, this);
             Legs = new Part(unitRecord.Legs, this);
             Booster = new Part(unitRecord.Backpack, this);
+            
+            Skills = new int[]
+            {
+                unitRecord.Skill1Id ?? -1,
+                unitRecord.Skill2Id ?? -1,
+                unitRecord.Skill3Id ?? -1,
+                unitRecord.Skill4Id ?? -1,
+            };
 
             var left = CreateWeapon(unitRecord.WeaponSet1Left, ArmIndex.Left, WeaponSetIndex.Primary);
             var right = unitRecord.WeaponSet1Right != null 

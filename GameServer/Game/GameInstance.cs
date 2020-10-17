@@ -344,6 +344,23 @@ namespace GameServer.Game
             // TODO: Spawn maps?
             spawnedUnit.WorldPosition = new Vector3(SpawnLocation.X, SpawnLocation.Y, SpawnLocation.Z);
             
+            // Codes?
+            var codes = new List<PartRecord>();
+            
+            if (unit.Skill1 != null)
+                codes.Add(unit.Skill1);
+            
+            if (unit.Skill2 != null)
+                codes.Add(unit.Skill2);
+            
+            if (unit.Skill3 != null)
+                codes.Add(unit.Skill3);
+            
+            if (unit.Skill4 != null)
+                codes.Add(unit.Skill4);
+            
+            RoomInstance.MulticastPacket(new CodeList(codes));
+            
             // Send unit info
             RoomInstance.MulticastPacket(new UnitInfo(spawnedUnit));
             
