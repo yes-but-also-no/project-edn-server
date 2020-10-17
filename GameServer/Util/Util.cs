@@ -113,7 +113,8 @@ namespace GameServer.Util
                 var orthDist = (px - coneDist * direction).Length();
 
                 // Determine if they are in the cone
-                var isInCone = orthDist < coneRadius;
+                // Temp: Fake unit size by increasing radius check
+                var isInCone = orthDist < coneRadius + 10.0f;
                 
                 // If they are, add to hash set
                 if (isInCone) foundUnits.Add(u);

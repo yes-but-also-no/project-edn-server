@@ -38,6 +38,14 @@ namespace GameServer.Managers
                         client.SendPacket(new Message(client.User.Callsign, 
                             $"geoX: {client.GameInstance.Map.GetGeoX((int)unitPos.X)}, geoY: {client.GameInstance.Map.GetGeoY((int)unitPos.Y)}"));
                         break;
+                    
+                    case "#god":
+                        client.CurrentUnit.GodMode = !client.CurrentUnit.GodMode;
+                        var msg = client.CurrentUnit.GodMode ? "ENABLED" : "DISABLED";
+                        client.GameInstance.BroadcastChat(
+                            $"God mode <{msg}> for user {client.User.Callsign}"
+                            );
+                        break;
                 }
         }
     }
