@@ -81,7 +81,7 @@ namespace GameServer.Model.Parts.Weapons
                 {
                     VictimId = first.Id,
                     Damage = damage,
-                    PushBack = Owner.InAir ? Vector3.Zero : direction * 20.0f, // TODO: Is this thrust?
+                    PushBack = Owner.InAir ? Vector3.Zero : direction * distance, // TODO: Is this thrust?
                     ResultCode = HitResultCode.Hit
                 });
                 

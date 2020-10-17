@@ -174,6 +174,9 @@ namespace GameServer.Model.Units
         #endregion
         
         #region STATE
+        
+        // Special states
+        public bool GodMode { get; set; }
 
         private int _currentHealth;
         
@@ -185,6 +188,8 @@ namespace GameServer.Model.Units
             get => _currentHealth;
             set
             {
+                if (GodMode) return;
+                
                 _currentHealth = value;
                 
                 // Prevent overheal
@@ -216,6 +221,8 @@ namespace GameServer.Model.Units
         /// <param name="weapon">Weapon used to apply damage</param>
         public void Attack(Weapon weapon, int damage)
         {
+            if (GodMode) return;
+            
             _currentHealth -= damage;
             
             if (_currentHealth <= 0)

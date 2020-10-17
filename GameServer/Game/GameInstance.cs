@@ -101,7 +101,7 @@ namespace GameServer.Game
         #region CHAT
 
         /// <summary>
-        /// Sends a message to all users in the room
+        /// Sends a message from a user to all users in the room
         /// </summary>
         /// <param name="user">User who sent the message</param>
         /// <param name="message">The message</param>
@@ -109,6 +109,16 @@ namespace GameServer.Game
         {
             if (BeforeChat(user, message))
                 RoomInstance.MulticastPacket(new Message(user.Callsign, message));
+        }
+        
+        /// <summary>
+        /// Broadcasts a message to all users in the room
+        /// </summary>
+        /// <param name="user">User who sent the message</param>
+        /// <param name="message">The message</param>
+        public virtual void BroadcastChat(string message)
+        {
+            RoomInstance.MulticastPacket(new Message("[SERVER]", message));
         }
 
         /// <summary>
@@ -405,6 +415,9 @@ namespace GameServer.Game
 //                unit.WeaponSet2Right.CurrentOverheat = 0.0f;
 //            }
 //            unit.Alive = false;
+
+            // Call ondeath
+            unit.OnDeath();
 
             // Destroy?
             if (unit.Owner != null)
