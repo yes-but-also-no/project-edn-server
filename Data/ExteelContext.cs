@@ -274,12 +274,14 @@ namespace Data
                     UserInventoryId = 1,
                     Id = 13,
                     TemplateId = (uint)6001,
-                }, new
-                {
-                    UserInventoryId = 1,
-                    Id = 14,
-                    TemplateId = (uint)6002
-                });
+                }
+                    // , new
+                // {
+                //     UserInventoryId = 1,
+                //     Id = 14,
+                //     TemplateId = (uint)6002
+                // }
+                );
             
 
             // Seed unit data

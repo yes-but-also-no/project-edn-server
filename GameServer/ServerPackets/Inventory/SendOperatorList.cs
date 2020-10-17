@@ -42,26 +42,6 @@ namespace GameServer.ServerPackets.Inventory
                 WriteInt(0); // Unknown - from pcap
                 WriteInt(part.Id == _selectedOperator ? 1 : 0);
             }
-            
-            // WriteInt(1); // Id?
-            // WriteInt(6001); // Template
-            // WriteInt(-1); // Time - seconds, -1 for unlimited
-            // WriteInt(0); // Unknown
-            // WriteInt(0); // Unknown
-            // WriteInt(0); // Unknown
-            // WriteInt(1); // Selected?
-
-            // for (var i = 2; i <= 7; i++)
-            // {
-            //
-            //     WriteInt(i); // Id?
-            //     WriteInt(6000 + i); // Template
-            //     WriteInt(-1); // Time - seconds, -1 for unlimited
-            //     WriteInt(0); // Unknown
-            //     WriteInt(0); // Unknown
-            //     WriteInt(0); // Unknown
-            //     WriteInt(0); // Unknown
-            // }
         }
     }
 }
