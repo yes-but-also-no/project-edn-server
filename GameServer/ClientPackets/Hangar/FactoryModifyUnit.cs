@@ -134,14 +134,16 @@ namespace GameServer.ClientPackets.Hangar
                 var weaponSet1Left = db.Parts.Single(p => p.Id == _patchUnit.WeaponSet1LeftId);
                 weaponSet1Left.Color = _patchWeaponSet1Left.Color;
                 
-                var weaponSet1Right = db.Parts.Single(p => p.Id == _patchUnit.WeaponSet1RightId);
-                weaponSet1Right.Color = _patchWeaponSet1Right.Color;
+                var weaponSet1Right = db.Parts.SingleOrDefault(p => p.Id == _patchUnit.WeaponSet1RightId);
+                if (weaponSet1Right != null)
+                    weaponSet1Right.Color = _patchWeaponSet1Right.Color;
                 
                 var weaponSet2Left = db.Parts.Single(p => p.Id == _patchUnit.WeaponSet2LeftId);
                 weaponSet2Left.Color = _patchWeaponSet2Left.Color;
                 
-                var weaponSet2Right = db.Parts.Single(p => p.Id == _patchUnit.WeaponSet2RightId);
-                weaponSet2Right.Color = _patchWeaponSet2Right.Color;
+                var weaponSet2Right = db.Parts.SingleOrDefault(p => p.Id == _patchUnit.WeaponSet2RightId);
+                if (weaponSet2Right != null)
+                    weaponSet2Right.Color = _patchWeaponSet2Right.Color;
 
                 db.SaveChanges();
             }

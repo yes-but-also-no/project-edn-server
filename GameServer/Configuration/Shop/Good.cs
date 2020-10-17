@@ -80,6 +80,7 @@ namespace GameServer.Configuration.Shop
         Part = 0,
         Code = 1,
         Etc = 2,
-        UnitSet = 3
+        UnitSet = 3,
+        Operator = 4
     }
 }
