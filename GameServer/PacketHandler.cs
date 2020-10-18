@@ -162,6 +162,10 @@ namespace GameServer
                     msg = new ModeSniper(packet, client);
                     break;
                 
+                case 0x39:
+                    msg = new UseSkill(packet, client);
+                    break;
+                
                 case 0x3a:
                     msg = new RequestChangeWeaponset(packet, client);
                     break;
