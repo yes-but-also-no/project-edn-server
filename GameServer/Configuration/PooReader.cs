@@ -56,6 +56,9 @@ namespace GameServer.Configuration
             
             Code = Read<CodeStats>("code");
             AttackSkill = Read<AttackSkillStats>("attackskill");
+            
+            // SPECIAL: Game files do not have have rect / rect listed as targetting team, so we patch it here
+            AttackSkill.First(a => a.TemplateId == 102).TargetTeam = TargetTeam.friend;
         }
 
         /// <summary>

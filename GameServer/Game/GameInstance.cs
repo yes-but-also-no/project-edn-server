@@ -10,6 +10,8 @@ using Data.Model.Items;
 using GameServer.Configuration;
 using GameServer.Configuration.Poo;
 using GameServer.GeoEngine;
+using GameServer.Model.Parts.Skills;
+using GameServer.Model.Parts.Skills.AttackSkills;
 using GameServer.Model.Parts.Weapons;
 using GameServer.Model.Results;
 using GameServer.Model.Units;
@@ -92,6 +94,33 @@ namespace GameServer.Game
         /// Dictionary of all units in this room
         /// </summary>
         private readonly ConcurrentDictionary<int, Unit> _units = new ConcurrentDictionary<int, Unit>();
+        
+        /// <summary>
+        /// Disctioanry of all skills in play
+        /// </summary>
+        private readonly ConcurrentDictionary<int, Skill> _skills = new ConcurrentDictionary<int, Skill>();
+
+        /// <summary>
+        /// Gets a skill by its id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public Skill GetSkillById(int id)
+        {
+            return _skills[id];
+        }
+
+        /// <summary>
+        /// Adds skills and notifies all users
+        /// </summary>
+        /// <param name="skill"></param>
+        // public void AddSkills(IEnumerable<Skill> skills)
+        // {
+        //     foreach (var skill in skills)
+        //     {
+        //         _skills[skill.Id] = skill;
+        //     }
+        // }
 
         //TEMP
         public Vector3 SpawnLocation { get; set; } = new Vector3(0, 0, 1000);
@@ -154,6 +183,16 @@ namespace GameServer.Game
         public IEnumerable<Unit> GetEnemies(Unit unit)
         {
             return _units.Values.Where(u => u.Team != unit.Team);
+        }
+        
+        /// <summary>
+        /// Returns all team mates for a unit
+        /// </summary>
+        /// <param name="unit">The unit to check</param>
+        /// <returns></returns>
+        public IEnumerable<Unit> GetFriends(Unit unit)
+        {
+            return _units.Values.Where(u => u.Team == unit.Team);
         }
         
         #endregion
@@ -343,23 +382,9 @@ namespace GameServer.Game
             // Set unit Location
             // TODO: Spawn maps?
             spawnedUnit.WorldPosition = new Vector3(SpawnLocation.X, SpawnLocation.Y, SpawnLocation.Z);
-            
-            // Codes?
-            var codes = new List<PartRecord>();
-            
-            if (unit.Skill1 != null)
-                codes.Add(unit.Skill1);
-            
-            if (unit.Skill2 != null)
-                codes.Add(unit.Skill2);
-            
-            if (unit.Skill3 != null)
-                codes.Add(unit.Skill3);
-            
-            if (unit.Skill4 != null)
-                codes.Add(unit.Skill4);
-            
-            RoomInstance.MulticastPacket(new CodeList(codes));
+
+            // Notify
+            RoomInstance.MulticastPacket(new CodeList(spawnedUnit.Skills));
             
             // Send unit info
             RoomInstance.MulticastPacket(new UnitInfo(spawnedUnit));
@@ -402,37 +427,8 @@ namespace GameServer.Game
         /// <param name="unit">The unit who died</param>
         /// <param name="killer">The unit who killed him</param>
         /// <param name="weapon">The weapon that killed him</param>
-        public void KillUnit(Unit unit, Unit killer = null, Weapon weapon = null)
+        public void KillUnit(Unit unit, Unit killer = null, Weapon weapon = null, Skill skill = null)
         {
-//            unit.Health = 0;
-//            unit.SetWeaponSet(0);
-//            unit.WeaponSet1Left.Target = null;
-//            unit.WeaponSet1Left.IsAttacking = false;
-//            unit.WeaponSet1Left.IsOverheated = false;
-//            unit.WeaponSet1Left.CurrentOverheat = 0.0f;
-//
-//            if (unit.WeaponSet1Right != null)
-//            {
-//                unit.WeaponSet1Right.Target = null;
-//                unit.WeaponSet1Right.IsAttacking = false;
-//                unit.WeaponSet1Right.IsOverheated = false;
-//                unit.WeaponSet1Right.CurrentOverheat = 0.0f;
-//            }
-//            
-//            unit.WeaponSet2Left.Target = null;
-//            unit.WeaponSet2Left.IsAttacking = false;
-//            unit.WeaponSet2Left.IsOverheated = false;
-//            unit.WeaponSet2Left.CurrentOverheat = 0.0f;
-//
-//            if (unit.WeaponSet2Right != null)
-//            {
-//                unit.WeaponSet2Right.Target = null;
-//                unit.WeaponSet2Right.IsAttacking = false;
-//                unit.WeaponSet2Right.IsOverheated = false;
-//                unit.WeaponSet2Right.CurrentOverheat = 0.0f;
-//            }
-//            unit.Alive = false;
-
             // Call ondeath
             unit.OnDeath();
 
@@ -442,12 +438,25 @@ namespace GameServer.Game
             
             // Remove from units list
             _units.Remove(unit.Id, out var trash);
+
+            // TODO: Use an interface here?
+            if (weapon != null)
+            {
+                // Notify all
+                RoomInstance.MulticastPacket(new UnitDestroyed(unit, killer, weapon));
             
-            // Notify all
-            RoomInstance.MulticastPacket(new UnitDestroyed(unit, killer, weapon));
+                // Call hook
+                AfterUnitKilled(unit, killer, weapon);
+            }
+            else
+            {
+                // Notify all
+                RoomInstance.MulticastPacket(new UnitDestroyed(unit, killer, skill));
             
-            // Call hook
-            AfterUnitKilled(unit, killer, weapon);
+                // Call hook
+                AfterUnitKilled(unit, killer, skill);
+            }
+            
         }
 
         /// <summary>
@@ -457,6 +466,7 @@ namespace GameServer.Game
         /// <param name="killer"></param>
         /// <param name="weapon"></param>
         protected abstract void AfterUnitKilled(Unit unit, Unit killer, Weapon weapon);
+        protected abstract void AfterUnitKilled(Unit unit, Unit killer, Skill skill);
 
         /// <summary>
         /// Updates users when a target has been made on a unit
@@ -536,211 +546,22 @@ namespace GameServer.Game
             else if (weapon is Fist)
                 RoomInstance.MulticastPacket(new AttackBlade(attacker, hits, weapon)); 
         }
-        
-        #region ATTACKS
+
+        #region SKILLS
 
         /// <summary>
-        /// Trys to attack using a weapon
+        /// Notifies users when a weapon skill is used
         /// </summary>
         /// <param name="attacker"></param>
-        /// <param name="weapon"></param>
-        /*
-        public void TryAttack(UnitRecord attacker, int arm)
+        /// <param name="hits"></param>
+        /// <param name="skill"></param>
+        public void NotifyUnitWeaponSkillUsed(Unit attacker, List<HitResult> hits, WeaponSkill skill, IEnumerable<Vector3> dashVectors)
         {
-            // Get weapon
-            var weapon = attacker.GetWeaponByArm(arm);
-            
-            // Check overheat status
-            // TODO: Do we need to send packet if this happens?
-            if (weapon.IsOverheated) return;
-            
-            // If automatic, handle reload time
-            if (weapon.IsAutomatic)
-                weapon.AddReloadTime();
-            
-            // Update overheat
-            // TODO: Handle cooldown...
-            if (weapon.AddOverheat())
-            {
-                
-            }
-            
-            // Send attack
-            if (weapon.IfoType == IfoType.ifo_none)
-            {
-                // TEMP - check melee
-                if (weapon.WeaponType == WeaponType.blade || weapon.WeaponType == WeaponType.spear)
-                {
-//                    attacker.IgnorePackets = 2;
-                    // TEST
-                    MulticastPacket(new AttackBlade(attacker, arm, weapon,this));
-                    
-//                    Thread.Sleep(200);
-                    
-//                    MulticastPacket(new UnitMoved(attacker, 0, AttackBlade.AIR == 1 ? new Vector3(0, 0, -29.0f) : Vector3.Zero));
+            RoomInstance.MulticastPacket(new OnSkill(attacker, hits, skill, dashVectors));
+        }
 
-                }
-                else
-                {
-                    MulticastPacket(new Attack(attacker, arm, weapon)); 
-                }
-                
-            }
-            else
-            {
-                // Temp: Clear old?
-                //MulticastPacket(new AttackAResult(weapon, true));
-                
-                // Fire?
-                MulticastPacket(new AttackA(attacker, arm, weapon));
-                
-                // Temp: check for collision
-                // Calculate movment
-//                var degX = 9.0f * (attacker.AimX / 1610.0f);
-//                var degY = 9.0f * (attacker.AimY / 1610.0f);
-
-                var degX = (attacker.AimX / 182.041666667f);
-                var degY = (attacker.AimY / 182.041666667f);
-
-                var radX = degX * 0.0174533f; // Convert ushort to euler deg then to rads
-                var radY = degY * 0.0174533f;
-                
-                // Start at hip height
-                var startPos = new Vector3(attacker.WorldPosition.X, attacker.WorldPosition.Y, attacker.WorldPosition.Z + 50.0f);
-            
-                var rotation = Quaternion.CreateFromYawPitchRoll(0, 0, radX);
-                var direction = Vector3.Transform(new Vector3(1, 0, 0), rotation);
-                
-                rotation = rotation *
-                           Quaternion.CreateFromYawPitchRoll(-radY, 0, 0);
-
-                direction = Vector3.Transform(new Vector3(1, 0, 0), rotation);
-                
-                
-                var newPos = startPos + direction * 10000.0f;
-                
-                var movePos = Map.MoveCheck3D(startPos, newPos);
-                
-                // TEMP: Spawn npc at loc lol
-                SpawnNpc(movePos);
-                
-                // TEMP: Not sure how to handle results
-                MulticastPacket(new AttackAResult(weapon, false));
-            }
-
-
-
-            // TODO: Do we need to multicast this?
-//            MulticastPacket(new OverheatStatus(attacker, arm, weapon));
-
-            // If they missed, do nothing
-            if (weapon.Target == null) return;
-            
-            // Check for kill
-            weapon.Target.Health -= weapon.Damage*weapon.NumberOfShots;
-
-            // Kill unit
-            // TODO: Are more status updates needed?
-            if (weapon.Target.Health <= 0)
-            {
-                KillUnit(weapon.Target, attacker, weapon);
-            }
-        }*/
-        
-        #endregion
-        
-        #region SKILLS
-        
-        
-        
         #endregion
 
-        /// <summary>
-        /// Called when a unit needs to be ticked to process status
-        /// </summary>
-        /// <param name="unit"></param>
-        /// <param name="timeStamp"></param>
-        /*
-        public void TickUnit(UnitRecord unit, float delta)
-        {           
-            // Do ticks
-            // TODO: Clean this up
-            //Console.WriteLine("TICK - delta: {0}", delta);
-            
-            // Tick weapons
-            // TODO: Tick unequipped weapons as well
-            var weapon = unit.WeaponSet1Left;
-            
-            // Update heat
-            if (weapon.ShouldUpdateOverheat(delta))
-            {
-                MulticastPacket(new OverheatStatus(unit, 0, 0, weapon));
-            }
-            
-            // Check fire first
-            if (weapon.ShouldAttack(delta))
-            {
-                TryAttack(unit, 0);
-                // TEMP
-                Console.WriteLine("GOT YES TO SHOULD ATTACK -- THIS SHOULD ONLY PRINT ONCE");
-            }
-
-            
-            // TODO: Check first weapon for type maybe?
-            if (unit.WeaponSet1Right != null)
-            {
-                weapon = unit.WeaponSet1Right;
-
-                if (weapon.ShouldUpdateOverheat(delta))
-                {
-                    MulticastPacket(new OverheatStatus(unit, 1, 0, weapon));
-                }
-
-                // Check fire first
-                if (weapon.ShouldAttack(delta))
-                {
-                    TryAttack(unit, 1);
-                    // TEMP
-                    Console.WriteLine("GOT YES TO SHOULD ATTACK -- THIS SHOULD ONLY PRINT ONCE");
-                }
-            }
-
-            weapon = unit.WeaponSet2Left;
-            
-            if (weapon.ShouldUpdateOverheat(delta))
-            {
-                MulticastPacket(new OverheatStatus(unit, 0, 1, weapon));
-            }
-            
-            // Check fire first
-            if (weapon.ShouldAttack(delta))
-            {
-                TryAttack(unit, 0);
-                // TEMP
-                Console.WriteLine("GOT YES TO SHOULD ATTACK -- THIS SHOULD ONLY PRINT ONCE");
-            }
-            
-            // TODO: Check first weapon for type maybe?
-            if (unit.WeaponSet2Right != null)
-            {
-                weapon = unit.WeaponSet2Right;
-
-                if (weapon.ShouldUpdateOverheat(delta))
-                {
-                    MulticastPacket(new OverheatStatus(unit, 1, 1, weapon));
-                }
-
-                // Check fire first
-                if (weapon.ShouldAttack(delta))
-                {
-                    TryAttack(unit, 1);
-                    // TEMP
-                    Console.WriteLine("GOT YES TO SHOULD ATTACK -- THIS SHOULD ONLY PRINT ONCE");
-                }
-            }
-
-        }*/
-        
         #endregion
         
         #region NPC

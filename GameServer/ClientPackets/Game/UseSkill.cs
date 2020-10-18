@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using GameServer.Model.Units;
 using GameServer.ServerPackets.Game;
+using Swan.Logging;
 using Console = Colorful.Console;
 
 namespace GameServer.ClientPackets.Game
@@ -20,7 +21,7 @@ namespace GameServer.ClientPackets.Game
         /// <summary>
         /// Who we hit
         /// </summary>
-        private readonly int _target;
+        private readonly int[] _targets;
 
         public UseSkill(byte[] data, GameSession client) : base(data, client)
         {
@@ -30,12 +31,12 @@ namespace GameServer.ClientPackets.Game
             _skillId = GetInt(); // Skill Id
             
             var num = GetInt(); // Num Enemies hit
-            _target = -1; // Start at a miss
+            _targets = new int[num]; // Start at a miss
 
             for (var i = 0; i < num; i++)
             {
                 // Temp: just take last
-                _target = GetInt(); // Target id - or self for aoe?
+                _targets[i] = GetInt(); // Target id - or self for aoe?
             }
 
             // High priority
@@ -53,7 +54,7 @@ namespace GameServer.ClientPackets.Game
             if (GetClient().GameInstance == null) return;
 
             // Temp: just forward
-            Unit.TryUseSkill(_skillId, _target);
+            Unit.TryUseSkill(_skillId, _targets);
         }
     }
 }

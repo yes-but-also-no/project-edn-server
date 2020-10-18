@@ -1,3 +1,4 @@
+using GameServer.Model.Parts.Skills;
 using GameServer.Model.Parts.Weapons;
 using GameServer.Model.Units;
 
@@ -11,12 +12,20 @@ namespace GameServer.ServerPackets.Game
         private readonly Unit _killer;
         private readonly Unit _victim;
         private readonly Weapon _weapon;
+        private readonly Skill _skill;
 
         public UnitDestroyed(Unit victim, Unit killer, Weapon weapon)
         {
             _killer = killer;
             _victim = victim;
             _weapon = weapon;
+        }
+        
+        public UnitDestroyed(Unit victim, Unit killer, Skill skill)
+        {
+            _killer = killer;
+            _victim = victim;
+            _skill = skill;
         }
         
         public override string GetType()
@@ -38,7 +47,7 @@ namespace GameServer.ServerPackets.Game
             
             WriteUInt(_weapon?.TemplateId ?? 0); // Template of kill weapon   
 
-            WriteInt(0); // 0 for weapon, template for skill?           
+            WriteUInt(_skill?.TemplateId ?? 0); // 0 for weapon, template for skill?           
 
             WriteInt(0); // Unknown
         }

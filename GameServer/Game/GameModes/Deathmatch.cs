@@ -1,6 +1,7 @@
 using System.Linq;
 using Data.Model;
 using GameServer.Configuration.Poo;
+using GameServer.Model.Parts.Skills;
 using GameServer.Model.Parts.Weapons;
 using GameServer.Model.Units;
 using Swan.Logging;
@@ -59,6 +60,11 @@ namespace GameServer.Game.GameModes
         }
 
         protected override void AfterUnitKilled(Unit unit, Unit killer, Weapon weapon)
+        {
+            
+        }
+        
+        protected override void AfterUnitKilled(Unit unit, Unit killer, Skill skill)
         {
             
         }

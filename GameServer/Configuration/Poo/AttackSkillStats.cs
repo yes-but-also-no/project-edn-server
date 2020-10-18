@@ -24,6 +24,10 @@ namespace GameServer.Configuration.Poo
         [TypeConverter(typeof(TargetConverter))]
         public TargetType TargetType { get; set; }
         
+        [Name("fTargetDistance")]
+        [Default(0)]
+        public float TargetDistance { get; set; }
+        
         [Name("nDamage")]
         [Default(0)]
         public int Damage { get; set; }
@@ -97,6 +101,7 @@ namespace GameServer.Configuration.Poo
     public enum TargetTeam
     {
         enemy = 0,
+        friend = 1
     }
 
     public enum TargetType

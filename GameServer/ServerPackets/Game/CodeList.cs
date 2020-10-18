@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Data.Model.Items;
+using GameServer.Model.Parts.Skills;
 using GameServer.Model.Units;
 
 namespace GameServer.ServerPackets.Game
@@ -11,9 +12,9 @@ namespace GameServer.ServerPackets.Game
     /// </summary>
     public class CodeList : ServerBasePacket
     {
-        private readonly List<PartRecord> _codes;
+        private readonly IEnumerable<Skill> _codes;
 
-        public CodeList(List<PartRecord> codes)
+        public CodeList(IEnumerable<Skill> codes)
         {
             _codes = codes;
         }
@@ -32,7 +33,7 @@ namespace GameServer.ServerPackets.Game
         {
             WriteInt(0); // Always zero?
             
-            WriteInt(_codes.Count); // Array size
+            WriteInt(_codes.Count()); // Array size
 
             foreach (var code in _codes)
             {

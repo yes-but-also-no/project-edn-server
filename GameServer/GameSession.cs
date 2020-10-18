@@ -213,6 +213,18 @@ namespace GameServer
                     .Include(i => i.Units)
                         .ThenInclude(u => u.WeaponSet2Right)
                     
+                    // .Include(i => i.Units)
+                    //     .ThenInclude(u => u.Skill1)
+                    //
+                    // .Include(i => i.Units)
+                    //     .ThenInclude(u => u.Skill2)
+                    //
+                    // .Include(i => i.Units)
+                    //     .ThenInclude(u => u.Skill3)
+                    //
+                    // .Include(i => i.Units)
+                    //     .ThenInclude(u => u.Skill4)
+                    //
                     .SingleOrDefault(i => i.Id == user.InventoryId);
                 
                 // Assign user units
