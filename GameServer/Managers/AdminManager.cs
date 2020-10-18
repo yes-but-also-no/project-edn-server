@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using Data.Model;
 using GameServer.Game;
+using GameServer.Model.Results;
 using GameServer.ServerPackets.Chat;
 
 namespace GameServer.Managers
@@ -45,6 +46,18 @@ namespace GameServer.Managers
                         client.GameInstance.BroadcastChat(
                             $"God mode <{msg}> for user {client.User.Callsign}"
                             );
+                        break;
+                    
+                    case "#sp":
+                        // Broadcast
+                        client.GameInstance.NotifyUnitAttacked(client.CurrentUnit, new HitResult
+                        {
+                            ResultCode = HitResultCode.Hit,
+                            Damage = 2000,
+                            PushBack = Vector3.Zero,
+                            VictimId = client.CurrentUnit.Id
+                        }, client.CurrentUnit.WeaponSetPrimary.Left);
+                        
                         break;
                 }
         }

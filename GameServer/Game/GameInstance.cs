@@ -648,6 +648,12 @@ namespace GameServer.Game
         }*/
         
         #endregion
+        
+        #region SKILLS
+        
+        
+        
+        #endregion
 
         /// <summary>
         /// Called when a unit needs to be ticked to process status

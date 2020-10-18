@@ -8,6 +8,7 @@ using Data.Model.Items;
 using GameServer.Game;
 using GameServer.Model.Parts.Body;
 using GameServer.Model.Parts.Weapons;
+using GameServer.Model.Results;
 using GameServer.ServerPackets.Game;
 using Console = Colorful.Console;
 using Weapon = GameServer.Model.Parts.Weapons.Weapon;
@@ -38,6 +39,7 @@ namespace GameServer.Model.Units
 
         // TODO: Move into game objects
         public readonly int[] Skills;
+        public readonly int[] SkillTemplates;
 
         protected Unit(GameInstance instance, UnitRecord unitRecord)
         {
@@ -59,6 +61,14 @@ namespace GameServer.Model.Units
                 unitRecord.Skill2Id ?? -1,
                 unitRecord.Skill3Id ?? -1,
                 unitRecord.Skill4Id ?? -1,
+            };
+            
+            SkillTemplates = new int[]
+            {
+                unitRecord.Skill1 != null ? (int)unitRecord.Skill1.TemplateId : -1,
+                unitRecord.Skill2 != null ? (int)unitRecord.Skill2.TemplateId : -1,
+                unitRecord.Skill3 != null ? (int)unitRecord.Skill3.TemplateId : -1,
+                unitRecord.Skill4 != null ? (int)unitRecord.Skill4.TemplateId : -1,
             };
 
             var left = CreateWeapon(unitRecord.WeaponSet1Left, ArmIndex.Left, WeaponSetIndex.Primary);
@@ -352,6 +362,46 @@ namespace GameServer.Model.Units
         public IEnumerable<int> GetSkills()
         {
             return Skills.Where(s => s != -1);
+        }
+        
+        /// <summary>
+        /// Tries to use a skill
+        /// </summary>
+        /// <param name="arm"></param>
+        /// <param name="comboStep"></param>
+        public void TryUseSkill(int skillId, int targetId)
+        {
+            // TODO: Hooks
+            // TEMP: Need to make skills their own item
+            
+            for (var i = 0; i < 4; i++)
+            {
+                if (Skills[i] == skillId)
+                {
+                    var hits = new List<HitResult>();
+
+                    if (targetId == -1)
+                    {
+                        // Missed all
+                        hits.AddRange(new [] { HitResult.Miss, HitResult.Miss, HitResult.Miss, HitResult.Miss });
+                    }
+                    else
+                    {
+                        // Missed all
+                        hits.AddRange(new [] { new HitResult
+                        {
+                            VictimId = targetId,
+                            Damage = 500,
+                            PushBack = Vector3.Zero,
+                            ResultCode = HitResultCode.Hit
+                        }, HitResult.Miss, HitResult.Miss, HitResult.Miss });
+                    }
+                    
+                    GameInstance.RoomInstance.MulticastPacket(new OnSkill(this, skillId, hits, (uint)SkillTemplates[i]));
+                }
+            }
+
+            
         }
         
         #endregion
