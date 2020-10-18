@@ -26,9 +26,10 @@ namespace GameServer.ClientPackets.Game
         {
             if (GetClient().GameInstance == null) return;
 
-            GetInt(); // Current SP!
+            GetClient().CurrentUnit.CurrentSp = GetInt(); // Current SP
             _skillId = GetInt(); // Skill Id
-            var num = GetInt(); // Num Enemies hit?
+            
+            var num = GetInt(); // Num Enemies hit
             _target = -1; // Start at a miss
 
             for (var i = 0; i < num; i++)

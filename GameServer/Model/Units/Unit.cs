@@ -221,6 +221,8 @@ namespace GameServer.Model.Units
                 }
             } 
         }
+        
+        public int CurrentSp { get; set; }
 
         /// <summary>
         /// Is this unit alive?

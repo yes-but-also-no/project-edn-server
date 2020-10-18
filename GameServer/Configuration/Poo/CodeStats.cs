@@ -9,10 +9,10 @@ namespace GameServer.Configuration.Poo
     /// it looks like skills are split into attack and consumable,
     /// though it was never added to NA
     /// </summary>
-    public class CodeStats
+    public class CodeStats : StatsBase
     {
         [Name("nTemplateId")]
-        public uint TemplateId { get; set; }
+        public new uint TemplateId { get; set; }
         
         [BooleanTrueValues("1")]
         [BooleanFalseValues("0")]
