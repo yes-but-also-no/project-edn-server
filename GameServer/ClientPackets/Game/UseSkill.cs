@@ -53,8 +53,9 @@ namespace GameServer.ClientPackets.Game
             // Check practice mode
             if (GetClient().GameInstance == null) return;
 
-            // Temp: just forward
-            Unit.TryUseSkill(_skillId, _targets);
+            // TODO: Miss skill packet
+            if (_targets.Length > 0)
+                Unit.TryUseSkill(_skillId, _targets);
         }
     }
 }

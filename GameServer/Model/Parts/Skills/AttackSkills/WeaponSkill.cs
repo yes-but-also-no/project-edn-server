@@ -116,15 +116,62 @@ namespace GameServer.Model.Parts.Skills.AttackSkills
             }
             
             // Create dash vectors if needed
-            var dashVectors = new List<Vector3>()
+            var dashVectors = new List<Vector3>
             {
-                Vector3.Zero,
-                Vector3.Zero,
-                Vector3.Zero,
-                Vector3.Zero,
-                Vector3.Zero,
-                Vector3.Zero,
+                new Vector3(0, 0, -1),
+                new Vector3(0, 0, -1),
+                new Vector3(0, 0, -1),
+                new Vector3(0, 0, -1),
+                new Vector3(0, 0, -1),
+                new Vector3(0, 0, -1),
             };
+
+            // If its a single target
+            if (AttackStats.TargetType == TargetType.activator)
+            {
+                // Get victim
+                var target = targets.First();
+                
+                // Get direction
+                var direction = Vector3.Normalize(target.WorldPosition - Owner.WorldPosition);
+                
+                // Iterator
+                var i = 0;
+                
+                // Do attacker offsets
+                foreach (var dash in AttackStats.AttackerDashDistances.Where(d => d != -1))
+                {
+                    // Figure offset
+                    var calc = Vector3.Add(Owner.WorldPosition, Vector3.Multiply(dash, direction));
+                    
+                    // Add to vector array
+                    dashVectors[i] = new Vector3(calc.X, calc.Y, Owner.WorldPosition.Z);
+
+                    // Just update every time for now i guess
+                    Owner.WorldPosition = new Vector3(dashVectors[i].X, dashVectors[i].Y, dashVectors[i].Z);
+
+                    i++;
+                }
+
+                i = 3;
+                
+                // Do target offsets
+                foreach (var dash in AttackStats.TargetDashDistances.Where(d => d != -1))
+                {
+                    // Figure offset
+                    var calc = Vector3.Add(target.WorldPosition, Vector3.Multiply(dash, direction));
+                    
+                    // Add to vector array
+                    dashVectors[i] = new Vector3(calc.X, calc.Y, target.WorldPosition.Z);
+
+                    // Just update every time for now i guess
+                    target.WorldPosition = new Vector3(dashVectors[i].X, dashVectors[i].Y, dashVectors[i].Z);
+                    
+                    i++;
+                }
+            }
+
+            
 
             // Notify users
             GameInstance.NotifyUnitWeaponSkillUsed(Owner, hits.ToList(), this, dashVectors);
