@@ -46,7 +46,7 @@ namespace GameServer.Model.Parts
             if (partRecord == null) return;
             
             // Load stats for part
-            Stats = PooReader.GetStatsByTemplateId(partRecord.TemplateId);
+            Stats = PooReader.GetStatsForPart(partRecord);
             
             // Set color
             Color = partRecord.Color;

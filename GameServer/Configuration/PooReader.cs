@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using CsvHelper;
+using Data.Model.Items;
 using GameServer.Configuration.Poo;
 using Swan.Logging;
 
@@ -58,11 +59,38 @@ namespace GameServer.Configuration
         }
 
         /// <summary>
-        /// Gets the part stats object for a template id
+        /// Gets the part stats object for a part record
+        /// </summary>
+        /// <param name="part"></param>
+        /// <returns></returns>
+        public static StatsBase GetStatsForPart(PartRecord part)
+        {
+            if (part.IsUnitPart)
+                return GetWeaponStats(part.TemplateId);
+            
+            if (part.IsCode)
+                return GetCodeStats(part.TemplateId);
+            
+            throw new ArgumentOutOfRangeException(nameof(part), $"Invalid part template id: {part.TemplateId}!");
+        }
+
+        /// <summary>
+        /// Gets the stats for a skill or consumable
         /// </summary>
         /// <param name="templateId"></param>
         /// <returns></returns>
-        public static StatsBase GetStatsByTemplateId(uint templateId)
+        private static StatsBase GetCodeStats(uint templateId)
+        {
+            return Code.First(c => c.TemplateId == templateId);
+        }
+
+        /// <summary>
+        /// Gets a standard parts stats object
+        /// </summary>
+        /// <param name="templateId"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        private static StatsBase GetWeaponStats(uint templateId)
         {
             var partsType = templateId;
             

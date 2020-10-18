@@ -1,3 +1,4 @@
+using System;
 using Data.Model.Items;
 using GameServer.Configuration.Poo;
 using GameServer.Model.Units;
@@ -13,7 +14,7 @@ namespace GameServer.Model.Parts.Skills
         /// <summary>
         /// Weapon stats
         /// </summary>
-        private new WeaponStatsBase Stats => base.Stats as WeaponStatsBase;
+        private new CodeStats Stats => base.Stats as CodeStats;
         
         protected Skill(PartRecord partRecord, Unit owner) : base(partRecord, owner)
         {
@@ -33,9 +34,13 @@ namespace GameServer.Model.Parts.Skills
         /// </summary>
         public virtual bool CanUse()
         {
-            // Check EN
+            // Check SP
+            if (Owner.CurrentSp < Stats.RequiredSp)
+                return false;
             
             // Check cooldown
+            if (Cooldown > 0)
+                return false;
 
             return true;
         }
@@ -51,6 +56,7 @@ namespace GameServer.Model.Parts.Skills
         public virtual void PostUse()
         {
             // Add cooldown
+            Cooldown = Stats.CoolTime;
         }
 
         /// <summary>
@@ -67,6 +73,10 @@ namespace GameServer.Model.Parts.Skills
         public virtual void OnTick(double delta)
         {        
             // Reduce cooldown
+            if (Cooldown > 0)
+            {
+                Cooldown -= MathF.Max((float)delta / 1000, 0);
+            }
         }
         
         public override string ToString()
