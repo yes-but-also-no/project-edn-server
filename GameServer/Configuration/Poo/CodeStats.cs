@@ -14,10 +14,11 @@ namespace GameServer.Configuration.Poo
         [Name("nTemplateId")]
         public uint TemplateId { get; set; }
         
-        [Name("isSuicideSkill")]
-        public int IsSuicideSkill { get; set; }
+        [BooleanTrueValues("1")]
+        [BooleanFalseValues("0")]
+        public bool IsSuicideSkill { get; set; }
         
-        [Name("ECodeWeaponType")]
+        [Name("ECodeEquipType")]
         public CodeEquipType CodeEquipType { get; set; }
         
         [Name("ECodeActivationTarget")]
@@ -27,12 +28,15 @@ namespace GameServer.Configuration.Poo
         public float CoolTime { get; set; }
         
         [Name("fTargetRange")]
+        [Default(0.0f)]
         public float TargetRange { get; set; }
         
         [Name("nMaxTarget")]
+        [Default(1)]
         public int MaxTarget { get; set; }
         
         [Name("nProjectileCount")]
+        [Default(1)]
         public int ProjectileCount { get; set; }
         
         [Name("AttackSkill")]
