@@ -76,6 +76,32 @@ namespace GameServer.Util
         {
             return new Vector3(unit.WorldPosition.X, unit.WorldPosition.Y, unit.WorldPosition.Z + UnitBodyHeight);
         }
+
+        /// <summary>
+        /// Finds all units in a sphere
+        /// </summary>
+        /// <param name="units"></param>
+        /// <param name="pos"></param>
+        /// <param name="distance"></param>
+        /// <returns></returns>
+        public static IEnumerable<Unit> CheckInSphere(this IEnumerable<Unit> units, Vector3 pos, float distance)
+        {
+            // New enumerable of units
+            var foundUnits = new HashSet<Unit>();
+            
+            // Loop units
+            foreach (var u in units)
+            {
+                // Calculate distance
+                // TODO: Factor unit size in
+                var dist = Vector3.Distance(pos, u.WorldPosition);
+
+                // If they are, add to hash set
+                if (dist <= distance) foundUnits.Add(u);
+            }
+
+            return foundUnits;
+        }
             
         /// <summary>
         /// Performs a cone shaped colission check for units

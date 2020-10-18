@@ -35,13 +35,13 @@ namespace GameServer.ServerPackets.Game
             
             WriteInt(4); // Slot count?
 
-            var skills = _unit.GetSkills();
+            var skills = _unit.Skills;
             
             WriteInt(skills.Count()); // Code count?
 
             foreach (var skill in skills)
             {
-                WriteInt(skill);
+                WriteInt(skill.Id);
             }
         }
     }

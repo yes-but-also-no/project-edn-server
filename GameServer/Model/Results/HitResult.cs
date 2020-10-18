@@ -10,7 +10,7 @@ namespace GameServer.Model.Results
         public int Damage { get; set; }
         public int VictimId { get; set; }
         public HitResultCode ResultCode { get; set; }
-        public Vector3 PushBack { get; set; }
+        public Vector3 PushBack { get; set; } = Vector3.Zero;
 
         public static HitResult Miss = new HitResult
         {

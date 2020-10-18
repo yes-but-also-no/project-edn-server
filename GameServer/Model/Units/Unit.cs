@@ -5,8 +5,12 @@ using System.Linq;
 using System.Numerics;
 using Data.Model;
 using Data.Model.Items;
+using GameServer.Configuration;
+using GameServer.Configuration.Poo;
 using GameServer.Game;
 using GameServer.Model.Parts.Body;
+using GameServer.Model.Parts.Skills;
+using GameServer.Model.Parts.Skills.AttackSkills;
 using GameServer.Model.Parts.Weapons;
 using GameServer.Model.Results;
 using GameServer.ServerPackets.Game;
@@ -38,8 +42,15 @@ namespace GameServer.Model.Units
         public readonly Part Booster;
 
         // TODO: Move into game objects
-        public readonly int[] Skills;
-        public readonly int[] SkillTemplates;
+        private readonly Skill[] _skills;
+
+        public IEnumerable<Skill> Skills
+        {
+            get
+            {
+                return _skills.Where(s => s != null);
+            }
+        }
 
         protected Unit(GameInstance instance, UnitRecord unitRecord)
         {
@@ -55,21 +66,16 @@ namespace GameServer.Model.Units
             Legs = new Part(unitRecord.Legs, this);
             Booster = new Part(unitRecord.Backpack, this);
             
-            Skills = new int[]
+            _skills = new Skill[]
             {
-                unitRecord.Skill1Id ?? -1,
-                unitRecord.Skill2Id ?? -1,
-                unitRecord.Skill3Id ?? -1,
-                unitRecord.Skill4Id ?? -1,
+                unitRecord.Skill1 != null ? CreateSkill(unitRecord.Skill1) : null,
+                unitRecord.Skill2 != null ? CreateSkill(unitRecord.Skill2) : null,
+                unitRecord.Skill3 != null ? CreateSkill(unitRecord.Skill3) : null,
+                unitRecord.Skill4 != null ? CreateSkill(unitRecord.Skill4) : null
             };
             
-            SkillTemplates = new int[]
-            {
-                unitRecord.Skill1 != null ? (int)unitRecord.Skill1.TemplateId : -1,
-                unitRecord.Skill2 != null ? (int)unitRecord.Skill2.TemplateId : -1,
-                unitRecord.Skill3 != null ? (int)unitRecord.Skill3.TemplateId : -1,
-                unitRecord.Skill4 != null ? (int)unitRecord.Skill4.TemplateId : -1,
-            };
+            // Add to master list
+            // GameInstance.AddSkills(Skills.Where(s => s != null));
 
             var left = CreateWeapon(unitRecord.WeaponSet1Left, ArmIndex.Left, WeaponSetIndex.Primary);
             var right = unitRecord.WeaponSet1Right != null 
@@ -235,7 +241,7 @@ namespace GameServer.Model.Units
         public uint Team;
         
         /// <summary>
-        /// Applies damage from no source
+        /// Applies damage from a weapon
         /// </summary>
         /// <param name="damage">Damage dealt</param>
         /// <param name="weapon">Weapon used to apply damage</param>
@@ -249,6 +255,24 @@ namespace GameServer.Model.Units
             {
                 _currentHealth = 0;
                 GameInstance.KillUnit(this, weapon.Owner, weapon);
+            }
+        }
+        
+        /// <summary>
+        /// Applies damage from a skill
+        /// </summary>
+        /// <param name="skill"></param>
+        /// <param name="damage"></param>
+        public void Attack(Skill skill, int damage)
+        {
+            if (GodMode) return;
+            
+            _currentHealth -= damage;
+            
+            if (_currentHealth <= 0)
+            {
+                _currentHealth = 0;
+                GameInstance.KillUnit(this, skill.Owner, null, skill);
             }
         }
         
@@ -274,6 +298,16 @@ namespace GameServer.Model.Units
         public Weapon GetWeaponByArm(ArmIndex arm)
         {
             return arm == ArmIndex.Left ? WeaponSetCurrent.Left : WeaponSetCurrent.Right;
+        }
+
+        /// <summary>
+        /// Gets a skill by its id
+        /// </summary>
+        /// <param name="skillId"></param>
+        /// <returns></returns>
+        public Skill GetSkillById(int skillId)
+        {
+            return _skills.First(s => s.Id == skillId);
         }
 
         /// <summary>
@@ -361,49 +395,33 @@ namespace GameServer.Model.Units
         /// Temp until we can get the palette stuff figured out
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<int> GetSkills()
+        public IEnumerable<int> GetSkillIds()
         {
-            return Skills.Where(s => s != -1);
+            return _skills.Select(s => s.Id);
         }
         
         /// <summary>
         /// Tries to use a skill
         /// </summary>
-        /// <param name="arm"></param>
-        /// <param name="comboStep"></param>
-        public void TryUseSkill(int skillId, int targetId)
+        public void TryUseSkill(int skillId, IEnumerable<int> targets)
         {
-            // TODO: Hooks
-            // TEMP: Need to make skills their own item
-            
-            for (var i = 0; i < 4; i++)
-            {
-                if (Skills[i] == skillId)
-                {
-                    var hits = new List<HitResult>();
+            // Get the weapon
+            var skill = _skills.First(s => s.Id == skillId);
 
-                    if (targetId == -1)
-                    {
-                        // Missed all
-                        hits.AddRange(new [] { HitResult.Miss, HitResult.Miss, HitResult.Miss, HitResult.Miss });
-                    }
-                    else
-                    {
-                        // Missed all
-                        hits.AddRange(new [] { new HitResult
-                        {
-                            VictimId = targetId,
-                            Damage = 500,
-                            PushBack = Vector3.Zero,
-                            ResultCode = HitResultCode.Hit
-                        }, HitResult.Miss, HitResult.Miss, HitResult.Miss });
-                    }
-                    
-                    GameInstance.RoomInstance.MulticastPacket(new OnSkill(this, skillId, hits, (uint)SkillTemplates[i]));
-                }
+            // Try to attack
+            if (!skill.CanUse())
+            {
+                return;
             }
 
+            // Get targets
+            var units = targets.Select(s => GameInstance.GetUnitById(s));
             
+            // Do attack
+            skill.OnUse(units);
+            
+            // Do after attack
+            skill.PostUse();
         }
         
         #endregion
@@ -443,6 +461,24 @@ namespace GameServer.Model.Units
                     throw new Exception($"Invalid weapon template id: {partRecord.TemplateId}!");
             }
         }
+        
+        /// <summary>
+        /// Creates a weapon for this unit
+        /// </summary>
+        /// <param name="templateId"></param>
+        /// <returns></returns>
+        private Skill CreateSkill(PartRecord partRecord)
+        {
+            var stats = PooReader.Code.First(s => s.TemplateId == partRecord.TemplateId);
+            
+            if (stats.CodeEquipType == CodeEquipType.weapon)
+                return new WeaponSkill(partRecord, this);
+            
+            if (stats.CodeEquipType == CodeEquipType.backpack)
+                throw new NotImplementedException();
+            
+            throw new Exception($"Invalid skill template id: {partRecord.TemplateId}!");
+        }
 
         #endregion
         
@@ -463,6 +499,17 @@ namespace GameServer.Model.Units
             // Remove references
             WeaponSetPrimary = (null, null);
             WeaponSetSecondary = (null, null);
+            
+            // Remove skills
+            for (var i = 0; i < 4; i++)
+            {
+                var skill = _skills[i];
+
+                skill?.OnDeath();
+
+                // Remove ref
+                _skills[i] = null;
+            }
         }
 
         /// <summary>
@@ -477,6 +524,12 @@ namespace GameServer.Model.Units
             
             WeaponSetSecondary.Left.OnTick(delta);
             WeaponSetSecondary.Right.OnTick(delta);
+            
+            // Tick skills
+            foreach (var skill in Skills)
+            {
+                skill.OnTick(delta);
+            }
         }
         
         #endregion

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Data.Model.Items;
 using GameServer.Configuration.Poo;
 using GameServer.Model.Units;
@@ -14,7 +15,9 @@ namespace GameServer.Model.Parts.Skills
         /// <summary>
         /// Weapon stats
         /// </summary>
-        private new CodeStats Stats => base.Stats as CodeStats;
+        protected new CodeStats Stats => base.Stats as CodeStats;
+        
+        public new uint TemplateId => Stats.TemplateId;
         
         protected Skill(PartRecord partRecord, Unit owner) : base(partRecord, owner)
         {
@@ -48,7 +51,7 @@ namespace GameServer.Model.Parts.Skills
         /// <summary>
         /// Called when the skill is used
         /// </summary>
-        public abstract void OnUse();
+        public abstract void OnUse(IEnumerable<Unit> target);
 
         /// <summary>
         /// Called after the skill is used
