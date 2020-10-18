@@ -26,6 +26,9 @@ namespace GameServer.Configuration
 
         public static List<GameStats> Game;
         
+        public static List<CodeStats> Code;
+        public static List<AttackSkillStats> AttackSkill;
+        
         /// <summary>
         /// Reads the poo data
         /// TODO: Configure path via config file
@@ -49,6 +52,9 @@ namespace GameServer.Configuration
             Shield = Read<ShieldStats>("weapon-shield");
 
             Game = Read<GameStats>("gametemplate");
+            
+            Code = Read<CodeStats>("code");
+            AttackSkill = Read<AttackSkillStats>("attackskill");
         }
 
         /// <summary>

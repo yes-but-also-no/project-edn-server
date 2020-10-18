@@ -1,6 +1,9 @@
 using System;
 using System.Linq;
+using CsvHelper;
+using CsvHelper.Configuration;
 using CsvHelper.Configuration.Attributes;
+using CsvHelper.TypeConversion;
 using GameServer.Model.Parts.Weapons;
 
 namespace GameServer.Configuration.Poo
@@ -18,21 +21,27 @@ namespace GameServer.Configuration.Poo
         public TargetTeam TargetTeam { get; set; }
         
         [Name("ECETargetType")]
+        [TypeConverter(typeof(TargetConverter))]
         public TargetType TargetType { get; set; }
         
         [Name("nDamage")]
+        [Default(0)]
         public int Damage { get; set; }
         
         [Name("nHeal")]
+        [Default(0)]
         public int Heal { get; set; }
         
         [Name("nSplashRadius")]
+        [Default(0)]
         public int SplashRadius { get; set; }
         
         [Name("nSplashDamage")]
+        [Default(0)]
         public int SplashDamage { get; set; }
         
         [Name("nMaxTarget")]
+        [Default(0)]
         public int MaxTarget { get; set; }
         
         [Name("AttackerDash1")]
@@ -97,5 +106,18 @@ namespace GameServer.Configuration.Poo
         front,
         self,
         splash
+    }
+    
+    /// <summary>
+    /// Special converter for the weird backpacks
+    /// </summary>
+    public class TargetConverter : DefaultTypeConverter
+    {
+        public override object ConvertFromString(string text, IReaderRow row, MemberMapData memberMapData)
+        {
+            return text == "activator | splash"
+                ? TargetType.activator
+                : new EnumConverter(typeof(TargetType)).ConvertFromString(text, row, memberMapData);
+        }
     }
 }
