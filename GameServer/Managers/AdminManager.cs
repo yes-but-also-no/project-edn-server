@@ -37,6 +37,9 @@ namespace GameServer.Managers
                         var unitPos = client.CurrentUnit.WorldPosition;
                         
                         client.SendPacket(new Message(client.User.Callsign, 
+                            $"X: {unitPos.X}, Y: {unitPos.Y} Z: {unitPos.Z}"));
+                        
+                        client.SendPacket(new Message(client.User.Callsign, 
                             $"geoX: {client.GameInstance.Map.GetGeoX((int)unitPos.X)}, geoY: {client.GameInstance.Map.GetGeoY((int)unitPos.Y)}"));
                         break;
                     
