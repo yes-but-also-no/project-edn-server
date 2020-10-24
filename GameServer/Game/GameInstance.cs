@@ -217,6 +217,9 @@ namespace GameServer.Game
             // Cleanup if necessary
             if (session.CurrentUnit != null)
                 DestroyUnit(session.CurrentUnit);
+            
+            // Notify of stats update
+            NotifyScoreChanged();
         }
 
         /// <summary>
@@ -281,12 +284,13 @@ namespace GameServer.Game
             // Send existing units
             foreach (var unit in _units.Values)
             {
-                $"SKILLS COUNT {unit.Skills.Count()}".Info();
-                //session.SendPacket(new CodeList(unit.Skills));
                 session.SendPacket(new UnitInfo(unit));
                 session.SendPacket(new SpawnUnit(unit));
                 session.SendPacket(new StatusChanged(unit, true, true, true));
             }
+            
+            // Update score
+            NotifyScoreChanged();
             
             // Call hook
             AfterGameReady(session);
@@ -416,6 +420,18 @@ namespace GameServer.Game
         /// <param name="weapon">The weapon that killed him</param>
         public void KillUnit(Unit unit, Unit killer = null, Weapon weapon = null, Skill skill = null)
         {
+            // Update scores
+            if (killer != null && killer != unit)
+            {
+                killer.Owner.User.Scores.Kills++;
+                killer.Owner.User.Scores.Points += 30;
+                killer.Owner.User.Scores.Credits += 100;
+            }
+
+            // Do not add score updates to npcs
+            if (unit.Owner != null)
+                unit.Owner.User.Scores.Deaths++;
+            
             // TODO: Use an interface here?
             if (weapon != null)
             {
@@ -433,6 +449,9 @@ namespace GameServer.Game
                 // Call hook
                 AfterUnitKilled(unit, killer, skill);
             }
+            
+            // Notify of stats update
+            NotifyScoreChanged();
 
             // Cleanup
             DestroyUnit(unit);
@@ -678,6 +697,18 @@ namespace GameServer.Game
             RoomInstance.MulticastPacket(new SpawnUnit(spawnedUnit));
 
             return spawnedUnit;
+        }
+        
+        #endregion
+        
+        #region SCORES
+
+        /// <summary>
+        /// Notifies all players when the scores have changed
+        /// </summary>
+        public void NotifyScoreChanged()
+        {
+            RoomInstance.MulticastPacket(new ScoreUpdate(this));
         }
         
         #endregion

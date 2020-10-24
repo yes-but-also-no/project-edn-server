@@ -4,6 +4,7 @@ using Data.Model;
 using GameServer.Game;
 using GameServer.Model.Results;
 using GameServer.ServerPackets.Chat;
+using GameServer.ServerPackets.Game;
 
 namespace GameServer.Managers
 {
@@ -32,7 +33,7 @@ namespace GameServer.Managers
                     case "#killme":
                         client.GameInstance.KillUnit(client.CurrentUnit);
                         break;
-                    
+
                     case "#where":
                         var unitPos = client.CurrentUnit.WorldPosition;
                         

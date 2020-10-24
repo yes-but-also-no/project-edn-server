@@ -120,5 +120,18 @@ namespace Data.Model
         /// </summary>
         [NotMapped]
         public Guid SessionId { get; set; }
+        
+        // TODO: Move into a user wrapper?
+        [NotMapped]
+        public PlayerScores Scores { get; set; }
+    }
+    
+    public class PlayerScores
+    {
+        public int Kills { get; set; }
+        public int Deaths { get; set; }
+        public int Assists { get; set; }
+        public int Points { get; set; }
+        public int Credits { get; set; }
     }
 }
