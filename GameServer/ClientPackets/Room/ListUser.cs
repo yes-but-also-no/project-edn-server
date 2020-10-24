@@ -3,6 +3,7 @@ using System.Linq;
 using Data.Model;
 using GameServer.ServerPackets.Room;
 using Microsoft.EntityFrameworkCore;
+using Swan.Logging;
 using Console = Colorful.Console;
 
 namespace GameServer.ClientPackets.Room
@@ -69,6 +70,8 @@ namespace GameServer.ClientPackets.Room
                 Console.WriteLine("ERROR FINDINGS USERS IN ROOM!");
                 return;
             }
+            
+            $"LISTING USERS FOR ROOM {room}!".Info();
             
             foreach (var user in room.Users)
             {
