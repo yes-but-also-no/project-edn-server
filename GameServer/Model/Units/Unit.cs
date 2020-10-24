@@ -496,19 +496,12 @@ namespace GameServer.Model.Units
             WeaponSetSecondary.Left.OnDeath();
             WeaponSetSecondary.Right.OnDeath();
 
-            // Remove references
-            WeaponSetPrimary = (null, null);
-            WeaponSetSecondary = (null, null);
-            
             // Remove skills
             for (var i = 0; i < 4; i++)
             {
                 var skill = _skills[i];
 
                 skill?.OnDeath();
-
-                // Remove ref
-                _skills[i] = null;
             }
         }
 
