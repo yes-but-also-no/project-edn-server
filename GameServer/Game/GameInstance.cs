@@ -94,21 +94,6 @@ namespace GameServer.Game
         /// Dictionary of all units in this room
         /// </summary>
         private readonly ConcurrentDictionary<int, Unit> _units = new ConcurrentDictionary<int, Unit>();
-        
-        /// <summary>
-        /// Disctioanry of all skills in play
-        /// </summary>
-        private readonly ConcurrentDictionary<int, Skill> _skills = new ConcurrentDictionary<int, Skill>();
-
-        /// <summary>
-        /// Gets a skill by its id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public Skill GetSkillById(int id)
-        {
-            return _skills[id];
-        }
 
         /// <summary>
         /// Adds skills and notifies all users
@@ -205,6 +190,13 @@ namespace GameServer.Game
         /// <param name="session"></param>
         public void OnGameEnter(GameSession session)
         {
+            $"Session entered ${session}".Info();
+
+            foreach (var u in _units.Values)
+            {
+                $"{u} - ${u.Owner} UNIT".Info();
+            }
+            
             // If in progress, list users?
             if (GameState == GameState.InGame)
             {
@@ -240,6 +232,10 @@ namespace GameServer.Game
             
             // Call hook
             AfterGameLeave(session);
+            
+            // Cleanup if necessary
+            if (session.CurrentUnit != null)
+                DestroyUnit(session.CurrentUnit);
         }
 
         /// <summary>
@@ -275,7 +271,7 @@ namespace GameServer.Game
             // If game is not started, we do start checks, otherwise, we just tell the new user its started
             if (GameState == GameState.WaitingForPlayers)
                 CheckAllUsersReady();
-            else
+            else if (GameState == GameState.InGame)
             {
 //                foreach (var user in Users.Where(u => u != session.User))
 //                {
@@ -316,6 +312,8 @@ namespace GameServer.Game
         /// </summary>
         private void CheckAllUsersReady()
         {
+            $"Check all users".Info();
+            
             // If everyone is loaded in
             if (RoomInstance.Sessions.All(s => s.IsGameReady))
             {
@@ -397,6 +395,8 @@ namespace GameServer.Game
             
             // Call hook
             AfterUnitSpawned(spawnedUnit, owner);
+            
+            $"Unit Spawned ${unit} - ${unit.Id} - ${owner.User.Team}".Info();
         }
 
         /// <summary>
@@ -429,16 +429,6 @@ namespace GameServer.Game
         /// <param name="weapon">The weapon that killed him</param>
         public void KillUnit(Unit unit, Unit killer = null, Weapon weapon = null, Skill skill = null)
         {
-            // Call ondeath
-            unit.OnDeath();
-
-            // Destroy?
-            if (unit.Owner != null)
-                unit.Owner.CurrentUnit = null;
-            
-            // Remove from units list
-            _units.Remove(unit.Id, out var trash);
-
             // TODO: Use an interface here?
             if (weapon != null)
             {
@@ -456,7 +446,26 @@ namespace GameServer.Game
                 // Call hook
                 AfterUnitKilled(unit, killer, skill);
             }
+
+            // Cleanup
+            DestroyUnit(unit);
+        }
+
+        /// <summary>
+        /// Destroys a unit and removes all references to it
+        /// </summary>
+        /// <param name="unit"></param>
+        protected void DestroyUnit(Unit unit)
+        {
+            // Call ondeath
+            unit.OnDeath();
             
+            // Destroy?
+            if (unit.Owner != null)
+                unit.Owner.CurrentUnit = null;
+            
+            // Remove from units list
+            _units.Remove(unit.Id, out var trash);
         }
 
         /// <summary>
@@ -703,6 +712,11 @@ namespace GameServer.Game
             
             // Start game loop
             StartGameLoop();
+            
+            $"GAME LOADED!".Info();
+            
+            // Set to waiting for players
+            GameState = GameState.WaitingForPlayers;
         }
 
         /// <summary>
@@ -714,10 +728,9 @@ namespace GameServer.Game
             BeforeGameStart();
             
             // Set game started flag
-            GameState = GameState.InGame;
-                
-            // Send game start
-            RoomInstance.MulticastPacket(new GameStarted());
+            GameState = GameState.AllPlayersReady;
+
+            $"ALL READY!".Info();
         }
 
         /// <summary>
@@ -736,6 +749,8 @@ namespace GameServer.Game
         public void OnGameDestroy()
         {
             GameState = GameState.Destroyed;
+            
+            $"GAME DESTROYED!".Info();
         }
         
         #endregion
@@ -750,6 +765,8 @@ namespace GameServer.Game
             await looper.RegisterActionAsync(GameLoop);
         }
 
+        private LogicLooperCoroutine coroutine = default(LogicLooperCoroutine);
+        
         /// <summary>
         /// The main game loop. When overriding, make sure to call base function. Return false to stop game loop
         /// </summary>
@@ -761,6 +778,20 @@ namespace GameServer.Game
             
             // If game is waiting on players, continue
             if (GameState == GameState.WaitingForPlayers) return true;
+
+            if (GameState == GameState.AllPlayersReady)
+            {
+                coroutine = ctx.RunCoroutine(async coCtx =>
+                {
+                    await coCtx.Delay(TimeSpan.FromSeconds(2));
+                    
+                    // Mark started
+                    GameState = GameState.InGame;
+                    
+                    // Send game start
+                    RoomInstance.MulticastPacket(new GameStarted());
+                });
+            }
             
             // Movement
 //            if (ctx.CurrentFrame % UpdateFrameInterval == 0)
@@ -850,9 +881,10 @@ namespace GameServer.Game
     {
         WaitingRoom = 0,
         WaitingForPlayers = 1,
-        InGame = 2,
-        GameOver = 3,
-        Destroyed = 4,
+        AllPlayersReady = 2,
+        InGame = 3,
+        GameOver = 4,
+        Destroyed = 5,
     }
 
     /// <summary>

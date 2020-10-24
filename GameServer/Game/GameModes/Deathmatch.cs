@@ -90,6 +90,7 @@ namespace GameServer.Game.GameModes
             {
                 if (RoomInstance.Users.All(u => u.Team != i))
                 {
+                    $"Got team for new user ${i}".Info();
                     return i;
                 }
             }
