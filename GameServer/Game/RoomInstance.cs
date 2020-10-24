@@ -205,6 +205,9 @@ namespace GameServer.Game
             // Setup team
             session.User.Team = _gameInstance.GetTeamForNewUser();
             
+            // Setup score
+            session.User.Scores = new PlayerScores();
+            
             // Reset ready flag
             session.User.IsReady = false;
             session.IsGameReady = false;
