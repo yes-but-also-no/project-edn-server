@@ -12,9 +12,9 @@ namespace GameServer.ServerPackets.Game
     /// </summary>
     public class CodeList : ServerBasePacket
     {
-        private readonly IEnumerable<Skill> _codes;
+        private readonly IEnumerable<PartRecord> _codes;
 
-        public CodeList(IEnumerable<Skill> codes)
+        public CodeList(IEnumerable<PartRecord> codes)
         {
             _codes = codes;
         }

@@ -219,6 +219,7 @@ namespace GameServer.Game
             if (_gameInstance.GameState == GameState.WaitingRoom)
                 MulticastPacket(new UnitInfo(session.User, session.User.DefaultUnit));
             
+            
             // Call hook for game enter
             _gameInstance.OnGameEnter(session);
             

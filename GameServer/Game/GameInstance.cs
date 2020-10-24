@@ -192,25 +192,6 @@ namespace GameServer.Game
         {
             $"Session entered ${session}".Info();
 
-            foreach (var u in _units.Values)
-            {
-                $"{u} - ${u.Owner} UNIT".Info();
-            }
-            
-            // If in progress, list users?
-            if (GameState == GameState.InGame)
-            {
-                // Send all users currently in room
-                foreach (var user in RoomInstance.Users)
-                {
-                    // Send user info
-                    session.SendPacket(new UserInfo(this, user));
-                
-                    // Send unit info
-                    //session.SendPacket(new UnitInfo(user, user.DefaultUnit));
-                }
-            }
-            
             // Call hook
             AfterGameEnter(session);
         }
@@ -252,13 +233,34 @@ namespace GameServer.Game
         {
             // Set flag to true
             session.IsGameReady = true;
-            
-            // Load user stats here, so they are not loaded during gameplay
-            //session.User.DefaultUnit.CalculateStats();
-            
+
             // Broadcast NEW user info
             RoomInstance.MulticastPacket(new UserInfo(this, session.User));
             
+            // Send all users currently in room
+            foreach (var user in RoomInstance.Users)
+            {
+                // Send user info
+                session.SendPacket(new UserInfo(this, user));
+            }
+            
+            // Send skills
+            var skills = RoomInstance.Users
+                .Select(u => u.DefaultUnit)
+                .SelectMany(u =>
+                {
+                    var sk = new List<PartRecord>();
+                    
+                    if (u.Skill1 != null) sk.Add(u.Skill1);
+                    if (u.Skill2 != null) sk.Add(u.Skill2);
+                    if (u.Skill3 != null) sk.Add(u.Skill3);
+                    if (u.Skill4 != null) sk.Add(u.Skill4);
+                    
+                    return sk;
+                });
+            
+            RoomInstance.MulticastPacket(new CodeList(skills));
+
             // Broadcast NEW unit info
             //MulticastPacket(new UnitInfo(session.User, session.User.DefaultUnit));
             
@@ -273,32 +275,17 @@ namespace GameServer.Game
                 CheckAllUsersReady();
             else if (GameState == GameState.InGame)
             {
-//                foreach (var user in Users.Where(u => u != session.User))
-//                {
-//                    // Send EXISTING user info to NEW user
-//                    //session.SendPacket(new ServerPackets.Game.UserInfo(this, user));
-//                    
-//                    
-//                    
-//                    // Spawn if alive
-////                    if (user.DefaultUnit.Alive)
-////                    {
-////                        // Send EXISTING unit info to NEW user
-////                        session.SendPacket(new ServerPackets.Game.UnitInfo(user, user.DefaultUnit));
-////                        session.SendPacket(new SpawnUnit(user.DefaultUnit));
-////                    }
-//                    // Send user info
-//
-//                    System.Console.WriteLine($"Sending user info {user.Username} to session {session.GetUserName()}");
-//                }
-                // Send all active units to new session
-                foreach (var unit in _units.Values)
-                {
-                    session.SendPacket(new UnitInfo(unit));
-                    session.SendPacket(new SpawnUnit(unit));
-                }
-                
                 session.SendPacket(new GameStarted());
+            }
+
+            // Send existing units
+            foreach (var unit in _units.Values)
+            {
+                $"SKILLS COUNT {unit.Skills.Count()}".Info();
+                //session.SendPacket(new CodeList(unit.Skills));
+                session.SendPacket(new UnitInfo(unit));
+                session.SendPacket(new SpawnUnit(unit));
+                session.SendPacket(new StatusChanged(unit, true, true, true));
             }
             
             // Call hook
@@ -382,7 +369,7 @@ namespace GameServer.Game
             spawnedUnit.WorldPosition = new Vector3(SpawnLocation.X, SpawnLocation.Y, SpawnLocation.Z);
 
             // Notify
-            RoomInstance.MulticastPacket(new CodeList(spawnedUnit.Skills));
+            //RoomInstance.MulticastPacket(new CodeList(spawnedUnit.Skills));
             
             // Send unit info
             RoomInstance.MulticastPacket(new UnitInfo(spawnedUnit));
