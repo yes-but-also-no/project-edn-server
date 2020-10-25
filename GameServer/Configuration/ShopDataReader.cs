@@ -63,6 +63,9 @@ namespace GameServer.Configuration
                 $"{csvName}.csv")))
             using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
             {
+                csv.Configuration.Comment = ';';
+                csv.Configuration.AllowComments = true;
+                
                 // Read weapons
                 data = csv.GetRecords<Good>().ToList();
                 
