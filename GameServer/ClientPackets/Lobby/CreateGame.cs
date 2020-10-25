@@ -62,10 +62,10 @@ namespace GameServer.ClientPackets.Lobby
         protected override void RunImpl()
         {
             $"User {GetClient().GetUserName()} created room {_newRoom.Name}".Info();
-            RoomManager.CreateRoom(_newRoom);
+            var success = RoomManager.CreateRoom(_newRoom);
             
             // Send
-            GetClient().SendPacket(new GameCreated(_newRoom));
+            GetClient().SendPacket(new GameCreated(success ? _newRoom : null));
         }
     }
 }
