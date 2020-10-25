@@ -510,6 +510,23 @@ namespace GameServer.Game
             
             // Notify of stats update
             NotifyScoreChanged();
+            
+            // Unaim from all funs
+            var allWeapons = _units.Values.SelectMany(u => new[]
+            {
+                u.WeaponSetPrimary.Left, u.WeaponSetPrimary.Right,
+                u.WeaponSetSecondary.Left, u.WeaponSetSecondary.Right
+            });
+            
+            // Unaim
+            foreach (var w in allWeapons)
+            {
+                var gun = w as Gun;
+                if (gun != null && gun.Target.TryGetTarget(out var target) && target == unit)
+                {
+                    gun.UnAimUnit();
+                }
+            }
 
             // Cleanup
             DestroyUnit(unit);
@@ -889,9 +906,17 @@ namespace GameServer.Game
                 unit.OnTick(ctx.ElapsedTimeFromPreviousFrame.TotalMilliseconds);
             }
             
-            foreach (var ifo in _ifos)
+            foreach (var (_, value) in _ifos)
             {
-                ifo.Value.OnTick(ctx.ElapsedTimeFromPreviousFrame.TotalMilliseconds);
+                try
+                {
+                    value.OnTick(ctx.ElapsedTimeFromPreviousFrame.TotalMilliseconds);
+                }
+                catch (Exception e)
+                {
+                    $"IFO Caused an error! {e.Message}!".Warn();
+                    RemoveIfo(value);
+                }
             }
 
             return true;

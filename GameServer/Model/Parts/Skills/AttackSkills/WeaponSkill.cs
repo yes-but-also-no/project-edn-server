@@ -125,9 +125,30 @@ namespace GameServer.Model.Parts.Skills.AttackSkills
                 new Vector3(0, 0, -1),
                 new Vector3(0, 0, -1),
             };
+            
+            if (AttackStats.TargetType == TargetType.activator)
+            {
+                // Get victim
+                var target = targets.FirstOrDefault();
+                
+                // Set attacker coords
+                dashVectors[0] = Owner.WorldPosition;
+                dashVectors[1] = Owner.WorldPosition;
+                dashVectors[2] = Owner.WorldPosition;
+                
+                // Try set victim coors
+                if (target != null)
+                {
+                    dashVectors[3] = target.WorldPosition;
+                    dashVectors[4] = target.WorldPosition;
+                    dashVectors[5] = target.WorldPosition;
+                }
+
+            }
 
             // If its a single target
-            if (AttackStats.TargetType == TargetType.activator)
+            // TEMP DISABLED
+            /*if (AttackStats.TargetType == TargetType.activator)
             {
                 // Get victim
                 var target = targets.First();
@@ -169,7 +190,7 @@ namespace GameServer.Model.Parts.Skills.AttackSkills
                     
                     i++;
                 }
-            }
+            }*/
 
             
 
