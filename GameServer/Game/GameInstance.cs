@@ -94,6 +94,11 @@ namespace GameServer.Game
         /// Dictionary of all units in this room
         /// </summary>
         private readonly ConcurrentDictionary<int, Unit> _units = new ConcurrentDictionary<int, Unit>();
+        
+        /// <summary>
+        /// All current ifos
+        /// </summary>
+        private readonly ConcurrentDictionary<int, Ifo> _ifos = new ConcurrentDictionary<int, Ifo>();
 
         /// <summary>
         /// Adds skills and notifies all users
@@ -311,6 +316,59 @@ namespace GameServer.Game
                 // Start game
                 OnGameStart();
             }
+        }
+        
+        #endregion
+        
+        #region IFO
+
+        private int _nextIfoId;
+
+        /// <summary>
+        /// Spawns an ifo
+        /// </summary>
+        /// <param name="ifo"></param>
+        public void SpawnIfo(Ifo ifo)
+        {
+            if (_ifos.TryAdd(_nextIfoId, ifo))
+            {
+                ifo.Id = _nextIfoId;
+                _nextIfoId++;
+
+                if (_nextIfoId > 10000) _nextIfoId = 1;
+            }
+        }
+
+        /// <summary>
+        /// Removes an ifo
+        /// </summary>
+        /// <param name="ifo"></param>
+        public void RemoveIfo(Ifo ifo)
+        {
+            _ifos.TryRemove(ifo.Id, out var trash);
+        }
+
+        /// <summary>
+        /// Notifies users of ifo result
+        /// </summary>
+        /// <param name="ifo"></param>
+        /// <param name="hits"></param>
+        public void NotifyIfoResult(Ifo ifo, List<HitResult> hits)
+        {
+            // while (hits.Count < 4)
+            //     hits.Add(HitResult.Unknown);
+            
+            RoomInstance.MulticastPacket(new AttackIfoResult(ifo, hits));
+        }
+        
+        /// <summary>
+        /// Notifies users an ifo was launched
+        /// </summary>
+        /// <param name="ifo"></param>
+        /// <param name="hits"></param>
+        public void NotifyIfoLaunched(Unit unit, Weapon weapon, Ifo ifo)
+        {
+            RoomInstance.MulticastPacket(new AttackIfo(unit, weapon, ifo));
         }
         
         #endregion
@@ -829,6 +887,11 @@ namespace GameServer.Game
             foreach (var unit in _units.Values)
             {
                 unit.OnTick(ctx.ElapsedTimeFromPreviousFrame.TotalMilliseconds);
+            }
+            
+            foreach (var ifo in _ifos)
+            {
+                ifo.Value.OnTick(ctx.ElapsedTimeFromPreviousFrame.TotalMilliseconds);
             }
 
             return true;

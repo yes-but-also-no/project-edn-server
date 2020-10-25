@@ -12,6 +12,8 @@ namespace GameServer.Util
     {
         public const float UnitHeadHeight = 70.0f;
         public const float UnitBodyHeight = 35.0f;
+
+        public const float UnitHitBoxSize = 15.0f;
         
         /// <summary>
         /// Gets a normalized vector representing this units aim direction
@@ -94,10 +96,10 @@ namespace GameServer.Util
             {
                 // Calculate distance
                 // TODO: Factor unit size in
-                var dist = Vector3.Distance(pos, u.WorldPosition);
+                var dist = Vector3.Distance(pos, u.GetBodyPosition());
 
                 // If they are, add to hash set
-                if (dist <= distance) foundUnits.Add(u);
+                if (dist <= (distance - UnitHitBoxSize)) foundUnits.Add(u);
             }
 
             return foundUnits;
@@ -140,7 +142,7 @@ namespace GameServer.Util
 
                 // Determine if they are in the cone
                 // Temp: Fake unit size by increasing radius check
-                var isInCone = orthDist < coneRadius + 10.0f;
+                var isInCone = orthDist < coneRadius + UnitHitBoxSize;
                 
                 // If they are, add to hash set
                 if (isInCone) foundUnits.Add(u);

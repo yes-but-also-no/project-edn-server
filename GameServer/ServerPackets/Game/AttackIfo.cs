@@ -7,22 +7,22 @@ namespace GameServer.ServerPackets.Game
     /// <summary>
     /// IFO (Projectile) attacks
     /// </summary>
-    public class AttackA : ServerBasePacket
+    public class AttackIfo : ServerBasePacket
     {
         private readonly Unit _unit;
         private readonly Weapon _weapon;
-        private readonly int _damage;
+        private readonly Ifo _ifo;
 
-        public AttackA(Unit unit, Weapon weapon, int damage)
+        public AttackIfo(Unit unit, Weapon weapon, Ifo ifo)
         {
             _unit = unit;
             _weapon = weapon;
-            _damage = damage;
+            _ifo = ifo;
         }
         
         public override string GetType()
         {
-            return "ATTACK_A";
+            return "ATTACK_IFO";
         }
 
         public override byte GetId()
@@ -39,7 +39,7 @@ namespace GameServer.ServerPackets.Game
             WriteInt(1); // Result code - For hit, crit, sheild
             WriteInt(_unit.Id); // Attacker Id - maybe passed as an index?
             WriteInt((int)_weapon.Arm); // Arm?
-            WriteInt(_weapon.Id); // IFO Id
+            WriteInt(_ifo.Id); // IFO Id
             WriteInt(-1); // Unknown - Damage? -1 on packet
             
             WriteUShort(_unit.AimY); // Attacker - AimX
