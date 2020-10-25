@@ -46,7 +46,7 @@ namespace Data
         /// </summary>
         /// <param name="options"></param>
         protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlite("Data Source=exteel.db");
+            => options.UseSqlite("Data Source=db/exteel.db");
 
         /// <summary>
         /// Handle custom entity mapping
