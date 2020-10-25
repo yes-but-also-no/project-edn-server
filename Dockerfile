@@ -3,7 +3,7 @@ WORKDIR /app
 
 # Copy csproj and restore as distinct layers
 COPY GameServer/*.csproj ./GameServer/
-COPY NetCoreServer/*.csproj ./NetCoreServer/
+# COPY NetCoreServer/*.csproj ./NetCoreServer/
 COPY Data/*.csproj ./Data/
 COPY *.sln ./
 RUN dotnet restore
@@ -17,7 +17,7 @@ FROM mcr.microsoft.com/dotnet/core/runtime:3.1
 WORKDIR /app
 COPY --from=build-env /app/out .
 COPY Config /Config
-COPY GameServer/html ./html
+COPY GameServer/Web/html ./html
 # Copy latest db
-COPY GameServer/exteel.db .
+#COPY GameServer/exteel.db .
 ENTRYPOINT ["dotnet", "GameServer.dll"]
