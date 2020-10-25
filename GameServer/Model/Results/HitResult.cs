@@ -19,12 +19,22 @@ namespace GameServer.Model.Results
             ResultCode = HitResultCode.Miss,
             PushBack = Vector3.Zero
         };
+        
+        public static HitResult Unknown = new HitResult
+        {
+            Damage = 0,
+            VictimId = -1,
+            ResultCode = HitResultCode.Unknown,
+            PushBack = Vector3.Zero
+        };
     }
 
     public enum HitResultCode : byte
     {
         Unknown = 0x00,
         Hit = 0x01,
-        Miss = 0x02
+        Miss = 0x02,
+        Block = 0x03,
+        Terrain = 0x04
     }
 }
