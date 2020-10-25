@@ -33,12 +33,19 @@ namespace GameServer.ServerPackets.Lobby
 
         protected override void WriteImpl()
         {
-            WriteInt(0); // Result code
-            WriteInt(_room.Id); // Session id?
+            if (_room != null)
+            {
+                WriteInt(0); // Result code
+                WriteInt(_room.Id); // Session id?
 
-            this.WriteRoomInfo(_room);
-            
-            WriteString(Configuration.Global.GameHost); // host?
+                this.WriteRoomInfo(_room);
+
+                WriteString(Configuration.Global.GameHost); // host?
+            }
+            else
+            {
+                WriteInt(1); // Result code
+            }
         }
     }
 }

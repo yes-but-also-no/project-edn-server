@@ -4,6 +4,7 @@ using System.Linq;
 using Data.Model;
 using GameServer.Game;
 using GameServer.Util;
+using Swan.Logging;
 
 namespace GameServer.Managers
 {
@@ -22,15 +23,23 @@ namespace GameServer.Managers
         /// Creates a new room and returns its ID
         /// </summary>
         /// <returns></returns>
-        public static int CreateRoom(RoomInstance room)
+        public static bool CreateRoom(RoomInstance room)
         {
+            try
+            {
+                room.SettingsChanged();
+            }
+            catch (Exception e)
+            {
+                $"Unable to create room with tempate {room.GameTemplate} - {e.Message}!".Warn();
+                return false;
+            }
+            
             var id = Rooms.AddNext(room);
 
             room.Id = id;
-            
-            room.SettingsChanged();
 
-            return id;
+            return true;
         }
 
         /// <summary>

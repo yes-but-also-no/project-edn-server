@@ -370,8 +370,7 @@ namespace GameServer.Game
                     break;
                 
                 default:
-                    $"Game type: {stats.GameType} is not implemented yet!".Fatal();
-                    break;
+                    throw new NotImplementedException($"Game type: {stats.GameType} is not implemented yet!");
             }
         }
         
