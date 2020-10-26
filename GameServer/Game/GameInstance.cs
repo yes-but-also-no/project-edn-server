@@ -672,7 +672,7 @@ namespace GameServer.Game
         {
             var unit = new UnitRecord
             {
-                Id = nextNpcId,
+                Id = nextNpcId++,
                 Name = "NPC_Puppet_Guard",
                 Head = new PartRecord
                 {
