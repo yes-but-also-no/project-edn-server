@@ -25,7 +25,7 @@ namespace GameServer.ClientPackets.Game
 
         protected override void RunImpl()
         {
-            Unit.TrySwitchWeapons(_desiredWeaponset);
+            Unit?.TrySwitchWeapons(_desiredWeaponset);
         }
     }
 }

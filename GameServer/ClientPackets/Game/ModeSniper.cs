@@ -24,7 +24,7 @@ namespace GameServer.ClientPackets.Game
 
         protected override void RunImpl()
         {
-            Unit.TrySetSniperMode(true);
+            Unit?.TrySetSniperMode(true);
         }
     }
 }

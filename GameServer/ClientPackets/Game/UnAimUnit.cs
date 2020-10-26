@@ -13,21 +13,10 @@ namespace GameServer.ClientPackets.Game
         
         public UnAimUnit(byte[] data, GameSession client) : base(data, client)
         {
-            try
-            {
-//            debug = true;
+            // Tick
+            TickUnit();
 
-                // Check practice mode
-                if (GetClient().GameInstance == null) return;
-
-                TickUnit();
-
-                _arm = (ArmIndex) GetInt();
-            }
-            catch (Exception e)
-            {
-                System.Console.WriteLine("Exception in Unaim unit: " + e.Message);
-            }
+            _arm = (ArmIndex) GetInt();
         }
 
         public override string GetType()
@@ -37,10 +26,7 @@ namespace GameServer.ClientPackets.Game
 
         protected override void RunImpl()
         {
-            // Check practice mode
-            if (GetClient().GameInstance == null) return;
-
-            Unit.GetWeaponByArm(_arm).UnAimUnit();
+            Unit?.GetWeaponByArm(_arm).UnAimUnit();
         }
     }
 }

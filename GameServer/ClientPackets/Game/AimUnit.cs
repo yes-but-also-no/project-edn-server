@@ -16,11 +16,6 @@ namespace GameServer.ClientPackets.Game
         
         public AimUnit(byte[] data, GameSession client) : base(data, client)
         {
-//            debug = true;
-            
-            // TODO: This is just for practice. Improve it?
-            if (client.RoomInstance == null) return;
-            
             TickUnit();
 
             // Find the target unit
@@ -39,8 +34,8 @@ namespace GameServer.ClientPackets.Game
         }
 
         protected override void RunImpl()
-        {            
-            Unit.TryAimUnit(_arm, _target);
+        {
+            Unit?.TryAimUnit(_arm, _target);
         }
     }
 }

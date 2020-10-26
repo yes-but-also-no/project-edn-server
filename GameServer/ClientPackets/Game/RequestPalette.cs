@@ -34,9 +34,10 @@ namespace GameServer.ClientPackets.Game
             var client = GetClient();
 
             // I think we need to find it. Not sure what to do if it fails
-            var unit = client.GameInstance.GetUnitById(_unitId);
+            var unit = client.GameInstance?.GetUnitById(_unitId);
             
-            client.SendPacket(new PaletteList(unit));
+            if (unit != null)
+                client.SendPacket(new PaletteList(unit));
         }
     }
 }

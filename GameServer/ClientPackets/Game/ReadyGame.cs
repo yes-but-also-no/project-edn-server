@@ -23,7 +23,7 @@ namespace GameServer.ClientPackets.Game
         {
             var client = GetClient();
 
-            client.GameInstance.OnGameReady(client);
+            client.GameInstance?.OnGameReady(client);
         }
     }
 }

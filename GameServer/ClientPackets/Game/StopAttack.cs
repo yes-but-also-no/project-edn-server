@@ -27,10 +27,10 @@ namespace GameServer.ClientPackets.Game
 
         protected override void RunImpl()
         {
-            var weapon = Unit.GetWeaponByArm(_arm);
-            
+            var weapon = Unit?.GetWeaponByArm(_arm);
+
             // For machine guns
-            weapon.OnStopAttack();
+            weapon?.OnStopAttack();
         }
     }
 }

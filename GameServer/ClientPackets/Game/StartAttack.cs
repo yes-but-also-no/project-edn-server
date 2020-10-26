@@ -24,8 +24,6 @@ namespace GameServer.ClientPackets.Game
         
         public StartAttack(byte[] data, GameSession client) : base(data, client)
         {
-            if (GetClient().GameInstance == null) return;
-
             TickUnit();
 
             _arm = (ArmIndex) GetInt();
@@ -45,11 +43,8 @@ namespace GameServer.ClientPackets.Game
 
         protected override void RunImpl()
         {
-            // Check practice mode
-            if (GetClient().GameInstance == null) return;
-
             // try to attack
-            Unit.TryAttack(_arm, _comboStep);
+            Unit?.TryAttack(_arm, _comboStep);
         }
     }
 }
