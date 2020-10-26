@@ -43,6 +43,9 @@ namespace GameServer.Model.Units
 
         // TODO: Move into game objects
         private readonly Skill[] _skills;
+        
+        // State
+        public UnitState State = UnitState.Unknown;
 
         public IEnumerable<Skill> Skills
         {
@@ -547,5 +550,19 @@ namespace GameServer.Model.Units
     {
         Primary = 0,
         Secondary = 1
+    }
+
+    /// <summary>
+    /// The state of this unit
+    /// </summary>
+    public enum UnitState
+    {
+        Unknown,
+        Spawned,
+        Invincible,
+        InPlay,
+        Dying,
+        Dead,
+        Destroyed
     }
 }
