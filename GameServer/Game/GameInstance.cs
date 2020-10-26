@@ -446,7 +446,7 @@ namespace GameServer.Game
             RoomInstance.MulticastPacket(new SpawnUnit(spawnedUnit));
             
             // Send status?
-            RoomInstance.MulticastPacket(new StatusChanged(spawnedUnit, GameState == GameState.InGame, false, GameState == GameState.InGame));
+            RoomInstance.MulticastPacket(new StatusChanged(spawnedUnit, true, false, true));
             
             // Call hook
             AfterUnitSpawned(spawnedUnit, owner);
@@ -516,6 +516,9 @@ namespace GameServer.Game
             
             // Notify of stats update
             NotifyScoreChanged();
+            
+            // Notify unit of regain
+            unit.Owner?.SendPacket(new RegainInfo(unit.Owner, false));
 
             // Flag for death
             unit.State = UnitState.Dying;
@@ -927,7 +930,8 @@ namespace GameServer.Game
                     
                     ctx.RunCoroutine(async coCtx =>
                     {
-                        await coCtx.Delay(TimeSpan.FromSeconds(2));
+                        // TODO: Configurable / overridable respawn time
+                        await coCtx.Delay(TimeSpan.FromSeconds(5));
                     
                         // Set to invincible
                         unit.State = UnitState.InPlay;
@@ -949,6 +953,9 @@ namespace GameServer.Game
                         
                         // Cleanup
                         DestroyUnit(unit);
+                        
+                        // Inform the player they can spawn
+                        unit.Owner?.SendPacket(new UnitRepaired(unit.Id));
                     });
                 }
             }
