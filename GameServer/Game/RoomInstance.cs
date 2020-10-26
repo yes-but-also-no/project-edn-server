@@ -148,6 +148,9 @@ namespace GameServer.Game
                 else
                     session.SendAsync(data);
             }
+            
+            if (Program.Configuration.Global.LogAllPackets)
+                $"[S] 0x{packet.GetId():x2} {packet.GetType()} >>> ALL".Info();
 
             // TODO: Add config here - if debug
             // Temp disable to lessen spam
