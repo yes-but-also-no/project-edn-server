@@ -523,8 +523,7 @@ namespace GameServer.Game
             // Unaim
             foreach (var w in allWeapons)
             {
-                var gun = w as Gun;
-                if (gun != null && gun.Target.TryGetTarget(out var target) && target == unit)
+                if (w is Gun gun && gun.Target.TryGetTarget(out var target) && target == unit)
                 {
                     gun.UnAimUnit();
                 }
@@ -673,7 +672,7 @@ namespace GameServer.Game
         {
             var unit = new UnitRecord
             {
-                Id = nextNpcId++,
+                Id = nextNpcId,
                 Name = "NPC_Puppet_Guard",
                 Head = new PartRecord
                 {

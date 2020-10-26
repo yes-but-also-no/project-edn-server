@@ -30,7 +30,7 @@ namespace GameServer.ServerPackets.Game
 
         protected override void WriteImpl()
         {
-            WriteInt(GameServer.RunningMs); // Unknown
+            WriteInt(GameServer.RunningMs); // Server Time
             WriteInt(_attacker.Id); // UnitID Attacker
             WriteInt(_victim.Id); // UnitId Victim - zero means no lock?
             WriteInt((int)_arm); // Arm?
