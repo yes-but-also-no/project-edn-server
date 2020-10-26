@@ -347,6 +347,9 @@ namespace GameServer.Model.Units
         {
             // TODO: Check for problems, like low EN, dead, etc
             
+            WeaponSetCurrent.Left.UnAimUnit();
+            WeaponSetCurrent.Right.UnAimUnit();
+            
             // Set weapon set
             WeaponSet = desiredWeaponSet;
             
