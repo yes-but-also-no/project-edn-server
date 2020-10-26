@@ -24,6 +24,7 @@ using Console = Colorful.Console;
 //using UnitInfo = GameServer.ServerPackets.Room.UnitInfo;
 //using UserInfo = GameServer.ServerPackets.Room.UserInfo;
 using GameServer.Util;
+using Swan;
 using Swan.Configuration;
 using Swan.Logging;
 using Weapon = GameServer.Model.Parts.Weapons.Weapon;
@@ -421,6 +422,9 @@ namespace GameServer.Game
             
             // Set team
             spawnedUnit.Team = owner.User.Team;
+            
+            // Set state
+            spawnedUnit.State = UnitState.Spawned;
 
             // Calculate stats
             spawnedUnit.CalculateStats();
@@ -442,7 +446,7 @@ namespace GameServer.Game
             RoomInstance.MulticastPacket(new SpawnUnit(spawnedUnit));
             
             // Send status?
-            RoomInstance.MulticastPacket(new StatusChanged(spawnedUnit, true, true, true));
+            RoomInstance.MulticastPacket(new StatusChanged(spawnedUnit, GameState == GameState.InGame, false, GameState == GameState.InGame));
             
             // Call hook
             AfterUnitSpawned(spawnedUnit, owner);
@@ -512,8 +516,18 @@ namespace GameServer.Game
             
             // Notify of stats update
             NotifyScoreChanged();
-            
-            // Unaim from all funs
+
+            // Flag for death
+            unit.State = UnitState.Dying;
+        }
+
+        /// <summary>
+        /// Destroys a unit and removes all references to it
+        /// </summary>
+        /// <param name="unit"></param>
+        protected void DestroyUnit(Unit unit)
+        {
+            // Unaim from all guns
             var allWeapons = _units.Values.SelectMany(u => new[]
             {
                 u.WeaponSetPrimary.Left, u.WeaponSetPrimary.Right,
@@ -528,17 +542,7 @@ namespace GameServer.Game
                     gun.UnAimUnit();
                 }
             }
-
-            // Cleanup
-            DestroyUnit(unit);
-        }
-
-        /// <summary>
-        /// Destroys a unit and removes all references to it
-        /// </summary>
-        /// <param name="unit"></param>
-        protected void DestroyUnit(Unit unit)
-        {
+            
             // Call ondeath
             unit.OnDeath();
             
@@ -875,6 +879,7 @@ namespace GameServer.Game
 
             if (GameState == GameState.AllPlayersReady)
             {
+                GameState = GameState.WaitingToStart;
                 coroutine = ctx.RunCoroutine(async coCtx =>
                 {
                     await coCtx.Delay(TimeSpan.FromSeconds(2));
@@ -884,6 +889,14 @@ namespace GameServer.Game
                     
                     // Send game start
                     RoomInstance.MulticastPacket(new GameStarted());
+                    
+                    // Release all units
+                    foreach (var unit in _units.Values)
+                    {
+                        RoomInstance.MulticastPacket(new StatusChanged(unit, true, true, true));
+                    }
+
+                    "GAME START".Info();
                 });
             }
             
@@ -905,6 +918,39 @@ namespace GameServer.Game
             foreach (var unit in _units.Values)
             {
                 unit.OnTick(ctx.ElapsedTimeFromPreviousFrame.TotalMilliseconds);
+
+                // If they just spawned
+                if (unit.State == UnitState.Spawned)
+                {
+                    // Set to invincible
+                    unit.State = UnitState.Invincible;
+                    
+                    ctx.RunCoroutine(async coCtx =>
+                    {
+                        await coCtx.Delay(TimeSpan.FromSeconds(2));
+                    
+                        // Set to invincible
+                        unit.State = UnitState.InPlay;
+                        
+                        // Notify users
+                        RoomInstance.MulticastPacket(new StatusChanged(unit, true, true, true));
+                    });
+                } else if (unit.State == UnitState.Dying)
+                {
+                    // Update state
+                    unit.State = UnitState.Dead;
+                    
+                    ctx.RunCoroutine(async coCtx =>
+                    {
+                        await coCtx.Delay(TimeSpan.FromSeconds(2));
+                    
+                        // Set to invincible
+                        unit.State = UnitState.Destroyed;
+                        
+                        // Cleanup
+                        DestroyUnit(unit);
+                    });
+                }
             }
             
             foreach (var (_, value) in _ifos)
@@ -989,9 +1035,10 @@ namespace GameServer.Game
         WaitingRoom = 0,
         WaitingForPlayers = 1,
         AllPlayersReady = 2,
-        InGame = 3,
-        GameOver = 4,
-        Destroyed = 5,
+        WaitingToStart = 3,
+        InGame = 4,
+        GameOver = 5,
+        Destroyed = 6,
     }
 
     /// <summary>
