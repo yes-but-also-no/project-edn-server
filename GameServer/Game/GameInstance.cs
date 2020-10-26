@@ -126,6 +126,8 @@ namespace GameServer.Game
         /// <param name="message">The message</param>
         public virtual void OnChat(ExteelUser user, string message)
         {
+            $"[CHAT] {user}: {message}".Debug();
+            
             if (BeforeChat(user, message))
                 RoomInstance.MulticastPacket(new Message(user.Callsign, message));
         }

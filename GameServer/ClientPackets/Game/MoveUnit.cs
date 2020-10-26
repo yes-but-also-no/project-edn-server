@@ -26,7 +26,7 @@ namespace GameServer.ClientPackets.Game
 
         protected override void RunImpl()
         {
-            Unit.Move(_movement);
+            Unit?.Move(_movement);
         }
     }
 }

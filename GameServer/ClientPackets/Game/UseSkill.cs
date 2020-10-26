@@ -27,7 +27,7 @@ namespace GameServer.ClientPackets.Game
         {
             if (GetClient().GameInstance == null) return;
 
-            GetClient().CurrentUnit.CurrentSp = GetInt(); // Current SP
+            var sp = GetInt(); // Current SP
             _skillId = GetInt(); // Skill Id
             
             var num = GetInt(); // Num Enemies hit
@@ -41,6 +41,10 @@ namespace GameServer.ClientPackets.Game
 
             // High priority
             HighPriority = true;
+            
+            if (Unit == null) return;
+
+            Unit.CurrentSp = sp;
         }
 
         public override string GetType()
@@ -50,12 +54,9 @@ namespace GameServer.ClientPackets.Game
 
         protected override void RunImpl()
         {
-            // Check practice mode
-            if (GetClient().GameInstance == null) return;
-
             // TODO: Miss skill packet
             if (_targets.Length > 0)
-                Unit.TryUseSkill(_skillId, _targets);
+                Unit?.TryUseSkill(_skillId, _targets);
         }
     }
 }

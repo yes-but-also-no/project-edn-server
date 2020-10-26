@@ -54,7 +54,7 @@ namespace GameServer
         /// <summary>
         /// Quick accessor for game instance
         /// </summary>
-        public GameInstance GameInstance => RoomInstance.GameInstance;
+        public GameInstance GameInstance => RoomInstance?.GameInstance;
         
         /// <summary>
         /// The current unit this session is controlling
