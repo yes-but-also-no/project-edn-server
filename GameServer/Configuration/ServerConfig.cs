@@ -24,5 +24,7 @@ namespace GameServer.Configuration
         public LogLevel ConsoleLogLevel { get; set; }
         
         public bool LogAllPackets { get; set; }
+        
+        public bool WriteCharacterImages { get; set; }
     }
 }
