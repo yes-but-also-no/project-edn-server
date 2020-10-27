@@ -7,5 +7,6 @@
   "GameFps": 30,
   "UpdateFrameInterval": 10,
   "ConsoleLogLevel": "Debug",
-  "LogAllPackets": false
+  "LogAllPackets": false,
+  "WriteCharacterImages": false
 }
