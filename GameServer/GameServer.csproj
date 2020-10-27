@@ -21,6 +21,51 @@
 
     <ItemGroup>
         <None Include="..\Config\**\*" Link="Config\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="Always" />
+        <None Update="..\Config\Spawns\Arena.spn">
+          <Link>Config\Spawns\Arena.spn</Link>
+        </None>
+        <None Update="..\Config\Spawns\capitalcity.spn">
+          <Link>Config\Spawns\capitalcity.spn</Link>
+        </None>
+        <None Update="..\Config\Spawns\dreadnought.spn">
+          <Link>Config\Spawns\dreadnought.spn</Link>
+        </None>
+        <None Update="..\Config\Spawns\faceonface.spn">
+          <Link>Config\Spawns\faceonface.spn</Link>
+        </None>
+        <None Update="..\Config\Spawns\faliciacanyon.spn">
+          <Link>Config\Spawns\faliciacanyon.spn</Link>
+        </None>
+        <None Update="..\Config\Spawns\mobilefortress.spn">
+          <Link>Config\Spawns\mobilefortress.spn</Link>
+        </None>
+        <None Update="..\Config\Spawns\overpassarea.spn">
+          <Link>Config\Spawns\overpassarea.spn</Link>
+        </None>
+        <None Update="..\Config\Spawns\recruitarena.spn">
+          <Link>Config\Spawns\recruitarena.spn</Link>
+        </None>
+        <None Update="..\Config\Spawns\stratofield.spn">
+          <Link>Config\Spawns\stratofield.spn</Link>
+        </None>
+        <None Update="..\Config\Spawns\tridenway.spn">
+          <Link>Config\Spawns\tridenway.spn</Link>
+        </None>
+        <None Update="..\Config\Spawns\undergroundcolony.spn">
+          <Link>Config\Spawns\undergroundcolony.spn</Link>
+        </None>
+        <None Update="..\Config\Spawns\launchingsite.spn">
+          <Link>Config\Spawns\launchingsite.spn</Link>
+        </None>
+        <None Update="..\Config\Spawns\summitdifrost.spn">
+          <Link>Config\Spawns\summitdifrost.spn</Link>
+        </None>
+        <None Update="..\Config\Spawns\vhill.spn">
+          <Link>Config\Spawns\vhill.spn</Link>
+        </None>
+        <None Update="..\Config\Spawns\battleshipfacility.spn">
+          <Link>Config\Spawns\battleshipfacility.spn</Link>
+        </None>
     </ItemGroup>
 
     <PropertyGroup>
