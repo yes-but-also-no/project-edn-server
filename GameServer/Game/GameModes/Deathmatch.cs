@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Numerics;
 using Data.Model;
 using GameServer.Configuration.Poo;
 using GameServer.Model.Parts.Skills;
@@ -99,6 +100,26 @@ namespace GameServer.Game.GameModes
             //     
             // return (uint) numSessions;
             return 0xffffffff;
+        }
+        
+        /// <summary>
+        /// The next spawn that will be used
+        /// </summary>
+        private int _nextSpawnId;
+
+        public override Vector3 GetSpawnForUnit(Unit unit)
+        {
+            // Get spawn
+            var spawn = SpawnInfo.PlayerSpawns[_nextSpawnId];
+            
+            // Increment
+            _nextSpawnId++;
+
+            // Loop around if needed
+            if (_nextSpawnId >= SpawnInfo.PlayerSpawns.Count)
+                _nextSpawnId = 0;
+
+            return spawn.WorldPosition;
         }
     }
 }

@@ -8,6 +8,7 @@ using Cysharp.Threading;
 using Data.Model;
 using Data.Model.Items;
 using GameServer.Configuration;
+using GameServer.Configuration.Game;
 using GameServer.Configuration.Poo;
 using GameServer.GeoEngine;
 using GameServer.Model.Parts.Skills;
@@ -74,6 +75,11 @@ namespace GameServer.Game
         public Map Map;
 
         /// <summary>
+        /// The spawn map instance for this game
+        /// </summary>
+        protected MapSpawnInfo SpawnInfo;
+
+        /// <summary>
         /// Creates a new game instance
         /// </summary>
         /// <param name="roomInstance">The room this game is running in</param>
@@ -101,21 +107,6 @@ namespace GameServer.Game
         /// </summary>
         private readonly ConcurrentDictionary<int, Ifo> _ifos = new ConcurrentDictionary<int, Ifo>();
 
-        /// <summary>
-        /// Adds skills and notifies all users
-        /// </summary>
-        /// <param name="skill"></param>
-        // public void AddSkills(IEnumerable<Skill> skills)
-        // {
-        //     foreach (var skill in skills)
-        //     {
-        //         _skills[skill.Id] = skill;
-        //     }
-        // }
-
-        //TEMP
-        public Vector3 SpawnLocation { get; set; } = new Vector3(0, 0, 1000);
-        
         #endregion
 
         #region CHAT
@@ -276,7 +267,7 @@ namespace GameServer.Game
             //MulticastPacket(new UnitInfo(session.User, session.User.DefaultUnit));
             
             // Send GEO Objects? TEST
-            session.SendPacket(new GeoObjectsHp());
+            //session.SendPacket(new GeoObjectsHp());
             
             // Spawn user default unit
             SpawnUnit(session.User.DefaultUnit, session);
@@ -433,8 +424,7 @@ namespace GameServer.Game
             spawnedUnit.CurrentHealth = 9999;
             
             // Set unit Location
-            // TODO: Spawn maps?
-            spawnedUnit.WorldPosition = new Vector3(SpawnLocation.X, SpawnLocation.Y, SpawnLocation.Z);
+            spawnedUnit.WorldPosition = GetSpawnForUnit(spawnedUnit);
 
             // Notify
             //RoomInstance.MulticastPacket(new CodeList(spawnedUnit.Skills));
@@ -995,6 +985,7 @@ namespace GameServer.Game
         private void LoadMap()
         {
             Map = GeoEngine.GeoEngine.GetGeoMap(GameStats.MapFileName);
+            SpawnInfo = SpawnDataReader.GetSpawnInfoForMap(GameStats.MapFileName);
         }
 
         #endregion
@@ -1009,27 +1000,14 @@ namespace GameServer.Game
         /// </summary>
         /// <returns></returns>
         public abstract uint GetTeamForNewUser();
-        /*{
-            if (GameType == GameType.Survival)
-            {
-                
-            }
 
-            if (GameType == GameType.DefensiveBattle)
-            {
-                return 0;
-            }
-
-            // Figure out which team has more users and add them to the other team
-            var numUsersTeamZero = _sessions.Values.Select(s => s.User.Team).Count(t => t == 0);
-            var numUsersTeamOne = _sessions.Values.Select(s => s.User.Team).Count(t => t == 1);
-
-            // If more users on team zero, they go to team one
-            // Otherwise, team zero
-            return numUsersTeamZero > numUsersTeamOne ? 1 : (uint) 0;
-        }*/
-
-        
+        /// <summary>
+        /// Gets the spawn for a new user
+        /// TODO: Handle team modes, spawn at base, etc
+        /// </summary>
+        /// <param name="unit"></param>
+        /// <returns></returns>
+        public abstract Vector3 GetSpawnForUnit(Unit unit);
         
         #endregion
     }

@@ -57,6 +57,12 @@ namespace GameServer
             
             "Done!".Info();
             
+            "Reading spawn data...".Info();
+            
+            SpawnDataReader.LoadAllSpawns();
+            
+            "Done!".Info();
+            
             "Reading poo data...".Info();
             
             PooReader.ReadPoo();
