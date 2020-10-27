@@ -60,7 +60,7 @@ namespace GameServer.Model.Units
             GameInstance = instance;
             
             Id = unitRecord.Id;
-            Team = unitRecord.User?.Team ?? 0;
+            //Team = unitRecord.User?.Team ?? 0;
             Name = unitRecord.Name;
 
             Head = new Part(unitRecord.Head, this);

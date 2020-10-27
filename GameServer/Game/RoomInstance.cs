@@ -156,6 +156,32 @@ namespace GameServer.Game
             // Temp disable to lessen spam
             //Console.WriteLine("[S] 0x{0:x2} {1} >>> room: {2}", Color.Green, packet.GetId(), packet.GetType(), Id);
         }
+        
+        /// <summary>
+        /// Multicasts a packet to all users in this room except one
+        /// </summary>
+        /// <param name="packet"></param>
+        public void MulticastPacketWithSession(Func<GameSession, ServerBasePacket> packetCreator)
+        {
+            // Multicast data to all sessions
+            foreach (var session in _sessions.Values)
+            {
+                var packet = packetCreator(session);
+                var data = packet.Write();
+                
+                if (packet.HighPriority)
+                    session.Send(data);
+                else
+                    session.SendAsync(data);
+                
+                if (Program.Configuration.Global.LogAllPackets)
+                    $"[S] 0x{packet.GetId():x2} {packet.GetType()} >>> {session}".Info();
+            }
+
+            // TODO: Add config here - if debug
+            // Temp disable to lessen spam
+            //Console.WriteLine("[S] 0x{0:x2} {1} >>> room: {2}", Color.Green, packet.GetId(), packet.GetType(), Id);
+        }
 
         /// <summary>
         /// Sends a batch of packets to the client

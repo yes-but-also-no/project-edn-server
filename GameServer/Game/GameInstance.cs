@@ -175,7 +175,7 @@ namespace GameServer.Game
         /// <returns></returns>
         public IEnumerable<Unit> GetEnemies(Unit unit)
         {
-            return _units.Values.Where(u => u.State == UnitState.InPlay && u.Team != unit.Team);
+            return _units.Values.Where(u => u.Id != unit.Id && u.State == UnitState.InPlay && (u.Team == 0xffffffff || u.Team != unit.Team));
         }
         
         /// <summary>
@@ -185,7 +185,7 @@ namespace GameServer.Game
         /// <returns></returns>
         public IEnumerable<Unit> GetFriends(Unit unit)
         {
-            return _units.Values.Where(u => u.State == UnitState.InPlay && u.Team == unit.Team);
+            return _units.Values.Where(u => u.State == UnitState.InPlay && u.Team != 0xffffffff && u.Team == unit.Team);
         }
         
         #endregion
@@ -292,7 +292,7 @@ namespace GameServer.Game
             // Send existing units
             foreach (var unit in _units.Values)
             {
-                session.SendPacket(new UnitInfo(unit));
+                session.SendPacket(new UnitInfo(unit, session));
                 session.SendPacket(new SpawnUnit(unit));
                 session.SendPacket(new StatusChanged(unit, true, true, true));
             }
@@ -440,7 +440,7 @@ namespace GameServer.Game
             //RoomInstance.MulticastPacket(new CodeList(spawnedUnit.Skills));
             
             // Send unit info
-            RoomInstance.MulticastPacket(new UnitInfo(spawnedUnit));
+            RoomInstance.MulticastPacketWithSession(session => new UnitInfo(spawnedUnit, session));
             
             // Send spawn command
             RoomInstance.MulticastPacket(new SpawnUnit(spawnedUnit));
