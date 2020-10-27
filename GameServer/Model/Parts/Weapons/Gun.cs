@@ -117,7 +117,7 @@ namespace GameServer.Model.Parts.Weapons
                 Target.TryGetTarget(out var target);
                 
                 // Check for valid target
-                if (target != null)
+                if (target != null && target.State == UnitState.InPlay)
                 {
                     // Roll hit for each shot
                     for (var i = 0; i < Stats.NumberOfShots; i++)
