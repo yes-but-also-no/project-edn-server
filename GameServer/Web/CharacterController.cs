@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 using EmbedIO;
 using EmbedIO.Routing;
 using EmbedIO.WebApi;
+using GameServer.Configuration;
 using HttpMultipartParser;
+using Swan.Configuration;
 using Swan.Logging;
 
 namespace GameServer.Web
@@ -20,6 +22,8 @@ namespace GameServer.Web
     /// </summary>
     public class CharacterController : WebApiController
     {
+        public static readonly SettingsProvider<ServerConfig> Configuration = SettingsProvider<ServerConfig>.Instance;
+        
         [Route(HttpVerbs.Get, "/check_file.aspx")]
         public async Task<string> GetData([FormData] NameValueCollection data)
         {
@@ -30,6 +34,10 @@ namespace GameServer.Web
         [Route(HttpVerbs.Post, "/upload_file.aspx")]
         public async Task PostData()
         {
+            // Check to see if enabled
+            if (!Configuration.Global.WriteCharacterImages)
+                return;
+            
             // Parse contents
             var parser = await MultipartFormDataParser.ParseAsync(Request.InputStream);
 
