@@ -926,8 +926,6 @@ namespace GameServer.Game
             // Tick
             foreach (var unit in _units.Values)
             {
-                unit.OnTick(ctx.ElapsedTimeFromPreviousFrame.TotalMilliseconds);
-
                 // If they just spawned
                 if (unit.State == UnitState.Spawned)
                 {
@@ -963,6 +961,10 @@ namespace GameServer.Game
                         // Inform the player they can spawn
                         unit.Owner?.SendPacket(new UnitRepaired(unit.Id));
                     });
+                }
+                else if (unit.State == UnitState.InPlay)
+                {
+                    unit.OnTick(ctx.ElapsedTimeFromPreviousFrame.TotalMilliseconds);
                 }
             }
             
