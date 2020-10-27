@@ -84,20 +84,21 @@ namespace GameServer.Game.GameModes
         /// <returns></returns>
         public override uint GetTeamForNewUser()
         {
-            var numSessions = RoomInstance.Sessions.Count();
-
-            for (uint i = 0; i <= numSessions + 1; i++)
-            {
-                if (RoomInstance.Users.All(u => u.Team != i))
-                {
-                    $"Got team for new user ${i}".Info();
-                    return i;
-                }
-            }
-
-            "ERROR! Could not find a team number for new user!".Error();
-                
-            return (uint) numSessions;
+            // var numSessions = RoomInstance.Sessions.Count();
+            //
+            // for (uint i = 0; i <= numSessions + 1; i++)
+            // {
+            //     if (RoomInstance.Users.All(u => u.Team != i))
+            //     {
+            //         $"Got team for new user ${i}".Info();
+            //         return i;
+            //     }
+            // }
+            //
+            // "ERROR! Could not find a team number for new user!".Error();
+            //     
+            // return (uint) numSessions;
+            return 0xffffffff;
         }
     }
 }

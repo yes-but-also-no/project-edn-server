@@ -10,11 +10,14 @@ namespace GameServer.ServerPackets.Game
     {
         private readonly Unit _unit;
 
-        public UnitInfo(Unit unit)
+        private readonly GameSession _session;
+
+        public UnitInfo(Unit unit, GameSession session)
         {
             HighPriority = true;
             
             _unit = unit;
+            _session = session;
         }
         
         public override string GetType()
@@ -31,8 +34,17 @@ namespace GameServer.ServerPackets.Game
         {
             WriteInt(_unit.UserId);
             WriteInt(_unit.Id);
+
+            var team = _unit.Team;
+
+            // Deathmatch? no teams?
+            if (team == 0xffffffff)
+            {
+                // We will write 0 for this user, 1 for others
+                team = _session.UserId == _unit.Owner.UserId ? (uint) 0 : (uint) 1;
+            }
             
-            WriteUInt(_unit.Team); // Team
+            WriteUInt(team); // Team
             WriteInt(_unit.CurrentHealth); // Unit HP?
             
             WriteString(_unit.Name);
