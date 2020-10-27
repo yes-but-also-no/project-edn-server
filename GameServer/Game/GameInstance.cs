@@ -175,7 +175,7 @@ namespace GameServer.Game
         /// <returns></returns>
         public IEnumerable<Unit> GetEnemies(Unit unit)
         {
-            return _units.Values.Where(u => u.Team != unit.Team);
+            return _units.Values.Where(u => u.State == UnitState.InPlay && u.Team != unit.Team);
         }
         
         /// <summary>
@@ -185,7 +185,7 @@ namespace GameServer.Game
         /// <returns></returns>
         public IEnumerable<Unit> GetFriends(Unit unit)
         {
-            return _units.Values.Where(u => u.Team == unit.Team);
+            return _units.Values.Where(u => u.State == UnitState.InPlay && u.Team == unit.Team);
         }
         
         #endregion
@@ -769,6 +769,9 @@ namespace GameServer.Game
             // Set hp to max - auto clamps to max hp
             spawnedUnit.CurrentHealth = 9999;
             
+            // Set state
+            spawnedUnit.State = UnitState.Spawned;
+            
             // Set unit Location
             // TODO: Spawn maps?
             spawnedUnit.WorldPosition = new Vector3(pos.X, pos.Y, pos.Z);
@@ -778,6 +781,9 @@ namespace GameServer.Game
             
             // Send spawn command
             RoomInstance.MulticastPacket(new SpawnUnit(spawnedUnit));
+            
+            // Send status?
+            RoomInstance.MulticastPacket(new StatusChanged(spawnedUnit, true, false, true));
 
             return spawnedUnit;
         }
@@ -946,7 +952,7 @@ namespace GameServer.Game
                     
                     ctx.RunCoroutine(async coCtx =>
                     {
-                        await coCtx.Delay(TimeSpan.FromSeconds(2));
+                        await coCtx.Delay(TimeSpan.FromSeconds(4));
                     
                         // Set to invincible
                         unit.State = UnitState.Destroyed;

@@ -40,8 +40,8 @@ namespace GameServer.ServerPackets.Game
             WriteInt(_session.User.DefaultUnit.Id); // Unit Id
             WriteInt(_session.User.DefaultUnit.LaunchOrder); // Launch (order)?
             WriteInt(0); // Life? - From client binaries
-            WriteFloat(100.0f); // Repair? - From client
-            WriteInt(2500); // Repair? Ms? - From client
+            WriteFloat(50.0f); // Repair? - From client
+            WriteInt(4000); // Repair? Ms? - From client
             
         }
     }

@@ -61,7 +61,7 @@ namespace GameServer.Model.Units
             Source = source;
             Stats = stats;
             _game = game;
-            _target = target;
+            _target = target?.State == UnitState.InPlay ? target : null;
             WorldPosition = source.Owner.GetHeadPosition();
             Direction = source.Owner.GetAimDirection();
             

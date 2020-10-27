@@ -250,7 +250,7 @@ namespace GameServer.Model.Units
         /// <param name="weapon">Weapon used to apply damage</param>
         public void Attack(Weapon weapon, int damage)
         {
-            if (GodMode) return;
+            if (GodMode || State != UnitState.InPlay) return;
             
             _currentHealth -= damage;
             
@@ -268,7 +268,7 @@ namespace GameServer.Model.Units
         /// <param name="damage"></param>
         public void Attack(Skill skill, int damage)
         {
-            if (GodMode) return;
+            if (GodMode || State != UnitState.InPlay) return;
             
             _currentHealth -= damage;
             
