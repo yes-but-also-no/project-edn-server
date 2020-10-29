@@ -39,7 +39,7 @@ namespace GameServer.Managers
                         var unitPos = client.CurrentUnit.WorldPosition;
                         
                         // Log it
-                        $"ID,{unitPos.X},{unitPos.Y},{unitPos.Z}".Info();
+                        $"ID,{unitPos.X},{unitPos.Y},{unitPos.Z} - {client.CurrentUnit.AimX}".Info();
                         
                         client.SendPacket(new Message(client.User.Callsign, 
                             $"X: {unitPos.X}, Y: {unitPos.Y} Z: {unitPos.Z}"));
