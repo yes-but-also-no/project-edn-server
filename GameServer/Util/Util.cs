@@ -150,5 +150,48 @@ namespace GameServer.Util
 
             return foundUnits;
         }
+        
+        /// <summary>
+        /// Performs a grid melee check
+        /// </summary>
+        /// <param name="unit"></param>
+        /// <param name="angle"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        // public static IEnumerable<Unit> CheckGridMelee(this IEnumerable<Unit> units, Vector3 startPos, Vector3 direction, float angle, float length)
+        // {
+        //     // New enumerable of units
+        //     var foundUnits = new HashSet<Unit>();
+        //     
+        //     // Loop units
+        //     foreach (var u in units)
+        //     {
+        //         // Calculate distance
+        //         // TODO: Factor unit size in
+        //         var px = u.GetBodyPosition() - startPos;
+        //         var coneDist = Vector3.Dot(px, direction);
+        //         
+        //         // Discard if outside?
+        //         if (coneDist < 0 || coneDist > length)
+        //         {
+        //             continue;
+        //         }
+        //
+        //         // Calculate radius of cone at distance
+        //         var coneRadius = (coneDist / length) * baseRadius;
+        //
+        //         // Calculate distance from center of cone
+        //         var orthDist = (px - coneDist * direction).Length();
+        //
+        //         // Determine if they are in the cone
+        //         // Temp: Fake unit size by increasing radius check
+        //         var isInCone = orthDist < coneRadius + UnitHitBoxSize;
+        //         
+        //         // If they are, add to hash set
+        //         if (isInCone) foundUnits.Add(u);
+        //     }
+        //
+        //     return foundUnits;
+        // }
     }
 }
