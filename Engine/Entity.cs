@@ -10,6 +10,20 @@ namespace Engine
     /// </summary>
     public abstract class Entity
     {
+        #region CONSTANTS
+
+        /// <summary>
+        /// Setting NextTick to this will make the engine always tick this entity
+        /// </summary>
+        protected const int AlwaysTick = 1;
+        
+        /// <summary>
+        /// Setting NextTick to this will make the engine never tick this entity
+        /// </summary>
+        protected const int NeverTick = 0;
+        
+        #endregion
+        
         #region ENGINE
 
         /// <summary>
@@ -98,6 +112,9 @@ namespace Engine
             // Set state
             State = EntityState.OutOfPlay;
             
+            // Set default tick
+            NextTick = AlwaysTick;
+            
             // Call hook
             OnInitialize();
         }
@@ -124,10 +141,7 @@ namespace Engine
             // Check if we want to tick
             if (NextTick > 0 && Engine.EngineTime < NextTick)
                 return;
-            
-            // Reset next tick
-            NextTick = 0;
-            
+
             // Call hook
             OnTick(delta);
         }
