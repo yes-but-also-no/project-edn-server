@@ -100,38 +100,5 @@ namespace Data.Model
         /// </summary>
         public PartRecord Operator { get; set; }
         public int OperatorId { get; set; }
-        
-        /// <summary>
-        /// The team this user is on
-        /// Only used at runtime
-        /// </summary>
-        [NotMapped]
-        public uint Team { get; set; }
-        
-        /// <summary>
-        /// Is the user ready
-        /// Only used at runtime
-        /// </summary>
-        [NotMapped]
-        public bool IsReady { get; set; }
-        
-        /// <summary>
-        /// The session id for this unit
-        /// </summary>
-        [NotMapped]
-        public Guid SessionId { get; set; }
-        
-        // TODO: Move into a user wrapper?
-        [NotMapped]
-        public PlayerScores Scores { get; set; }
-    }
-    
-    public class PlayerScores
-    {
-        public int Kills { get; set; }
-        public int Deaths { get; set; }
-        public int Assists { get; set; }
-        public int Points { get; set; }
-        public int Credits { get; set; }
     }
 }

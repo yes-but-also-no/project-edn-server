@@ -19,13 +19,6 @@ namespace Data.Model
         public int Id { get; set; }
 
         /// <summary>
-        /// The user who is owns this unit
-        /// Not mapped for now as I think we might need to assign this at runtime, for NPC units and stuff
-        /// </summary>
-        [NotMapped]
-        public ExteelUser User { get; set; }
-        
-        /// <summary>
         /// The inventory this unit is part of
         /// </summary>
         public int UserInventoryId { get; set; }
