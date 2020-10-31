@@ -229,7 +229,7 @@ namespace GameServer
                 
                 // Assign user units
                 // TODO: Maybe we can map this, not sure
-                user.Inventory.Units.ForEach(u => u.User = user);
+                //user.Inventory.Units.ForEach(u => u.User = user);
                 
                 
                 // Load users stats

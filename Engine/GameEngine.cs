@@ -1,4 +1,5 @@
 using System;
+using Cysharp.Threading;
 
 namespace Engine
 {
@@ -8,7 +9,7 @@ namespace Engine
     /// </summary>
     public class GameEngine
     {
-        #region PUBLIC
+        #region PROPERTIES
         
         /// <summary>
         /// The tick rate of the server
@@ -27,22 +28,26 @@ namespace Engine
         
         #endregion
         
-        #region PRIVATE
+        #region PRIVATE FIELDS
 
         /// <summary>
         /// When the engine was started
         /// </summary>
         private readonly DateTime _engineStartTime;
         
+        /// <summary>
+        /// Logic looper instance for this game engine
+        /// </summary>
+        private readonly LogicLooperPool _looper;
+
         #endregion
 
+        #region PUBLIC METHODS
+        
         /// <summary>
         /// Default constructor shows start time as now
         /// </summary>
-        public GameEngine()
-        {
-            _engineStartTime = DateTime.UtcNow;
-        }
+        public GameEngine() : this(DateTime.UtcNow) {}
 
         /// <summary>
         /// Constructor for set start time
@@ -51,6 +56,50 @@ namespace Engine
         public GameEngine(DateTime engineStartTime)
         {
             _engineStartTime = engineStartTime;
+            
+            _looper = new LogicLooperPool(
+                TickRate,
+                Environment.ProcessorCount,
+                RoundRobinLogicLooperPoolBalancer.Instance
+            );
         }
+
+        /// <summary>
+        /// Starts the game engine
+        /// </summary>
+        public async void Start()
+        {
+            await _looper.RegisterActionAsync(Tick);
+        }
+
+        /// <summary>
+        /// Shuts down the game engine
+        /// </summary>
+        public async void Stop()
+        {
+            await _looper.ShutdownAsync(TimeSpan.Zero);
+            
+            // TODO: Do we need to call this?
+            _looper.Dispose();
+        }
+        
+        #endregion
+        
+        #region PRIVATE METHODS
+
+        /// <summary>
+        /// Main engine tick
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <returns></returns>
+        private bool Tick(in LogicLooperActionContext ctx)
+        {
+            // DO TICK
+            
+            // Return true to keep going
+            return true;
+        }
+        
+        #endregion
     }
 }

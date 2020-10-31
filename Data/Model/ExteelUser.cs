@@ -100,5 +100,27 @@ namespace Data.Model
         /// </summary>
         public PartRecord Operator { get; set; }
         public int OperatorId { get; set; }
+        
+        // TEMP: REMOVE ME AFTER REFACTOR
+        [NotMapped]
+        public Guid SessionId { get; set; } 
+        
+        [NotMapped]
+        public uint Team { get; set; }
+        
+        [NotMapped]
+        public bool IsReady { get; set; }
+    
+        [NotMapped]
+        public PlayerScores Scores { get; set; }
+    }
+    
+    public class PlayerScores
+    {
+        public int Kills { get; set; }
+        public int Deaths { get; set; }
+        public int Assists { get; set; }
+        public int Points { get; set; }
+        public int Credits { get; set; }
     }
 }
