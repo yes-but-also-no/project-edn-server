@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Engine;
 using GameServer.Configuration;
 using Console = Colorful.Console;
 using GameServer.Game;
@@ -53,25 +54,25 @@ namespace GameServer
             
             "Reading shop data...".Info();
             
-            ShopDataReader.ReadGoods();
+            //ShopDataReader.ReadGoods();
             
             "Done!".Info();
             
             "Reading spawn data...".Info();
             
-            SpawnDataReader.LoadAllSpawns();
+            //SpawnDataReader.LoadAllSpawns();
             
             "Done!".Info();
             
             "Reading poo data...".Info();
             
-            PooReader.ReadPoo();
+            //PooReader.ReadPoo();
             
             "Done!".Info();
             
             "Reading map data...".Info();
             
-            GeoEngine.GeoEngine.LoadAllMaps();
+            //GeoEngine.GeoEngine.LoadAllMaps();
             
             "Done!".Info();
             
@@ -180,9 +181,17 @@ namespace GameServer
                 // Allow the manin thread to continue and exit...
                 WaitHandle.Set();
             };
+            
+            // TESTING
+            var engine = new GameEngine { TickRate = 30 };
+
+
+            engine.Start();
 
             // Wait
             WaitHandle.WaitOne();
+            
+            engine.Stop();
             
             /*
             // Perform text input

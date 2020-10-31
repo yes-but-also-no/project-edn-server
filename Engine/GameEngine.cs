@@ -1,5 +1,6 @@
 using System;
 using Cysharp.Threading;
+using Swan.Logging;
 
 namespace Engine
 {
@@ -10,6 +11,11 @@ namespace Engine
     public class GameEngine
     {
         #region PROPERTIES
+        
+        /// <summary>
+        /// The unique id of this engine instance
+        /// </summary>
+        public readonly Guid Id = Guid.NewGuid();
         
         /// <summary>
         /// The tick rate of the server
@@ -38,7 +44,7 @@ namespace Engine
         /// <summary>
         /// Logic looper instance for this game engine
         /// </summary>
-        private readonly LogicLooperPool _looper;
+        private LogicLooperPool _looper;
 
         #endregion
 
@@ -55,13 +61,11 @@ namespace Engine
         /// <param name="engineStartTime">When the engine has been started</param>
         public GameEngine(DateTime engineStartTime)
         {
+            // Set start time
             _engineStartTime = engineStartTime;
-            
-            _looper = new LogicLooperPool(
-                TickRate,
-                Environment.ProcessorCount,
-                RoundRobinLogicLooperPoolBalancer.Instance
-            );
+
+            // Log
+            $"Engine instance <{Id}> Created!".Info("[GameEngine]");
         }
 
         /// <summary>
@@ -69,7 +73,18 @@ namespace Engine
         /// </summary>
         public async void Start()
         {
+            // Create looper
+            _looper = new LogicLooperPool(
+                TickRate,
+                Environment.ProcessorCount,
+                RoundRobinLogicLooperPoolBalancer.Instance
+            );
+            
+            // Start game loop
             await _looper.RegisterActionAsync(Tick);
+            
+            // Log
+            $"Started".Info(ToString());
         }
 
         /// <summary>
@@ -77,10 +92,14 @@ namespace Engine
         /// </summary>
         public async void Stop()
         {
+            // Stop loop
             await _looper.ShutdownAsync(TimeSpan.Zero);
             
             // TODO: Do we need to call this?
             _looper.Dispose();
+            
+            // Log
+            $"Stopped".Info(ToString());
         }
         
         #endregion
@@ -96,10 +115,22 @@ namespace Engine
         {
             // DO TICK
             
+            // Log
+            $"Ticked".Info(ToString());
+            
             // Return true to keep going
             return true;
         }
         
         #endregion
+
+        /// <summary>
+        /// To string override
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return $"[GameEngine]<{Id}>";
+        }
     }
 }

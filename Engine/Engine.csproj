@@ -6,7 +6,7 @@
 
     <ItemGroup>
       <PackageReference Include="LogicLooper" Version="1.0.2" />
-      <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.0.1641" />
+      <PackageReference Include="Unosquare.Swan.Lite" Version="3.0.0" />
     </ItemGroup>
 
 </Project>
