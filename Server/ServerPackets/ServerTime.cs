@@ -19,7 +19,7 @@ namespace GameServer.ServerPackets
         protected override void WriteImpl()
         {
             // Write the clients time
-            //var server = (GameServer)GetClient().Server;
+            //var server = (Server)GetClient().Server;
             WriteInt(GameServer.RunningMs);
             WriteInt(_clientTime);            
 
