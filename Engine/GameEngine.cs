@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Cysharp.Threading;
 using Engine.Entities;
 using Swan.Logging;
@@ -52,6 +54,11 @@ namespace Engine
         /// This holds a reference to all entities in the game engine
         /// </summary>
         private readonly Dictionary<Guid, Entity> _entities = new Dictionary<Guid, Entity>();
+        
+        /// <summary>
+        /// This holds a list of all registered assemblies to search when creating classes
+        /// </summary>
+        private readonly HashSet<Assembly> _assemblies = new HashSet<Assembly>{Assembly.GetExecutingAssembly()};
 
         #endregion
 
@@ -110,6 +117,16 @@ namespace Engine
         }
         
         #region ENTITIES
+
+        /// <summary>
+        /// Registers a new assembly to be searched when creating classes
+        /// </summary>
+        /// <param name="assembly"></param>
+        public void RegisterAssembly(Assembly assembly)
+        {
+            // Add to hash set
+            _assemblies.Add(assembly);
+        }
         
         /// <summary>
         /// Creates a new entity
@@ -119,14 +136,20 @@ namespace Engine
         /// <returns></returns>
         public Entity CreateEntity(string engineName, string engineClass)
         {
-            // TODO: Dynamic lookup of class
+            // Get constructor
+            var type = _assemblies
+                .SelectMany(a => a.GetTypes())
+                .Where(typeof(Entity).IsAssignableFrom)
+                .First(t => t.Name == "TestEntity");
+
+            var ent = Activator.CreateInstance(type, this) as Entity;
             
             // Create
-            var ent = new TestEntity(this)
-            {
-                EngineClass = engineClass,
-                EngineName = engineName
-            };
+            // var ent = new TestEntity(this)
+            // {
+            //     EngineClass = engineClass,
+            //     EngineName = engineName
+            // };
             
             // Add to list
             _entities.Add(ent.EngineId, ent);

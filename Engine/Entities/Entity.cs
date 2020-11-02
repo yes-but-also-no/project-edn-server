@@ -47,7 +47,7 @@ namespace Engine.Entities
         /// The class of this entity
         /// ENGINE ONLY
         /// </summary>
-        public string EngineClass { get; internal set; }
+        //public string EngineClass { get; internal set; }
         
         #endregion
         
@@ -96,7 +96,7 @@ namespace Engine.Entities
         /// Constructor
         /// </summary>
         /// <param name="engine"></param>
-        internal Entity(GameEngine engine)
+        protected Entity(GameEngine engine)
         {
             // Store engine ref
             Engine = engine;
@@ -216,7 +216,7 @@ namespace Engine.Entities
         /// <returns></returns>
         public override string ToString()
         {
-            return $"[Entity]<{EngineId}><{EngineClass}><{EngineName}>";
+            return $"[Entity]<{EngineId}><{EngineName}>";
         }
     }
     

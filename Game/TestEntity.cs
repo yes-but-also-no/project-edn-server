@@ -1,6 +1,8 @@
+using Engine;
+using Engine.Entities;
 using Swan.Logging;
 
-namespace Engine.Entities
+namespace Game
 {
     public class TestEntity : Entity
     {
@@ -43,5 +45,7 @@ namespace Engine.Entities
             // Set next tick
             NextTick = Engine.EngineTime + 1000;
         }
+
+        
     }
 }

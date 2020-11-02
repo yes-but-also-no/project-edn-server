@@ -19,6 +19,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Data\Data.csproj" />
       <ProjectReference Include="..\Engine\Engine.csproj" />
+      <ProjectReference Include="..\Game\Game.csproj" />
     </ItemGroup>
 
     <ItemGroup>
