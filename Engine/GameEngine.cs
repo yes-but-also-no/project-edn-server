@@ -134,23 +134,34 @@ namespace Engine
         /// <param name="engineName"></param>
         /// <param name="engineClass"></param>
         /// <returns></returns>
-        public Entity CreateEntity(string engineName, string engineClass)
+        public Entity CreateEntity(string engineClass, string engineName)
         {
             // Get constructor
             var type = _assemblies
                 .SelectMany(a => a.GetTypes())
                 .Where(typeof(Entity).IsAssignableFrom)
-                .First(t => t.Name == "TestEntity");
-
+                .FirstOrDefault(t => t.Name == engineClass);
+            
+            // Check for errors
+            if (type == null)
+            {
+                $"Could not find entity with engine class of {engineClass}!".Error(ToString());
+                return null;
+            }
+                
+            // Create it
             var ent = Activator.CreateInstance(type, this) as Entity;
             
-            // Create
-            // var ent = new TestEntity(this)
-            // {
-            //     EngineClass = engineClass,
-            //     EngineName = engineName
-            // };
-            
+            // Check for errors
+            if (ent == null)
+            {
+                $"Could not create entity with engine class of {engineClass}!".Error(ToString());
+                return null;
+            }
+
+            ent.EngineClass = engineClass;
+            ent.EngineName = engineName;
+
             // Add to list
             _entities.Add(ent.EngineId, ent);
             

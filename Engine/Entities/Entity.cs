@@ -47,7 +47,7 @@ namespace Engine.Entities
         /// The class of this entity
         /// ENGINE ONLY
         /// </summary>
-        //public string EngineClass { get; internal set; }
+        public string EngineClass { get; internal set; }
         
         #endregion
         
@@ -216,7 +216,7 @@ namespace Engine.Entities
         /// <returns></returns>
         public override string ToString()
         {
-            return $"[Entity]<{EngineId}><{EngineName}>";
+            return $"[Entity]<{EngineId}><{EngineClass}><{EngineName}>";
         }
     }
     
