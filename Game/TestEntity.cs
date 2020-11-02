@@ -1,5 +1,7 @@
+using System;
 using Engine;
 using Engine.Entities;
+using MoonSharp.Interpreter;
 using Swan.Logging;
 
 namespace Game
@@ -17,6 +19,22 @@ namespace Game
             
             // Enable tick
             TickEnabled = true;
+            
+            string script = @"    
+		-- defines a factorial function
+		function fact (n)
+			if (n == 0) then
+				return 1
+			else
+				return n*fact(n - 1)
+			end
+		end
+
+		return fact(5)";
+
+            DynValue res = Script.RunString(script);
+            
+            Console.WriteLine(res.Number);
         }
 
         protected override void OnSpawn()

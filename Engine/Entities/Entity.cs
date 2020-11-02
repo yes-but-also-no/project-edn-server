@@ -108,15 +108,15 @@ namespace Engine.Entities
         internal void Initialize()
         {
             // TODO: Register with engine?
-            
-            // Set state
-            State = EntityState.OutOfPlay;
-            
+
             // Set default tick
             NextTick = AlwaysTick;
             
             // Call hook
             OnInitialize();
+            
+            // Set state
+            State = EntityState.OutOfPlay;
         }
 
         /// <summary>

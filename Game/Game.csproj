@@ -5,11 +5,16 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="MoonSharp" Version="2.0.0" />
       <PackageReference Include="Unosquare.Swan.Lite" Version="3.0.0" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Engine\Engine.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\Scripts\**\*" Link="Scripts\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="Always" />
     </ItemGroup>
 
 </Project>

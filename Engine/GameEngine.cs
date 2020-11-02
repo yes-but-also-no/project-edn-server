@@ -212,7 +212,7 @@ namespace Engine
             // TODO: Do this as an event?
             foreach (var kvp in _entities)
             {
-                if (kvp.Value.TickEnabled)
+                if (kvp.Value.TickEnabled && kvp.Value.State != EntityState.Unknown)
                     kvp.Value.Tick(ctx.ElapsedTimeFromPreviousFrame.TotalMilliseconds);
             }
 
