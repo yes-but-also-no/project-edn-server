@@ -1,7 +1,7 @@
 using System;
 using System.Numerics;
 
-namespace Engine
+namespace Engine.Entities
 {
     /// <summary>
     /// This is the entity for any spawnable game object
@@ -41,13 +41,13 @@ namespace Engine
         /// The name of this entity
         /// ENGINE ONLY
         /// </summary>
-        public string EngineName { get; protected set; }
+        public string EngineName { get; internal set; }
         
         /// <summary>
         /// The class of this entity
         /// ENGINE ONLY
         /// </summary>
-        public string EngineClass { get; protected set; }
+        public string EngineClass { get; internal set; }
         
         #endregion
         
@@ -209,6 +209,15 @@ namespace Engine
         protected abstract void OnTick(double delta);
 
         #endregion
+        
+        /// <summary>
+        /// To string override
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return $"[Entity]<{EngineId}><{EngineClass}><{EngineName}>";
+        }
     }
     
     /// <summary>

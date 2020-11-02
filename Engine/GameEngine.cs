@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using Cysharp.Threading;
+using Engine.Entities;
 using Swan.Logging;
 
 namespace Engine
@@ -45,6 +47,11 @@ namespace Engine
         /// Logic looper instance for this game engine
         /// </summary>
         private LogicLooperPool _looper;
+
+        /// <summary>
+        /// This holds a reference to all entities in the game engine
+        /// </summary>
+        private readonly Dictionary<Guid, Entity> _entities = new Dictionary<Guid, Entity>();
 
         #endregion
 
@@ -102,6 +109,53 @@ namespace Engine
             $"Stopped".Info(ToString());
         }
         
+        #region ENTITIES
+        
+        /// <summary>
+        /// Creates a new entity
+        /// </summary>
+        /// <param name="engineName"></param>
+        /// <param name="engineClass"></param>
+        /// <returns></returns>
+        public Entity CreateEntity(string engineName, string engineClass)
+        {
+            // TODO: Dynamic lookup of class
+            
+            // Create
+            var ent = new TestEntity(this)
+            {
+                EngineClass = engineClass,
+                EngineName = engineName
+            };
+            
+            // Add to list
+            _entities.Add(ent.EngineId, ent);
+            
+            // Initialize
+            ent.Initialize();
+            
+            // return
+            return ent;
+        }
+
+        /// <summary>
+        /// Removes an entity by its engine id
+        /// </summary>
+        /// <param name="engineId"></param>
+        public void RemoveEntity(Guid engineId)
+        {
+            // Get entity
+            var ent = _entities[engineId];
+            
+            // Call remove
+            ent.Remove();
+            
+            // Remove from list
+            _entities.Remove(engineId);
+        }
+        
+        #endregion
+        
         #endregion
         
         #region PRIVATE METHODS
@@ -116,8 +170,18 @@ namespace Engine
             // DO TICK
             
             // Log
-            $"Ticked".Info(ToString());
+            //$"Ticked".Info(ToString());
+
+            // Tick Hooks?
             
+            // Tick entities
+            // TODO: Do this as an event?
+            foreach (var kvp in _entities)
+            {
+                if (kvp.Value.TickEnabled)
+                    kvp.Value.Tick(ctx.ElapsedTimeFromPreviousFrame.TotalMilliseconds);
+            }
+
             // Return true to keep going
             return true;
         }
