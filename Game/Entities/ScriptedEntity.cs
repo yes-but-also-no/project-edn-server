@@ -18,11 +18,7 @@ namespace Game.Entities
         /// <summary>
         /// Lua accessor for id
         /// </summary>
-        public string GetEngineId()
-        {
-            Console.WriteLine("hi");
-            return EngineId.ToString();
-        }
+        public string GetEngineId() => EngineId.ToString();
         
         public ScriptedEntity(GameEngine engine) : base(engine)
         {

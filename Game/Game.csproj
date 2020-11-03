@@ -18,6 +18,12 @@
         <None Update="..\Scripts\Entities\my_lua_entity.lua">
           <Link>Scripts\Entities\my_lua_entity.lua</Link>
         </None>
+        <None Update="..\Scripts\Internal\entity_template.lua">
+          <Link>Scripts\Internal\entity_template.lua</Link>
+        </None>
+        <None Update="..\Scripts\Internal\g_entities.lua">
+          <Link>Scripts\Internal\g_entities.lua</Link>
+        </None>
     </ItemGroup>
 
 </Project>

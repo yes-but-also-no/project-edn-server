@@ -37,9 +37,7 @@ namespace Game
             
             // TEMP: Start the engine
             _engine.Start();
-            
-            LuaEngine.LuaEngine.AddEntityBindings(_lua);
-            
+
             _lua.DoFile(Path.Combine(Directory.GetCurrentDirectory(), "Scripts", "init.lua"));
 
             // TEMP: Create an entity

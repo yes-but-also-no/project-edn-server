@@ -1,5 +1,4 @@
--- Create ENT base class
-local ENT = {}
+-- This template file will have ENT pre-seeded
 ENT.__index = ENT
 
 -- Set meta table for constructor
@@ -12,9 +11,18 @@ setmetatable(ENT, {
                 if cls[k] then
                     return cls[k]
                 end
-                
+
+                local native = t.__native;
+
+                -- If function
+                if type(native[k] == 'function') and getmetatable(native[k]).__call ~= nil then
+                    return function(_, ...)
+                        return native[k](native, ...)
+                    end
+                end
+
                 -- We search the native
-                return t.__native[k]
+                return native[k]
             end
         })
         self:_init(...)
