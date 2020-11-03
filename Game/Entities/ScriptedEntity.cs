@@ -10,17 +10,32 @@ namespace Game.Entities
     /// </summary>
     public class ScriptedEntity : Entity
     {
+        #region DELEGATES
+        
         /// <summary>
         /// Delegate for ticks
         /// </summary>
         public event Action<double> LuaTick;
         
+        /// <summary>
+        /// Delegate for spawn hook
+        /// </summary>
         public event Action LuaOnSpawn;
         
+        /// <summary>
+        /// Delegate for despawn hook
+        /// </summary>
         public event Action LuaOnDeSpawn;
         
+        /// <summary>
+        /// Delegate for removed hook
+        /// </summary>
         public event Action LuaOnRemoved;
+        
+        #endregion
 
+        #region GETTERS AND SETTERS
+        
         /// <summary>
         /// Lua accessor for id
         /// </summary>
@@ -37,6 +52,14 @@ namespace Game.Entities
         /// </summary>
         /// <param name="nextTick"></param>
         public void SetNextTick(int nextTick) => NextTick = nextTick;
+
+        /// <summary>
+        /// Is this entity spawned yet
+        /// </summary>
+        /// <returns></returns>
+        public bool IsSpawned() => State == EntityState.InPlay;
+        
+        #endregion
         
         public ScriptedEntity(GameEngine engine) : base(engine)
         {

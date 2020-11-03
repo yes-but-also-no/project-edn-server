@@ -31,16 +31,23 @@ function ENT:OnInitialize()
     print(self:GetEngineId() .. " was initialized")
     
     -- Configure instance vars
-    self.InstanceVar = 69
+    self.InstanceVar = 0
     
     -- Access C# properties
-    self:SetTickEnabled(false)
+    self:SetTickEnabled(true)
 end
 
 -- Called every tick. Will not be called if self.TickEnabled is not set to true
 -- Set self.NextTick to a value to delay ticks, otherwise tick will run every frame
 function ENT:OnTick(deltaTime)
-    print(self:GetEngineId() .. " was ticked " .. deltaTime)
+    print(self:GetEngineId() .. " was ticked " .. self.InstanceVar)
+    
+    -- You can change instance vars here
+    self.InstanceVar = self.InstanceVar + 1
+    
+    if self.InstanceVar > 5 and not self:IsSpawned() then
+        self:Spawn()
+    end
     
     -- Access globals, which are scoped to this game instance
     self:SetNextTick(engine.EngineTime + 1000)
