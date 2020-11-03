@@ -27,14 +27,14 @@ end
 -----------
 
 -- Called as soon as an entity is initialized
-function ENT:Initialize()
+function ENT:OnInitialize()
     print(self:GetEngineId() .. " was initialized")
     
     -- Configure instance vars
     self.InstanceVar = 69
     
     -- Access C# properties
-    self:SetTickEnabled(true)
+    self:SetTickEnabled(false)
 end
 
 -- Called every tick. Will not be called if self.TickEnabled is not set to true
@@ -44,6 +44,30 @@ function ENT:OnTick(deltaTime)
     
     -- Access globals, which are scoped to this game instance
     self:SetNextTick(engine.EngineTime + 1000)
+end
+
+-- Called when this entity is spawned, through either a c# or lua call to :Spawn()
+function ENT:OnSpawn()
+    print(self:GetEngineId() .. " was spawned")
+
+    -- Access C# properties
+    self:SetTickEnabled(true)
+end
+
+-- Called when this entity is spawned, through either a c# or lua call to :DeSpawn()
+function ENT:OnDeSpawn()
+    print(self:GetEngineId() .. " was de-spawned")
+
+    -- Access C# properties
+    self:SetTickEnabled(false)
+end
+
+-- Called when this entity is destroyed, through either a c# or lua call to :Destroy()
+function ENT:OnRemoved()
+    print(self:GetEngineId() .. " was removed")
+
+    -- Do final cleanup
+    self.InstanceVar = 0
 end
 
 -- END SIMULATED USER FILE

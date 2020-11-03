@@ -14,6 +14,11 @@ setmetatable(ENT, {
 
                 local native = t.__native;
 
+                -- Dump if non existing
+                if native[k] == nil then
+                    return
+                end
+                
                 -- If function
                 if type(native[k] == 'function') and getmetatable(native[k]).__call ~= nil then
                     return function(_, ...)
@@ -39,9 +44,23 @@ function ENT:_init(engineName)
     self.__native.EngineClass = self.ClassName
     
     -- Bind delegates
-    self.__native.LuaTick:Add(function (delta) self:OnTick(delta) end)
+    if self.OnSpawn ~= nil then
+        self.__native.LuaOnSpawn:Add(function(delta) self:OnSpawn() end)
+    end
+
+    if self.OnDeSpawn ~= nil then
+        self.__native.LuaOnDeSpawn:Add(function(delta) self:OnDeSpawn(delta) end)
+    end
+
+    if self.OnTick ~= nil then
+        self.__native.LuaTick:Add(function(delta) self:OnTick(delta) end)
+    end
+
+    if self.OnRemoved ~= nil then
+        self.__native.LuaOnRemoved:Add(function(delta) self:OnRemoved(delta) end)
+    end
 
     -- Call lua initializer
-    self:Initialize()
+    self:OnInitialize()
 end
 
