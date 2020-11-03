@@ -1,8 +1,9 @@
 using System;
+using System.IO;
 using System.Reflection;
 using Engine;
 using Engine.Entities;
-using MoonSharp.Interpreter;
+using NLua;
 
 namespace Game
 {
@@ -20,19 +21,14 @@ namespace Game
         /// <summary>
         /// The main script reference for this game
         /// </summary>
-        private readonly Script _mainScript;
+        private readonly Lua _lua;
 
         public Game()
         {
-            // Setup scripting
-            _mainScript = new Script {Options = {ScriptLoader = new GameScriptLoader()}};
+            // Create state
+            _lua = new Lua();
 
-            // Create entity global
-            _mainScript.Globals["createEntity"] = (Func<string, string, Entity>) _engine.CreateEntity;
-            
-            // Proxy
-            // UserData.RegisterProxyType<EntityProxy, Entity>(e => new EntityProxy(e));
-            UserData.RegisterType<Entity>();
+            _lua["createEntity"] = (Func<string, string, Entity>)_engine.CreateEntity;
 
             // Register our selves with the engine
             _engine.RegisterAssembly(Assembly.GetExecutingAssembly());
@@ -40,11 +36,10 @@ namespace Game
             // TEMP: Start the engine
             _engine.Start();
             
-            // Run init script
-            _mainScript.DoFile("init.lua");
-            
+            _lua.DoFile(Path.Combine(Directory.GetCurrentDirectory(), "Scripts", "init.lua"));
+
             // TEMP: Create an entity
-            _engine.CreateEntity("TestEntity", "my_test_entity");
+            //_engine.CreateEntity("TestEntity", "my_test_entity");
         }
     }
 }

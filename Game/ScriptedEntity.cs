@@ -5,9 +5,14 @@ using Swan.Logging;
 
 namespace Game
 {
-    public class TestEntity : Entity
+    /// <summary>
+    /// This is the base for a generic scripted entity
+    /// </summary>
+    public class ScriptedEntity : Entity
     {
-        public TestEntity(GameEngine engine) : base(engine)
+        public event Action LuaTick;
+        
+        public ScriptedEntity(GameEngine engine) : base(engine)
         {
         }
 
@@ -42,11 +47,11 @@ namespace Game
         {
             // Log
             $"Ticked".Info(ToString());
+            
+            LuaTick?.Invoke();
 
             // Set next tick
             NextTick = Engine.EngineTime + 1000;
         }
-
-        
     }
 }
