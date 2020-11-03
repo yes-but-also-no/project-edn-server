@@ -15,6 +15,9 @@
 
     <ItemGroup>
         <None Include="..\Scripts\**\*" Link="Scripts\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="Always" />
+        <None Update="..\Scripts\Entities\my_lua_entity.lua">
+          <Link>Scripts\Entities\my_lua_entity.lua</Link>
+        </None>
     </ItemGroup>
 
 </Project>

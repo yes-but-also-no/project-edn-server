@@ -1,18 +1,12 @@
-using System;
 using Engine;
 using Engine.Entities;
 using Swan.Logging;
 
-namespace Game
+namespace Game.Entities
 {
-    /// <summary>
-    /// This is the base for a generic scripted entity
-    /// </summary>
-    public class ScriptedEntity : Entity
+    public class TestEntity : Entity
     {
-        public event Action LuaTick;
-        
-        public ScriptedEntity(GameEngine engine) : base(engine)
+        public TestEntity(GameEngine engine) : base(engine)
         {
         }
 
@@ -47,11 +41,11 @@ namespace Game
         {
             // Log
             $"Ticked".Info(ToString());
-            
-            LuaTick?.Invoke();
 
             // Set next tick
             NextTick = Engine.EngineTime + 1000;
         }
+
+        
     }
 }

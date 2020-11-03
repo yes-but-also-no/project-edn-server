@@ -3,11 +3,28 @@ using Engine;
 using Engine.Entities;
 using Swan.Logging;
 
-namespace Game
+namespace Game.Entities
 {
-    public class TestEntity : Entity
+    /// <summary>
+    /// This is the base for a generic scripted entity
+    /// </summary>
+    public class ScriptedEntity : Entity
     {
-        public TestEntity(GameEngine engine) : base(engine)
+        /// <summary>
+        /// Delegate for ticks
+        /// </summary>
+        public event Action<double> LuaTick;
+
+        /// <summary>
+        /// Lua accessor for id
+        /// </summary>
+        public string GetEngineId()
+        {
+            Console.WriteLine("hi");
+            return EngineId.ToString();
+        }
+        
+        public ScriptedEntity(GameEngine engine) : base(engine)
         {
         }
 
@@ -15,9 +32,6 @@ namespace Game
         {
             // Log
             $"Initialized".Info(ToString());
-            
-            // Enable tick
-            TickEnabled = true;
         }
 
         protected override void OnSpawn()
@@ -42,11 +56,9 @@ namespace Game
         {
             // Log
             $"Ticked".Info(ToString());
-
-            // Set next tick
-            NextTick = Engine.EngineTime + 1000;
+            
+            // Call lua hook
+            LuaTick?.Invoke(delta);
         }
-
-        
     }
 }

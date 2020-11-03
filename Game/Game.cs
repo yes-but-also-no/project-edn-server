@@ -27,6 +27,8 @@ namespace Game
         {
             // Create state
             _lua = new Lua();
+            
+            LuaEngine.LuaEngine.LoadAllEntities(_lua);
 
             _lua["createEntity"] = (Func<string, string, Entity>)_engine.CreateEntity;
 
@@ -35,6 +37,8 @@ namespace Game
             
             // TEMP: Start the engine
             _engine.Start();
+            
+            LuaEngine.LuaEngine.AddEntityBindings(_lua);
             
             _lua.DoFile(Path.Combine(Directory.GetCurrentDirectory(), "Scripts", "init.lua"));
 
