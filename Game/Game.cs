@@ -31,6 +31,9 @@ namespace Game
             LuaEngine.LuaEngine.LoadAllEntities(_lua);
 
             _lua["createEntity"] = (Func<string, string, Entity>)_engine.CreateEntity;
+            
+            // TEMP
+            _lua["engine"] = _engine;
 
             // Register our selves with the engine
             _engine.RegisterAssembly(Assembly.GetExecutingAssembly());

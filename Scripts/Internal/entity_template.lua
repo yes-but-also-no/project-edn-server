@@ -37,6 +37,9 @@ function ENT:_init(engineName)
 
     -- Update the engine name
     self.__native.EngineClass = self.ClassName
+    
+    -- Bind delegates
+    self.__native.LuaTick:Add(function (delta) self:OnTick(delta) end)
 
     -- Call lua initializer
     self:Initialize()

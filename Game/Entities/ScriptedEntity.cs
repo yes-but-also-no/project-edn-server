@@ -19,6 +19,18 @@ namespace Game.Entities
         /// Lua accessor for id
         /// </summary>
         public string GetEngineId() => EngineId.ToString();
+
+        /// <summary>
+        /// Lua accessor for tick enable
+        /// </summary>
+        /// <param name="enabled"></param>
+        public void SetTickEnabled(bool enabled) => TickEnabled = enabled;
+
+        /// <summary>
+        /// Lua accessor for next tick
+        /// </summary>
+        /// <param name="nextTick"></param>
+        public void SetNextTick(int nextTick) => NextTick = nextTick;
         
         public ScriptedEntity(GameEngine engine) : base(engine)
         {
