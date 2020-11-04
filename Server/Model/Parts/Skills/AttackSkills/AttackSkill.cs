@@ -1,7 +1,7 @@
 using System.Linq;
+using Data.Configuration;
+using Data.Configuration.Poo;
 using Data.Model.Items;
-using GameServer.Configuration;
-using GameServer.Configuration.Poo;
 using GameServer.Model.Units;
 
 namespace GameServer.Model.Parts.Skills.AttackSkills

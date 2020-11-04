@@ -4,11 +4,11 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using CsvHelper;
+using Data.Configuration.Poo;
 using Data.Model.Items;
-using GameServer.Configuration.Poo;
 using Swan.Logging;
 
-namespace GameServer.Configuration
+namespace Data.Configuration
 {
     /// <summary>
     /// This class reads game data files (.poo) into memory and helps computer unit stats
@@ -167,7 +167,7 @@ namespace GameServer.Configuration
                 csv.Configuration.MissingFieldFound = null;
                 
                 // Read weapons
-                data = csv.GetRecords<T>().ToList();
+                data = Enumerable.ToList<T>(csv.GetRecords<T>());
             }
             
             $"Done! Read {data.Count} {csvName}(s)!".Debug();

@@ -1,4 +1,4 @@
-using GameServer.Configuration;
+using Data.Configuration;
 using Swan.Configuration;
 
 namespace GameServer.ServerPackets

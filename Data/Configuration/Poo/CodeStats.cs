@@ -1,8 +1,7 @@
 using System;
 using CsvHelper.Configuration.Attributes;
-using GameServer.Model.Parts.Weapons;
 
-namespace GameServer.Configuration.Poo
+namespace Data.Configuration.Poo
 {
     /// <summary>
     /// The poo file data for a code item

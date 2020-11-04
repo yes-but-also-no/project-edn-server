@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace GameServer.Configuration.Shop
+namespace Data.Configuration.Shop
 {
     /// <summary>
     /// Represents a single item contract and price
@@ -62,7 +62,7 @@ namespace GameServer.Configuration.Shop
         /// The computed templates in this item
         /// Always one, unless it is a unit set
         /// </summary>
-        public uint[] Templates => TemplateString.Split(":").Select(t => Convert.ToUInt32(t)).ToArray();
+        public uint[] Templates => TemplateString.Split(":").Select(t => Convert.ToUInt32((string?) t)).ToArray();
     }
 
     /// <summary>

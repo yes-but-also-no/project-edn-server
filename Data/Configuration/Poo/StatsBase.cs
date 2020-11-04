@@ -1,6 +1,6 @@
 using CsvHelper.Configuration.Attributes;
 
-namespace GameServer.Configuration.Poo
+namespace Data.Configuration.Poo
 {
     /// <summary>
     /// Base file for all poo files

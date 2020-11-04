@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Sockets;
+using Data.Configuration;
 using Network.Packets.Client;
 using Swan.Logging;
 using Sylver.Network.Data;
@@ -34,8 +35,8 @@ namespace Network
 
                 PacketHandler.Invoke(this, packet, packetType);
 
-                // if (Program.Configuration.Global.LogAllPackets)
-                //     $"[S] 0x{packet.GetId():x2} {packet.GetType()} >>> {GetUserName()}".Info();
+                if (ServerConfig.Configuration.Global.LogAllPackets)
+                    $"[C] 0x{packetId:x2} {Enum.GetName(typeof(ClientPacketType), packetId)}".Info(ToString());
             }
             catch (PacketHandler.HandlerNotFoundException)
             {

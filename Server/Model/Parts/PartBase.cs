@@ -1,7 +1,7 @@
 using System.Drawing;
+using Data.Configuration;
+using Data.Configuration.Poo;
 using Data.Model.Items;
-using GameServer.Configuration;
-using GameServer.Configuration.Poo;
 using GameServer.Game;
 using GameServer.Model.Parts.Body;
 using GameServer.Model.Units;

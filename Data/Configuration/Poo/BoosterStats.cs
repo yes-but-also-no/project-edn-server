@@ -1,4 +1,4 @@
-namespace GameServer.Configuration.Poo
+namespace Data.Configuration.Poo
 {
     /// <summary>
     /// The poo file data for a booster item

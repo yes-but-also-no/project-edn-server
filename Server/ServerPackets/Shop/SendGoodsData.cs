@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using GameServer.Configuration.Shop;
+using Data.Configuration.Shop;
 
 namespace GameServer.ServerPackets.Shop
 {

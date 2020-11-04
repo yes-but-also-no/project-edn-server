@@ -1,7 +1,6 @@
 using CsvHelper.Configuration.Attributes;
-using GameServer.Model.Parts.Weapons;
 
-namespace GameServer.Configuration.Poo
+namespace Data.Configuration.Poo
 {
     /// <summary>
     /// The base class for weapon parts 

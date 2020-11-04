@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Data.Configuration.Poo;
 using Data.Model.Items;
-using GameServer.Configuration.Poo;
 using GameServer.Model.Results;
 using GameServer.Model.Units;
 using GameServer.Util;

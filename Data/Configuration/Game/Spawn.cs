@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Numerics;
 
-namespace GameServer.Configuration.Game
+namespace Data.Configuration.Game
 {
     /// <summary>
     /// Represents a single spawn location

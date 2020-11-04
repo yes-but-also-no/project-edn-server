@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using Data;
+using Data.Configuration;
 using Data.Model;
 using GameServer.ClientPackets;
 using GameServer.Game;
@@ -111,7 +112,7 @@ namespace GameServer
             else
                 SendAsync(data);
             
-            if (Program.Configuration.Global.LogAllPackets)
+            if (ServerConfig.Configuration.Global.LogAllPackets)
                 $"[S] 0x{packet.GetId():x2} {packet.GetType()} >>> {GetUserName()}".Info();
             
             // TODO: Add config here - if debug
@@ -150,7 +151,7 @@ namespace GameServer
                 
                 // TODO: Add config here - if debug
                 // Temp - only unknowns
-                if (Program.Configuration.Global.LogAllPackets && !(packet is UnknownPacket))
+                if (ServerConfig.Configuration.Global.LogAllPackets && !(packet is UnknownPacket))
                     $"[C] 0x{packet.Id:x2} {packet.GetType()} <<< {GetUserName()}".Info();
                 
                 if (packet is UnknownPacket)

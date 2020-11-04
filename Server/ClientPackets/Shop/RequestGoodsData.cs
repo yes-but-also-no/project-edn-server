@@ -1,4 +1,4 @@
-using GameServer.Configuration;
+using Data.Configuration;
 using GameServer.ServerPackets.Shop;
 
 namespace GameServer.ClientPackets.Shop

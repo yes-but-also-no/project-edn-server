@@ -8,9 +8,9 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Data.Configuration;
 using Engine;
 using Game;
-using GameServer.Configuration;
 using Console = Colorful.Console;
 using GameServer.Game;
 using GameServer.Managers;
@@ -28,12 +28,10 @@ namespace GameServer
     {
         private static readonly AutoResetEvent WaitHandle = new AutoResetEvent(false);
 
-        public static readonly SettingsProvider<ServerConfig> Configuration = SettingsProvider<ServerConfig>.Instance;
-      
         static void Main(string[] args)
         {
             // Load config
-            Configuration.ConfigurationFilePath =
+            ServerConfig.Configuration.ConfigurationFilePath =
                 Path.Combine(Directory.GetCurrentDirectory(), "Config/server.json");
 
             // Write welcome banner
@@ -49,7 +47,7 @@ namespace GameServer
             });
             
             // Console
-            ConsoleLogger.Instance.LogLevel = Configuration.Global.ConsoleLogLevel;
+            ConsoleLogger.Instance.LogLevel = ServerConfig.Configuration.Global.ConsoleLogLevel;
             
             // Startup
             "Logging started!".Info();
@@ -78,7 +76,7 @@ namespace GameServer
             
             "Done!".Info();
             
-            $"Server Port is {Configuration.Global.GamePort}".Info();
+            $"Server Port is {ServerConfig.Configuration.Global.GamePort}".Info();
             
             "Server starting...".Info();
             
@@ -276,7 +274,7 @@ namespace GameServer
         
         private static Task RunServers(CancellationToken token)
         {
-            var gameServer =  new NewServer(Configuration.Global.GameHost, Convert.ToInt32(Configuration.Global.GamePort));
+            var gameServer =  new NewServer(ServerConfig.Configuration.Global.GameHost, Convert.ToInt32(ServerConfig.Configuration.Global.GamePort));
 
             var gameTask = Task.Run(async () =>
             {
@@ -313,7 +311,7 @@ namespace GameServer
             
             Console.WriteLine($"Version [{GetAssemblyVersion()}]", Color.DarkBlue);
             
-            Console.WriteLine($"Preparing server [{Configuration.Global.ServerName}]", Color.DarkBlue);
+            Console.WriteLine($"Preparing server [{ServerConfig.Configuration.Global.ServerName}]", Color.DarkBlue);
         }
         
         #endregion

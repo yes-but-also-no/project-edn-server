@@ -1,12 +1,15 @@
+using Swan.Configuration;
 using Swan.Logging;
 
-namespace GameServer.Configuration
+namespace Data.Configuration
 {
     /// <summary>
     /// Strong typings for all server config settings
     /// </summary>
     public class ServerConfig
     {
+        public static readonly SettingsProvider<ServerConfig> Configuration = SettingsProvider<ServerConfig>.Instance;
+        
         public string GameHost { get; set; }
         
         public int GamePort { get; set; }

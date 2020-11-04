@@ -1,4 +1,4 @@
-namespace GameServer.Configuration.Poo
+namespace Data.Configuration.Poo
 {
     public class ShieldStats : WeaponStatsBase
     {

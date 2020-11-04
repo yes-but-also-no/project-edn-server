@@ -78,7 +78,6 @@
 
     <ItemGroup>
       <PackageReference Include="Colorful.Console" Version="1.2.10" />
-      <PackageReference Include="CsvHelper" Version="15.0.5" />
       <PackageReference Include="EmbedIO" Version="3.4.3" />
       <PackageReference Include="HttpMultipartParser" Version="4.3.1" />
       <PackageReference Include="LogicLooper" Version="1.0.2" />
@@ -88,6 +87,12 @@
       </PackageReference>
       <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.4" />
       <PackageReference Include="Sylver.Network" Version="1.2.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Configuration\Game" />
+      <Folder Include="Configuration\Poo" />
+      <Folder Include="Configuration\Shop" />
     </ItemGroup>
 
 </Project>

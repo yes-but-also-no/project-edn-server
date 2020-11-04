@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using GameServer.Configuration.Poo;
+using Data.Configuration.Poo;
 using GameServer.Game;
 using GameServer.Model.Parts.Weapons;
 using GameServer.Model.Results;

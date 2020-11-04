@@ -1,6 +1,6 @@
 using System;
 using System.Drawing;
-using GameServer.Configuration;
+using Data.Configuration;
 using GameServer.ServerPackets;
 using Swan.Configuration;
 using Console = Colorful.Console;

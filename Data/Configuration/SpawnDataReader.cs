@@ -3,11 +3,10 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using CsvHelper;
-using GameServer.Configuration.Game;
-using GameServer.Configuration.Shop;
+using Data.Configuration.Game;
 using Swan.Logging;
 
-namespace GameServer.Configuration
+namespace Data.Configuration
 {
     /// <summary>
     /// The helper class to read config files for item pricing
@@ -71,7 +70,7 @@ namespace GameServer.Configuration
                 csv.Configuration.AllowComments = true;
                 
                 // Read weapons
-                var data = csv.GetRecords<Spawn>().ToList();
+                var data = Enumerable.ToList<Spawn>(csv.GetRecords<Spawn>());
                 
                 // Add to all list
                 data.ForEach(g => spawnInfo.PlayerSpawns.Add(g.Id, g));

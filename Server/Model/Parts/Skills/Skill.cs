@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Data.Configuration.Poo;
 using Data.Model.Items;
-using GameServer.Configuration.Poo;
 using GameServer.Model.Units;
 
 namespace GameServer.Model.Parts.Skills

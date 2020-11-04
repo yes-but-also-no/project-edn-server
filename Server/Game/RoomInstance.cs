@@ -3,9 +3,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using Data.Configuration;
+using Data.Configuration.Poo;
 using Data.Model;
-using GameServer.Configuration;
-using GameServer.Configuration.Poo;
 using GameServer.Game.GameModes;
 using GameServer.Managers;
 using GameServer.ServerPackets;
@@ -149,7 +149,7 @@ namespace GameServer.Game
                     session.SendAsync(data);
             }
             
-            if (Program.Configuration.Global.LogAllPackets)
+            if (ServerConfig.Configuration.Global.LogAllPackets)
                 $"[S] 0x{packet.GetId():x2} {packet.GetType()} >>> ALL".Info();
 
             // TODO: Add config here - if debug
@@ -174,7 +174,7 @@ namespace GameServer.Game
                 else
                     session.SendAsync(data);
                 
-                if (Program.Configuration.Global.LogAllPackets)
+                if (ServerConfig.Configuration.Global.LogAllPackets)
                     $"[S] 0x{packet.GetId():x2} {packet.GetType()} >>> {session}".Info();
             }
 
