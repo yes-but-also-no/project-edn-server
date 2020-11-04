@@ -1,5 +1,6 @@
 using Network;
-using Network.Packets;
+using Network.Packets.Client;
+using Network.Packets.Client.Core;
 using Swan.Logging;
 
 namespace GameServer.New
@@ -9,7 +10,7 @@ namespace GameServer.New
     /// </summary>
     public static class TestManager
     {
-        [PacketHandler(0x0d)]
+        [PacketHandler(ClientPacketType.Log)]
         public static void OnLog(GameClient client, LogPacket packet)
         {
             packet.LogMessage.Info();

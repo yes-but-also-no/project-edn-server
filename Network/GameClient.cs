@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Net.Sockets;
+using Network.Packets.Client;
+using Swan.Logging;
 using Sylver.Network.Data;
 using Sylver.Network.Server;
 
@@ -14,13 +16,49 @@ namespace Network
         {
         }
 
+        /// <summary>
+        /// Called when a packet is recieved from the client
+        /// </summary>
+        /// <param name="packet"></param>
         public override void HandleMessage(INetPacketStream packet)
         {
-            var packetId = packet.Read<byte>();
 
-            PacketHandler.Invoke(this, packet, packetId);
+            byte packetId = 0;
+            ClientPacketType packetType;
 
-            //throw new NotImplementedException();
+            try
+            {
+                packetId = packet.Read<byte>();
+
+                packetType = (ClientPacketType) packetId;
+
+                PacketHandler.Invoke(this, packet, packetType);
+
+                // if (Program.Configuration.Global.LogAllPackets)
+                //     $"[S] 0x{packet.GetId():x2} {packet.GetType()} >>> {GetUserName()}".Info();
+            }
+            catch (PacketHandler.HandlerNotFoundException)
+            {
+                if (Enum.IsDefined(typeof(ClientPacketType), packetId))
+                {
+                    $"Received an unimplemented packet {Enum.GetName(typeof(ClientPacketType), packetId)} ({packetId:x2}) from {Socket.RemoteEndPoint}."
+                        .Warn();
+                }
+                else
+                {
+                    $"Received an unknown packet {packetId:x2} from {Socket.RemoteEndPoint}.".Warn();
+                }
+            }
+            catch (Exception exception)
+            {
+                $"Error occured in handle message from {Socket.RemoteEndPoint}".Error();
+            }
+        }
+
+        // TODO: Username
+        public override string ToString()
+        {
+            return $"[GameClient]<{Id}><USERNAME_TODO>";
         }
     }
 }

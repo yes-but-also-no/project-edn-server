@@ -1,4 +1,5 @@
 using System;
+using Network.Packets.Client;
 
 namespace Network
 {
@@ -12,13 +13,13 @@ namespace Network
         /// <summary>
         /// Gets the packet attribute header.
         /// </summary>
-        public byte Header { get; private set; }
+        public ClientPacketType Header { get; private set; }
 
         /// <summary>
         /// Creates a new <see cref="PacketHandlerAttribute"/> instance.
         /// </summary>
         /// <param name="header"></param>
-        public PacketHandlerAttribute(byte header)
+        public PacketHandlerAttribute(ClientPacketType header)
         {
             Header = header;
         }

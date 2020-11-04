@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Network.Packets;
+using Network.Packets.Client;
 using Sylver.Network.Data;
 
 namespace Network
@@ -15,8 +16,8 @@ namespace Network
         /// <summary>
         /// Dictionary of all handlers
         /// </summary>
-        private static readonly Dictionary<byte, PacketMethodHandler> Handlers 
-            = new Dictionary<byte, PacketMethodHandler>();
+        private static readonly Dictionary<ClientPacketType, PacketMethodHandler> Handlers 
+            = new Dictionary<ClientPacketType, PacketMethodHandler>();
         
         /// <summary>
         /// Packet handler method struct
@@ -61,9 +62,7 @@ namespace Network
 
                     if (parameters.Count() < 2 || parameters.First().ParameterType != typeof(GameClient))
                         continue;
-
-                    // var action = methodHandler.Method.CreateDelegate(typeof(Action<GameClient, IPacketDeserializer>)) as Action<GameClient, IPacketDeserializer>;
-
+                    
                     Handlers.Add(methodHandler.Attribute.Header, methodHandler);
                 }
             }
@@ -77,10 +76,10 @@ namespace Network
         /// <param name="packetHeader"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public static bool Invoke(GameClient invoker, INetPacketStream packet, byte packetHeader)
+        public static bool Invoke(GameClient invoker, INetPacketStream packet, ClientPacketType packetHeader)
         {
             if (!Handlers.TryGetValue(packetHeader, out PacketMethodHandler packetHandler))
-                return false;
+                throw new HandlerNotFoundException();
 
             try
             {
@@ -96,6 +95,13 @@ namespace Network
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Thrown if there is no registered handler for a packet type
+        /// </summary>
+        public class HandlerNotFoundException : Exception
+        {
         }
     }
 }

@@ -1,6 +1,6 @@
 using Sylver.Network.Data;
 
-namespace Network.Packets
+namespace Network.Packets.Client.Core
 {
     public class LogPacket  : IPacketDeserializer
     {
