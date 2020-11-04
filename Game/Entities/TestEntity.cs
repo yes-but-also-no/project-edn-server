@@ -13,7 +13,7 @@ namespace Game.Entities
         protected override void OnInitialize()
         {
             // Log
-            $"Initialized".Info(ToString());
+            $"Initialized".Debug(ToString());
             
             // Enable tick
             TickEnabled = true;
@@ -22,25 +22,25 @@ namespace Game.Entities
         protected override void OnSpawn()
         {
             // Log
-            $"Spawned".Info(ToString());
+            $"Spawned".Debug(ToString());
         }
 
         protected override void OnDeSpawn()
         {
             // Log
-            $"DeSpawned".Info(ToString());
+            $"DeSpawned".Debug(ToString());
         }
 
         protected override void OnRemoved()
         {
             // Log
-            $"Removed".Info(ToString());
+            $"Removed".Debug(ToString());
         }
 
         protected override void OnTick(double delta)
         {
             // Log
-            $"Ticked".Info(ToString());
+            //$"Ticked".Debug(ToString());
 
             // Set next tick
             NextTick = Engine.EngineTime + 1000;

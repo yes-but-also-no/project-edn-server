@@ -103,7 +103,7 @@ namespace Game.Entities
         protected override void OnTick(double delta)
         {
             // Log
-            //$"Ticked".Info(ToString());
+            //$"Ticked".Debug(ToString());
             
             // Call lua hook
             LuaTick?.Invoke(delta);
