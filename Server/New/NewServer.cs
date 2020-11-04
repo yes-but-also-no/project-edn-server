@@ -1,8 +1,9 @@
+using System.Reflection;
 using Network;
 using Swan.Logging;
 using Sylver.Network.Server;
 
-namespace GameServer
+namespace GameServer.New
 {
     /// <summary>
     /// Testing for new server
@@ -14,6 +15,7 @@ namespace GameServer
 
         public NewServer(string host, int port)
         {
+            Network.PacketHandler.RegisterAssembly(Assembly.GetCallingAssembly());
             PacketProcessor = new GamePacketProcessor();
             ServerConfiguration = new NetServerConfiguration(host, port, ClientBacklog, ClientBufferSize);
         }

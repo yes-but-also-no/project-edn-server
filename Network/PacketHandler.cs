@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Network.Packets;
 using Sylver.Network.Data;
 
 namespace Network
@@ -14,8 +15,8 @@ namespace Network
         /// <summary>
         /// Dictionary of all handlers
         /// </summary>
-        private static readonly Dictionary<object, Action<GameClient, INetPacketStream>> Handlers 
-            = new Dictionary<object, Action<GameClient, INetPacketStream>>();
+        private static readonly Dictionary<byte, PacketMethodHandler> Handlers 
+            = new Dictionary<byte, PacketMethodHandler>();
         
         /// <summary>
         /// Packet handler method struct
@@ -24,11 +25,13 @@ namespace Network
         {
             public readonly PacketHandlerAttribute Attribute;
             public readonly MethodInfo Method;
+            public readonly Type PacketType;
 
             public PacketMethodHandler(MethodInfo method, PacketHandlerAttribute attribute)
             {
                 Method = method;
                 Attribute = attribute;
+                PacketType = Method.GetParameters()[1].ParameterType;
             }
 
             public bool Equals(PacketMethodHandler other)
@@ -59,21 +62,33 @@ namespace Network
                     if (parameters.Count() < 2 || parameters.First().ParameterType != typeof(GameClient))
                         continue;
 
-                    var action = methodHandler.Method.CreateDelegate(typeof(Action<GameClient, INetPacketStream>)) as Action<GameClient, INetPacketStream>;
+                    // var action = methodHandler.Method.CreateDelegate(typeof(Action<GameClient, IPacketDeserializer>)) as Action<GameClient, IPacketDeserializer>;
 
-                    Handlers.Add(methodHandler.Attribute.Header, action);
+                    Handlers.Add(methodHandler.Attribute.Header, methodHandler);
                 }
             }
         }
 
-        public static bool Invoke(GameClient invoker, INetPacketStream packet, object packetHeader)
+        /// <summary>
+        /// This will match the packet id against a packet deserializer, deserialize it, and call the appropriate handler
+        /// </summary>
+        /// <param name="invoker"></param>
+        /// <param name="packet"></param>
+        /// <param name="packetHeader"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public static bool Invoke(GameClient invoker, INetPacketStream packet, byte packetHeader)
         {
-            if (!Handlers.TryGetValue(packetHeader, out Action<GameClient, INetPacketStream> packetHandler))
+            if (!Handlers.TryGetValue(packetHeader, out PacketMethodHandler packetHandler))
                 return false;
 
             try
             {
-                packetHandler.Invoke(invoker, packet);
+                var deserializer = (IPacketDeserializer)Activator.CreateInstance(packetHandler.PacketType);
+                
+                deserializer?.Deserialize(packet);
+                
+                packetHandler.Method.Invoke(null, new object[]{invoker, deserializer});
             }
             catch (Exception e)
             {

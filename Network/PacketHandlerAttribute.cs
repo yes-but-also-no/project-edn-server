@@ -12,13 +12,13 @@ namespace Network
         /// <summary>
         /// Gets the packet attribute header.
         /// </summary>
-        public object Header { get; private set; }
+        public byte Header { get; private set; }
 
         /// <summary>
         /// Creates a new <see cref="PacketHandlerAttribute"/> instance.
         /// </summary>
         /// <param name="header"></param>
-        public PacketHandlerAttribute(object header)
+        public PacketHandlerAttribute(byte header)
         {
             Header = header;
         }

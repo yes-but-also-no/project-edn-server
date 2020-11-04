@@ -18,10 +18,7 @@ namespace Network
         {
             var packetId = packet.Read<byte>();
 
-            if (packetId == 0x0d)
-            {
-                var str = packet.Read<string>();
-            }
+            PacketHandler.Invoke(this, packet, packetId);
 
             //throw new NotImplementedException();
         }

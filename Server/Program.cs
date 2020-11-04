@@ -14,6 +14,7 @@ using GameServer.Configuration;
 using Console = Colorful.Console;
 using GameServer.Game;
 using GameServer.Managers;
+using GameServer.New;
 using GameServer.ServerPackets.Chat;
 using GameServer.Web;
 using Microsoft.Extensions.Configuration;

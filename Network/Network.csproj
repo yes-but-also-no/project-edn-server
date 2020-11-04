@@ -8,8 +8,4 @@
       <PackageReference Include="Sylver.Network" Version="1.2.1" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Packets" />
-    </ItemGroup>
-
 </Project>

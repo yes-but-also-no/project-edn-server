@@ -1,4 +1,5 @@
 using System.IO;
+using System.Numerics;
 using System.Text;
 using Sylver.Network.Data;
 
@@ -68,6 +69,30 @@ namespace Network
             Seek(oldPointer, SeekOrigin.Begin);
 
             return base.Buffer;
+        }
+        
+        /// <summary>
+        /// Reads a vector
+        /// </summary>
+        /// <returns></returns>
+        public Vector3 ReadVector()
+        {
+            return new Vector3(
+                    Read<float>(),
+                    Read<float>(),
+                    Read<float>()
+                );
+        }
+        
+        /// <summary>
+        /// Writes a vector
+        /// </summary>
+        /// <returns></returns>
+        public void ReadVector(Vector3 value)
+        {
+            Write(value.X);
+            Write(value.Y);
+            Write(value.Z);
         }
     }
 }
