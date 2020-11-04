@@ -20,6 +20,7 @@
       <ProjectReference Include="..\Data\Data.csproj" />
       <ProjectReference Include="..\Engine\Engine.csproj" />
       <ProjectReference Include="..\Game\Game.csproj" />
+      <ProjectReference Include="..\Network\Network.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -86,6 +87,7 @@
         <PrivateAssets>all</PrivateAssets>
       </PackageReference>
       <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.4" />
+      <PackageReference Include="Sylver.Network" Version="1.2.1" />
     </ItemGroup>
 
 </Project>

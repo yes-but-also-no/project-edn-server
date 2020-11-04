@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Engine;
+using Game;
 using GameServer.Configuration;
 using Console = Colorful.Console;
 using GameServer.Game;
@@ -183,16 +184,13 @@ namespace GameServer
             };
             
             // TESTING
-            var engine = new GameEngine { TickRate = 30 };
-
-
-            engine.Start();
+            
+            //var instance = new global::Game.Game();
+            
 
             // Wait
             WaitHandle.WaitOne();
-            
-            engine.Stop();
-            
+
             /*
             // Perform text input
             for (;;)
@@ -250,15 +248,34 @@ namespace GameServer
             Terminal.Flush();
         }
 
+        // private static Task RunServers(CancellationToken token)
+        // {
+        //     var webServer = AccountServer.CreateWebServer($"http://*:{Configuration.Global.WebPort}/");
+        //     
+        //     var webTask = webServer.RunAsync(token);
+        //     
+        //     var gameServer =  new GameServer(IPAddress.Any, Convert.ToInt32(Configuration.Global.GamePort));
+        //
+        //     gameServer.OptionNoDelay = true;
+        //
+        //     var gameTask = Task.Run(async () =>
+        //     {
+        //         gameServer.Start();
+        //         while (!token.IsCancellationRequested)
+        //         {
+        //             // Wait
+        //             await Task.Delay(10, token);
+        //         }
+        //         // Calling stop
+        //         gameServer.Stop();
+        //     }, token);
+        //
+        //     return Task.WhenAll(webTask, gameTask);
+        // }
+        
         private static Task RunServers(CancellationToken token)
         {
-            var webServer = AccountServer.CreateWebServer($"http://*:{Configuration.Global.WebPort}/");
-            
-            var webTask = webServer.RunAsync(token);
-            
-            var gameServer =  new GameServer(IPAddress.Any, Convert.ToInt32(Configuration.Global.GamePort));
-
-            gameServer.OptionNoDelay = true;
+            var gameServer =  new NewServer(Configuration.Global.GameHost, Convert.ToInt32(Configuration.Global.GamePort));
 
             var gameTask = Task.Run(async () =>
             {
@@ -272,7 +289,7 @@ namespace GameServer
                 gameServer.Stop();
             }, token);
 
-            return Task.WhenAll(webTask, gameTask);
+            return Task.WhenAll(gameTask);
         }
         
         #region UTIL
