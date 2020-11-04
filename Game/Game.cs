@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using Core;
 using Engine;
 using Engine.Entities;
 using NLua;
@@ -22,6 +23,11 @@ namespace Game
         /// The main script reference for this game
         /// </summary>
         private readonly Lua _lua;
+        
+        /// <summary>
+        /// Game specific signal hub
+        /// </summary>
+        internal SignalHub SignalHub = new SignalHub();
 
         public Game()
         {
@@ -37,6 +43,9 @@ namespace Game
 
             // Register our selves with the engine
             _engine.RegisterAssembly(Assembly.GetExecutingAssembly());
+            
+            // Register our signal hub with the engine
+            _engine.RegisterSignalHub(SignalHub);
             
             // TEMP: Start the engine
             _engine.Start();

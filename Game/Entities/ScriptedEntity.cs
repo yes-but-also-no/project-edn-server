@@ -68,7 +68,7 @@ namespace Game.Entities
         protected override void OnInitialize()
         {
             // Log
-            $"Initialized".Info(ToString());
+            $"Initialized".Debug(ToString());
             
             // Hook is called in lua, since this function is called directly by the C# engine
         }
@@ -76,7 +76,7 @@ namespace Game.Entities
         protected override void OnSpawn()
         {
             // Log
-            $"Spawned".Info(ToString());
+            $"Spawned".Debug(ToString());
             
             // Call lua hook
             LuaOnSpawn?.Invoke();
@@ -85,7 +85,7 @@ namespace Game.Entities
         protected override void OnDeSpawn()
         {
             // Log
-            $"DeSpawned".Info(ToString());
+            $"DeSpawned".Debug(ToString());
             
             // Call lua hook
             LuaOnDeSpawn?.Invoke();
@@ -94,7 +94,7 @@ namespace Game.Entities
         protected override void OnRemoved()
         {
             // Log
-            $"Removed".Info(ToString());
+            $"Removed".Debug(ToString());
             
             // Call lua hook
             LuaOnRemoved?.Invoke();
@@ -103,7 +103,7 @@ namespace Game.Entities
         protected override void OnTick(double delta)
         {
             // Log
-            $"Ticked".Info(ToString());
+            //$"Ticked".Info(ToString());
             
             // Call lua hook
             LuaTick?.Invoke(delta);

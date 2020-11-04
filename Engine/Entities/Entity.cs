@@ -1,5 +1,6 @@
 using System;
 using System.Numerics;
+using Engine.Signals;
 
 namespace Engine.Entities
 {
@@ -81,12 +82,28 @@ namespace Engine.Entities
         /// Controls when this entity should run its tick next
         /// </summary>
         public int NextTick { get; protected set; }
+
+        /// <summary>
+        /// Backing field
+        /// </summary>
+        private bool _tickEnabled;
         
         /// <summary>
         /// Controls if this entity should tick at all
-        /// TODO: Should these change a subscription / hook against the game server?
         /// </summary>
-        public bool TickEnabled { get; protected set; }
+        public bool TickEnabled {
+            get => _tickEnabled;
+            set
+            {
+                _tickEnabled = value;
+                
+                // Register / deregister if needed
+                if (_tickEnabled)
+                    Engine.SignalHub.Get<EngineSignals.Tick>().AddListener(Tick);
+                else
+                    Engine.SignalHub.Get<EngineSignals.Tick>().RemoveListener(Tick);
+            }
+        }
 
         #endregion
         
@@ -115,6 +132,9 @@ namespace Engine.Entities
             // Call hook
             OnInitialize();
             
+            // Dispatch event
+            Engine.SignalHub.Get<EntitySignals.Initialize>().Dispatch(EngineId);
+            
             // Set state
             State = EntityState.OutOfPlay;
         }
@@ -127,16 +147,20 @@ namespace Engine.Entities
             // Set state
             State = EntityState.Removed;
             
+            // Disable tick
+            TickEnabled = false;
+            
             // Call hook
             OnRemoved();
             
-            // TODO: Deregister with engine?
+            // Dispatch event
+            Engine.SignalHub.Get<EntitySignals.Remove>().Dispatch(EngineId);
         }
 
         /// <summary>
         /// Ticks this entity
         /// </summary>
-        internal void Tick(double delta)
+        private void Tick(double delta)
         {
             // Check if we want to tick
             if (NextTick > 0 && Engine.EngineTime < NextTick)
@@ -144,6 +168,9 @@ namespace Engine.Entities
 
             // Call hook
             OnTick(delta);
+            
+            // Dispatch event
+            Engine.SignalHub.Get<EntitySignals.Tick>().Dispatch(EngineId, delta);
         }
         
         #endregion
@@ -161,7 +188,8 @@ namespace Engine.Entities
             // Call hook
             OnSpawn();
             
-            // TODO: Register tick / events?
+            // Dispatch event
+            Engine.SignalHub.Get<EntitySignals.Spawn>().Dispatch(EngineId);
         }
 
         /// <summary>
@@ -175,7 +203,8 @@ namespace Engine.Entities
             // Call hook
             OnDeSpawn();
             
-            // TODO: DeRegister tick / events?
+            // Dispatch event
+            Engine.SignalHub.Get<EntitySignals.DeSpawn>().Dispatch(EngineId);
         }
         
         #endregion

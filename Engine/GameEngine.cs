@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Core;
 using Cysharp.Threading;
 using Engine.Entities;
+using Engine.Signals;
 using Swan.Logging;
 
 namespace Engine
@@ -60,6 +62,11 @@ namespace Engine
         /// </summary>
         private readonly HashSet<Assembly> _assemblies = new HashSet<Assembly>{Assembly.GetExecutingAssembly()};
 
+        /// <summary>
+        /// Signal hub for engine events
+        /// </summary>
+        internal SignalHub SignalHub { get; private set; }
+
         #endregion
 
         #region PUBLIC METHODS
@@ -79,7 +86,7 @@ namespace Engine
             _engineStartTime = engineStartTime;
 
             // Log
-            $"Engine instance <{Id}> Created!".Info("[GameEngine]");
+            $"Engine instance <{Id}> Created!".Debug("[GameEngine]");
         }
 
         /// <summary>
@@ -87,6 +94,10 @@ namespace Engine
         /// </summary>
         public async void Start()
         {
+            // Make sure signalhub is registered
+            if (SignalHub == null)
+                throw new Exception("SignalHub must be registered before starting game engine!");
+            
             // Create looper
             _looper = new LogicLooperPool(
                 TickRate,
@@ -94,11 +105,14 @@ namespace Engine
                 RoundRobinLogicLooperPoolBalancer.Instance
             );
             
+            // Dispatch
+            SignalHub.Get<EngineSignals.Start>().Dispatch();
+            
             // Start game loop
             await _looper.RegisterActionAsync(Tick);
             
             // Log
-            $"Started".Info(ToString());
+            $"Started".Debug(ToString());
         }
 
         /// <summary>
@@ -112,8 +126,11 @@ namespace Engine
             // TODO: Do we need to call this?
             _looper.Dispose();
             
+            // Dispatch
+            SignalHub.Get<EngineSignals.Stop>().Dispatch();
+            
             // Log
-            $"Stopped".Info(ToString());
+            $"Stopped".Debug(ToString());
         }
         
         #region ENTITIES
@@ -126,6 +143,9 @@ namespace Engine
         {
             // Add to hash set
             _assemblies.Add(assembly);
+            
+            // Log
+            $"Registered assembly {assembly.FullName}".Debug(ToString());
         }
         
         /// <summary>
@@ -190,6 +210,19 @@ namespace Engine
         
         #endregion
         
+        #region SIGNALS
+
+        public void RegisterSignalHub(SignalHub hub)
+        {
+            // Store ref
+            SignalHub = hub;
+            
+            // Log
+            $"Registered signal hub".Debug(ToString());
+        }
+        
+        #endregion
+        
         #endregion
         
         #region PRIVATE METHODS
@@ -204,17 +237,18 @@ namespace Engine
             // DO TICK
             
             // Log
-            //$"Ticked".Info(ToString());
+            //$"Ticked".Debug(ToString());
 
-            // Tick Hooks?
+            // Dispatch
+            SignalHub.Get<EngineSignals.Tick>().Dispatch(ctx.ElapsedTimeFromPreviousFrame.TotalMilliseconds);
             
             // Tick entities
             // TODO: Do this as an event?
-            foreach (var kvp in _entities)
-            {
-                if (kvp.Value.TickEnabled && kvp.Value.State != EntityState.Unknown)
-                    kvp.Value.Tick(ctx.ElapsedTimeFromPreviousFrame.TotalMilliseconds);
-            }
+            // foreach (var kvp in _entities)
+            // {
+            //     if (kvp.Value.TickEnabled && kvp.Value.State != EntityState.Unknown)
+            //         kvp.Value.Tick(ctx.ElapsedTimeFromPreviousFrame.TotalMilliseconds);
+            // }
 
             // Return true to keep going
             return true;
