@@ -17,7 +17,7 @@ namespace Game
         /// <summary>
         /// The game engine reference
         /// </summary>
-        private readonly GameEngine _engine = new GameEngine {TickRate = 30};
+        internal readonly GameEngine Engine = new GameEngine {TickRate = 30};
         
         /// <summary>
         /// The main script reference for this game
@@ -36,19 +36,19 @@ namespace Game
             
             LuaEngine.LuaEngine.LoadAllEntities(_lua);
 
-            _lua["createEntity"] = (Func<string, string, Entity>)_engine.CreateEntity;
+            _lua["createEntity"] = (Func<string, string, Entity>)Engine.CreateEntity;
             
             // TEMP
-            _lua["engine"] = _engine;
+            _lua["engine"] = Engine;
 
             // Register our selves with the engine
-            _engine.RegisterAssembly(Assembly.GetExecutingAssembly());
+            Engine.RegisterAssembly(Assembly.GetExecutingAssembly());
             
             // Register our signal hub with the engine
-            _engine.RegisterSignalHub(SignalHub);
+            Engine.RegisterSignalHub(SignalHub);
             
             // TEMP: Start the engine
-            _engine.Start();
+            Engine.Start();
 
             _lua.DoFile(Path.Combine(Directory.GetCurrentDirectory(), "Scripts", "init.lua"));
 

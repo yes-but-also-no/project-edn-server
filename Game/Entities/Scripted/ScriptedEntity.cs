@@ -3,7 +3,7 @@ using Engine;
 using Engine.Entities;
 using Swan.Logging;
 
-namespace Game.Entities
+namespace Game.Entities.Scripted
 {
     /// <summary>
     /// This is the base for a generic scripted entity
