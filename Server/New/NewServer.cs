@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 using Network;
 using Swan.Logging;
@@ -11,10 +12,27 @@ namespace GameServer.New
     /// </summary>
     public class NewServer : NetServer<GameClient>
     {
+        #region PRIVATE
+        
         private const int ClientBufferSize = 128;
         private const int ClientBacklog = 50;
+        
+        #endregion
 
+        /// <summary>
+        /// Static instance ref
+        /// </summary>
         public static NewServer Instance;
+        
+        /// <summary>
+        /// The time stamp of when the server started
+        /// </summary>
+        public static DateTime StartedStamp { get; private set; }
+
+        /// <summary>
+        /// Server Time
+        /// </summary>
+        public static int RunningMs => (int)(DateTime.UtcNow - StartedStamp).TotalMilliseconds;
 
         public NewServer(string host, int port)
         {
@@ -24,6 +42,9 @@ namespace GameServer.New
             
             // Assign to static instance
             Instance ??= this;
+            
+            // Mark start time
+            StartedStamp = DateTime.UtcNow;
         }
         
         /// <inheritdoc />

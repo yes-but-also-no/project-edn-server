@@ -1,8 +1,11 @@
+using GameServer.New;
 using Network;
 using Network.Packets.Client;
 using Network.Packets.Client.Core;
 using Network.Packets.Server.Core;
 using Swan.Logging;
+using ClientTimePacket = Network.Packets.Client.Core.ServerTimePacket;
+using ServerTimePacket = Network.Packets.Server.Core.ServerTimePacket;
 
 namespace GameServer.Handlers
 {
@@ -43,6 +46,22 @@ namespace GameServer.Handlers
             
             // Return success
             client.Send(PacketFactory.CreatePacket(new ClientValidatedPacket()));
+        }
+        
+        /// <summary>
+        /// Called when the client wishes verify the server time
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="packet"></param>
+        [PacketHandler(ClientPacketType.ServerTime)]
+        public static void OnServerTime(GameClient client, ClientTimePacket packet)
+        {
+            // Return server time
+            client.Send(PacketFactory.CreatePacket(new ServerTimePacket
+            {
+                ClientTime = packet.ClientTime,
+                ServerTime = NewServer.RunningMs
+            }));
         }
         
         /// <summary>

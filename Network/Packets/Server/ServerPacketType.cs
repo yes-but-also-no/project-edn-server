@@ -7,6 +7,7 @@ namespace Network.Packets.Server
     {
         ServerVersion = 0x00,
         ClientValidated = 0x01,
-        ConnectResult = 0x02
+        ConnectResult = 0x02,
+        ServerTime = 0x04
     }
 }
