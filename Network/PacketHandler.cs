@@ -11,7 +11,7 @@ namespace Network
     /// <summary>
     /// This class manages all packet handlers
     /// </summary>
-    public static class PacketHandler
+    public static class PacketHandler<T>
     {
         /// <summary>
         /// Dictionary of all handlers
@@ -60,7 +60,7 @@ namespace Network
                 {
                     ParameterInfo[] parameters = methodHandler.Method.GetParameters();
 
-                    if (parameters.Count() < 2 || parameters.First().ParameterType != typeof(GameClient))
+                    if (parameters.Count() < 2 || parameters.First().ParameterType != typeof(T))
                         continue;
                     
                     Handlers.Add(methodHandler.Attribute.Header, methodHandler);
@@ -76,7 +76,7 @@ namespace Network
         /// <param name="packetHeader"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public static bool Invoke(GameClient invoker, INetPacketStream packet, ClientPacketType packetHeader)
+        public static bool Invoke(T invoker, INetPacketStream packet, ClientPacketType packetHeader)
         {
             if (!Handlers.TryGetValue(packetHeader, out PacketMethodHandler packetHandler))
                 throw new HandlerNotFoundException();

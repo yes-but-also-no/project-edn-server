@@ -36,7 +36,7 @@ namespace GameServer.New
 
         public NewServer(string host, int port)
         {
-            Network.PacketHandler.RegisterAssembly(Assembly.GetCallingAssembly());
+            PacketHandler<GameClient>.RegisterAssembly(Assembly.GetCallingAssembly());
             PacketProcessor = new GamePacketProcessor();
             ServerConfiguration = new NetServerConfiguration(host, port, ClientBacklog, ClientBufferSize);
             
