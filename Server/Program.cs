@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define LEGACY
+
+using System;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -21,8 +23,6 @@ using Microsoft.Extensions.Configuration;
 using Swan;
 using Swan.Configuration;
 using Swan.Logging;
-
-//#define LEGACY
 
 namespace GameServer
 {
@@ -53,14 +53,14 @@ namespace GameServer
             
             // Startup
             "Logging started!".Info();
-            
-            #if LEGACY
-            
+
             "Reading shop data...".Info();
             
             ShopDataReader.ReadGoods();
             
             "Done!".Info();
+            
+            #if LEGACY
             
             "Reading spawn data...".Info();
             

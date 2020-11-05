@@ -2,9 +2,8 @@ using Data.Configuration;
 using GameServer.New;
 using Network;
 using Network.Packets.Client;
-using Network.Packets.Client.Core;
+using Network.Packets.Client.Shop;
 using Network.Packets.Server.Shop;
-using Swan.Logging;
 
 namespace GameServer.Handlers
 {
@@ -19,7 +18,7 @@ namespace GameServer.Handlers
         /// <param name="client"></param>
         /// <param name="packet"></param>
         [PacketHandler(ClientPacketType.RequestGoodsData)]
-        public static void OnRequestGoodsData(GameClient client, LogPacket packet)
+        public static void OnRequestGoodsData(GameClient client, RequestGoodsDataPacket packet)
         {
             // Send start
             client.Send(PacketFactory.CreatePacket(new SendGoodsDataStartPacket()));
