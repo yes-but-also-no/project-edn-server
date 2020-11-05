@@ -22,6 +22,8 @@ using Swan;
 using Swan.Configuration;
 using Swan.Logging;
 
+//#define LEGACY
+
 namespace GameServer
 {
     class Program
@@ -52,27 +54,31 @@ namespace GameServer
             // Startup
             "Logging started!".Info();
             
+            #if LEGACY
+            
             "Reading shop data...".Info();
             
-            //ShopDataReader.ReadGoods();
+            ShopDataReader.ReadGoods();
             
             "Done!".Info();
             
             "Reading spawn data...".Info();
             
-            //SpawnDataReader.LoadAllSpawns();
+            SpawnDataReader.LoadAllSpawns();
             
             "Done!".Info();
             
             "Reading poo data...".Info();
             
-            //PooReader.ReadPoo();
+            PooReader.ReadPoo();
             
             "Done!".Info();
             
             "Reading map data...".Info();
             
-            //GeoEngine.GeoEngine.LoadAllMaps();
+            GeoEngine.GeoEngine.LoadAllMaps();
+            
+            #endif
             
             "Done!".Info();
             
@@ -83,7 +89,15 @@ namespace GameServer
             var tokenSource = new CancellationTokenSource();
             var token = tokenSource.Token;
 
+            #if LEGACY
+            
+            RunServersLegacy(token);
+            
+            #else
+
             RunServers(token);
+
+            #endif
             
             "Server is Started!".Info();
             
@@ -247,35 +261,16 @@ namespace GameServer
             Terminal.Flush();
         }
 
-        // private static Task RunServers(CancellationToken token)
-        // {
-        //     var webServer = AccountServer.CreateWebServer($"http://*:{Configuration.Global.WebPort}/");
-        //     
-        //     var webTask = webServer.RunAsync(token);
-        //     
-        //     var gameServer =  new GameServer(IPAddress.Any, Convert.ToInt32(Configuration.Global.GamePort));
-        //
-        //     gameServer.OptionNoDelay = true;
-        //
-        //     var gameTask = Task.Run(async () =>
-        //     {
-        //         gameServer.Start();
-        //         while (!token.IsCancellationRequested)
-        //         {
-        //             // Wait
-        //             await Task.Delay(10, token);
-        //         }
-        //         // Calling stop
-        //         gameServer.Stop();
-        //     }, token);
-        //
-        //     return Task.WhenAll(webTask, gameTask);
-        // }
-        
-        private static Task RunServers(CancellationToken token)
+        private static Task RunServersLegacy(CancellationToken token)
         {
-            var gameServer =  new NewServer(ServerConfig.Configuration.Global.GameHost, Convert.ToInt32(ServerConfig.Configuration.Global.GamePort));
-
+            var webServer = AccountServer.CreateWebServer($"http://*:{ServerConfig.Configuration.Global.WebPort}/");
+            
+            var webTask = webServer.RunAsync(token);
+            
+            var gameServer =  new GameServer(IPAddress.Any, Convert.ToInt32(ServerConfig.Configuration.Global.GamePort));
+        
+            gameServer.OptionNoDelay = true;
+        
             var gameTask = Task.Run(async () =>
             {
                 gameServer.Start();
@@ -287,7 +282,26 @@ namespace GameServer
                 // Calling stop
                 gameServer.Stop();
             }, token);
-
+        
+            return Task.WhenAll(webTask, gameTask);
+        }
+        
+        private static Task RunServers(CancellationToken token)
+        {
+            var gameServer =  new NewServer(ServerConfig.Configuration.Global.GameHost, Convert.ToInt32(ServerConfig.Configuration.Global.GamePort));
+        
+            var gameTask = Task.Run(async () =>
+            {
+                gameServer.Start();
+                while (!token.IsCancellationRequested)
+                {
+                    // Wait
+                    await Task.Delay(10, token);
+                }
+                // Calling stop
+                gameServer.Stop();
+            }, token);
+        
             return Task.WhenAll(gameTask);
         }
         
