@@ -10,9 +10,9 @@ namespace Network.Packets.Client.Core
         /// </summary>
         public string ValidationSeed { get; private set; }
 
-        public void Deserialize(INetPacketStream packet)
+        public void Deserialize(GamePacket packet)
         {
-            ValidationSeed = packet.Read<string>();
+            ValidationSeed = packet.ReadGameString();
         }
 
     }

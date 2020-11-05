@@ -6,18 +6,24 @@ using Sylver.Network.Server;
 namespace GameServer.New
 {
     /// <summary>
-    /// Testing for new server
+    /// New server
+    /// Singleton
     /// </summary>
     public class NewServer : NetServer<GameClient>
     {
         private const int ClientBufferSize = 128;
         private const int ClientBacklog = 50;
 
+        public static NewServer Instance;
+
         public NewServer(string host, int port)
         {
             Network.PacketHandler.RegisterAssembly(Assembly.GetCallingAssembly());
             PacketProcessor = new GamePacketProcessor();
             ServerConfiguration = new NetServerConfiguration(host, port, ClientBacklog, ClientBufferSize);
+            
+            // Assign to static instance
+            Instance ??= this;
         }
         
         /// <inheritdoc />

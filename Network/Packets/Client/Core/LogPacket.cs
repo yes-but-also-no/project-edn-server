@@ -9,9 +9,9 @@ namespace Network.Packets.Client.Core
         /// </summary>
         public string LogMessage { get; private set; }
         
-        public void Deserialize(INetPacketStream packet)
+        public void Deserialize(GamePacket packet)
         {
-            LogMessage = packet.Read<string>();
+            LogMessage = packet.ReadGameString();
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Network.Packets.Client.Core
         /// </summary>
         public int Version { get; private set; }
 
-        public void Deserialize(INetPacketStream packet)
+        public void Deserialize(GamePacket packet)
         {
             Version = packet.Read<int>();
         }

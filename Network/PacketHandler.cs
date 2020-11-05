@@ -85,7 +85,7 @@ namespace Network
             {
                 var deserializer = (IPacketDeserializer)Activator.CreateInstance(packetHandler.PacketType);
                 
-                deserializer?.Deserialize(packet);
+                deserializer?.Deserialize((GamePacket)packet);
                 
                 packetHandler.Method.Invoke(null, new object[]{invoker, deserializer});
             }

@@ -10,7 +10,7 @@ namespace Network.Packets.Client.Core
         /// </summary>
         public int JobCode { get; private set; }
 
-        public void Deserialize(INetPacketStream packet)
+        public void Deserialize(GamePacket packet)
         {
             JobCode = packet.Read<int>();
         }

@@ -10,9 +10,9 @@ namespace Network.Packets.Client.Core
         /// </summary>
         public string Server { get; private set; }
 
-        public void Deserialize(INetPacketStream packet)
+        public void Deserialize(GamePacket packet)
         {
-            Server = packet.Read<string>();
+            Server = packet.ReadGameString();
         }
 
     }

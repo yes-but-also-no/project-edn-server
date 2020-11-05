@@ -1,6 +1,7 @@
 using System.IO;
 using System.Numerics;
 using System.Text;
+using Network.Packets.Server;
 using Sylver.Network.Data;
 
 namespace Network
@@ -35,7 +36,7 @@ namespace Network
         /// Creates a new GamePacket with a header.
         /// </summary>
         /// <param name="packetHeader"></param>
-        public GamePacket(object packetHeader)
+        public GamePacket(ServerPacketType packetHeader)
             : this()
         {
             WriteHeader(packetHeader);
@@ -54,7 +55,7 @@ namespace Network
         /// Write packet header.
         /// </summary>
         /// <param name="packetHeader">GamePacket header</param>
-        public void WriteHeader(object packetHeader) => Write((byte)packetHeader);
+        public void WriteHeader(ServerPacketType packetHeader) => Write((byte)packetHeader);
         
         /// <summary>
         /// Builds the packet buffer.
@@ -83,6 +84,19 @@ namespace Network
                     Read<float>()
                 );
         }
+
+        /// <summary>
+        /// Special override for strings, which use 2 byte lengths instead of 4
+        /// and are null terminated
+        /// </summary>
+        /// <returns></returns>
+        public string ReadGameString()
+        {
+            var stringLength = Read<short>();
+            var stringBytes = Read<byte>(stringLength);
+
+            return ReadEncoding.GetString(stringBytes);
+        }
         
         /// <summary>
         /// Writes a vector
@@ -93,6 +107,38 @@ namespace Network
             Write(value.X);
             Write(value.Y);
             Write(value.Z);
+        }
+        
+        /// <summary>
+        /// Special override for strings, which use 2 byte lengths instead of 4
+        /// and are null terminated
+        /// </summary>
+        /// <returns></returns>
+        public void WriteGameString(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                Write<short>(2); // Length
+                
+                Write<byte>(0); // Null terminator
+                Write<byte>(0);
+            }
+            else
+            {
+                value += "\0";
+                
+                // Convert to bytes
+                var arr = value.ToCharArray();
+                
+                // Write the size as a short
+                Write<short>((short)(value.Length*2));
+                
+                // Add to list
+                foreach (var c in arr)
+                {
+                    Write(c);
+                }
+            }
         }
     }
 }

@@ -1,3 +1,4 @@
+using Network.Packets.Server;
 using Sylver.Network.Data;
 
 namespace Network.Packets
@@ -8,9 +9,14 @@ namespace Network.Packets
     public interface IPacketSerializer
     {
         /// <summary>
+        /// The server packet type for this packet
+        /// </summary>
+        ServerPacketType PacketType { get; }
+        
+        /// <summary>
         /// Serializes the current object.
         /// </summary>
         /// <param name="packet">Packet stream.</param>
-        void Serialize(INetPacketStream packet);
+        void Serialize(GamePacket packet);
     }
 }

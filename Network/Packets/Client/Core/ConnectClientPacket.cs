@@ -15,10 +15,10 @@ namespace Network.Packets.Client.Core
         /// </summary>
         public string Password { get; private set; }
 
-        public void Deserialize(INetPacketStream packet)
+        public void Deserialize(GamePacket packet)
         {
-            UserName = packet.Read<string>();
-            Password = packet.Read<string>();
+            UserName = packet.ReadGameString();
+            Password = packet.ReadGameString();
         }
 
     }

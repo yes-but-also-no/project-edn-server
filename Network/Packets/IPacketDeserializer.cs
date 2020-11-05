@@ -11,6 +11,6 @@ namespace Network.Packets
         /// Deserializes the current packet stream.
         /// </summary>
         /// <param name="packet">Packet stream.</param>
-        void Deserialize(INetPacketStream packet);
+        void Deserialize(GamePacket packet);
     }
 }
