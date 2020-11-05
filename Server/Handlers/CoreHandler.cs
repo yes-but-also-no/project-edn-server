@@ -1,3 +1,4 @@
+using Data.Configuration;
 using GameServer.New;
 using Network;
 using Network.Packets.Client;
@@ -25,7 +26,16 @@ namespace GameServer.Handlers
             // Log
             $"Client protocol check request. Client Protocol: [{packet.Version}]".Debug(client.ToString());
             
-            // TODO: Validate client protocol
+            // Validate protocol
+            if (packet.Version != ServerConfig.Configuration.Global.ProtocolVersion)
+            {
+                // Log
+                $@"Client protocol does not match server protocol! 
+                    Client ({packet.Version}) != Server ({ServerConfig.Configuration.Global.ProtocolVersion})".Warn(client.ToString());
+                
+                // Disconnect
+                NewServer.Instance.DisconnectClient(client.Id);
+            }
             
             // Return success
             client.Send(PacketFactory.CreatePacket(new ServerVersionPacket()));
