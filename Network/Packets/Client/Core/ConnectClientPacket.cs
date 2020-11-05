@@ -17,8 +17,8 @@ namespace Network.Packets.Client.Core
 
         public void Deserialize(GamePacket packet)
         {
-            UserName = packet.ReadGameString();
-            Password = packet.ReadGameString();
+            UserName = packet.ReadGameString().Trim();
+            Password = packet.ReadGameString().Trim();
         }
 
     }

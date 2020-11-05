@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Linq;
 using System.Net.Sockets;
+using Data;
 using Data.Configuration;
+using Data.Model;
+using Microsoft.EntityFrameworkCore;
 using Network;
 using Network.Packets.Client;
 using Swan.Logging;
@@ -60,14 +64,97 @@ namespace GameServer.New
             catch (Exception exception)
             {
                 // All other errors
-                $"Error occured in handle message from {Socket.RemoteEndPoint}".Error(ToString());
+                $"Error occured in handle message from {Socket.RemoteEndPoint}: {exception.InnerException}".Error(ToString());
             }
         }
+        
+        #region USER
+        
+        /// <summary>
+        /// Current user id
+        /// </summary>
+        public int UserId { get; set; }
+        
+        /// <summary>
+        /// User object reference
+        /// </summary>
+        public ExteelUser User { get; private set; }
+        
+        /// <summary>
+        /// Gets the callsign for this session if they are logged in
+        /// </summary>
+        /// <returns></returns>
+        public string GetUserName()
+        {
+            return User != null ? User.Callsign : "[NOT SIGNED IN]";
+        }
+        
+        /// <summary>
+        /// Updates user with data from database
+        /// </summary>
+        public void UpdateUserFromDatabase()
+        {
+            if (UserId == 0) return;
+            
+            using (var db = new ExteelContext())
+            {               
+                // Find user
+                var user = db.Users.SingleOrDefault(u => u.Id == UserId);
+                
+                // TODO: Check for ban state / admin state / user already logged in
+                
+                // Successful login from here, so assign user
+                
+                // Load user inventory
+                user.Inventory = db.Inventories
+                    .Include(i => i.Parts)
+                    
+                    .Include(i => i.Units)
+                        .ThenInclude(u => u.Head)
+                    
+                    .Include(i => i.Units)
+                        .ThenInclude(u => u.Chest)
+                    
+                    .Include(i => i.Units)
+                        .ThenInclude(u => u.Arms)
+                    
+                    .Include(i => i.Units)
+                        .ThenInclude(u => u.Legs)
+                    
+                    .Include(i => i.Units)
+                        .ThenInclude(u => u.Backpack)
+                    
+                    .Include(i => i.Units)
+                        .ThenInclude(u => u.WeaponSet1Left)
+                    
+                    .Include(i => i.Units)
+                        .ThenInclude(u => u.WeaponSet1Right)
+                    
+                    .Include(i => i.Units)
+                        .ThenInclude(u => u.WeaponSet2Left)
+                    
+                    .Include(i => i.Units)
+                        .ThenInclude(u => u.WeaponSet2Right)
+                    
+                    .SingleOrDefault(i => i.Id == user.InventoryId);
 
-        // TODO: Username
+
+                // Load users stats
+                db
+                    .Entry(user)
+                    .Collection(u => u.Stats)
+                    .Load();
+                
+                // Assign to client
+                User = user;
+            }
+        }
+        
+        #endregion
+        
         public override string ToString()
         {
-            return $"[GameClient]<{Id}><USERNAME_TODO>";
+            return $"[GameClient]<{Id}><{GetUserName()}>";
         }
     }
 }
