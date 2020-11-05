@@ -11,6 +11,7 @@ namespace Network.Packets.Server
         ServerTime = 0x04,
         SendGoodsDataStart = 0x90,
         SendGoodsData = 0x91,
-        SendGoodsDataEnd = 0x92
+        SendGoodsDataEnd = 0x92,
+        SendAvatarInfo = 97
     }
 }

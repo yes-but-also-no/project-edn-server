@@ -1,6 +1,7 @@
 using System.IO;
 using System.Numerics;
 using System.Text;
+using Data.Model;
 using Network.Packets.Server;
 using Sylver.Network.Data;
 
@@ -140,5 +141,38 @@ namespace Network
                 }
             }
         }
+        
+        #region OBJECTS
+
+        /// <summary>
+        /// Writes a pilot info object into the packet
+        /// </summary>
+        /// <param name="info"></param>
+        public void WritePilotInfo(PilotInfo info)
+        {
+            Write(info.AbilityPointsAvailable);
+            
+            Write((byte)info.HpLevel);
+            Write((byte)info.MoveSpeedLevel);
+            Write((byte)info.EnLevel);
+            Write((byte)info.ScanRangeLevel);
+            Write((byte)info.SpLevel);
+            Write((byte)info.AimLevel);
+            
+            Write((byte)0); // Unknown
+            Write((byte)0); // Unknown
+            
+            Write(info.MeleeLevel);
+            Write(info.RangedLevel);
+            Write(info.SiegeLevel);
+            Write(info.RocketLevel);
+            
+            //packet.WriteInt(0); // Unknown
+            Write((byte)0); // NOTE: Not sure why everything after here is offset by one, so i am just doing 3 bytes instead of 4 here
+            Write((byte)0);
+            Write((byte)0);
+        }
+        
+        #endregion
     }
 }
