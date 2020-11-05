@@ -50,6 +50,10 @@ namespace GameServer
                     msg = new ValidateClient(packet, client);
                     break;
                 
+                case 0x02:
+                    msg = new ConnectWeb(packet, client);
+                    break;
+                
                 case 0x03:
                     msg = new ConnectClient(packet, client);
                     break;

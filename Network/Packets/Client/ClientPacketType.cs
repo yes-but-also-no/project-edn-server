@@ -7,6 +7,7 @@ namespace Network.Packets.Client
     {
         ProtocolVersion = 0x00,
         ValidateClient = 0x01,
+        ConnectWeb = 0x02,
         ConnectClient = 0x03,
         ConnectSwitch = 0x04,
         SwitchSever = 0x05,

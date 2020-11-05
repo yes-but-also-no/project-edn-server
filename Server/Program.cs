@@ -1,4 +1,4 @@
-﻿//#define LEGACY
+﻿#define LEGACY
 
 using System;
 using System.Drawing;
