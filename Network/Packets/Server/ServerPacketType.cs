@@ -8,6 +8,9 @@ namespace Network.Packets.Server
         ServerVersion = 0x00,
         ClientValidated = 0x01,
         ConnectResult = 0x02,
-        ServerTime = 0x04
+        ServerTime = 0x04,
+        SendGoodsDataStart = 0x90,
+        SendGoodsData = 0x91,
+        SendGoodsDataEnd = 0x92
     }
 }

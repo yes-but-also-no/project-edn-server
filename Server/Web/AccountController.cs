@@ -21,6 +21,8 @@ namespace GameServer.Web
             var user = data["username"].Trim();
             var pass = data["password"].Trim();
             var callsign = data["callsign"].Trim();
+            
+            // TODO: Valid no usage of stuff like GM, Admin, no brackets, etc
 
             if (string.IsNullOrEmpty(user) || user.Length < 3 || user.Length > 10)
             {
