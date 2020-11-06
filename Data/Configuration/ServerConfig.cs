@@ -19,6 +19,12 @@ namespace Data.Configuration
         public int ProtocolVersion { get; set; }
         
         public string ServerName { get; set; }
+
+        public string ServerDescription { get; set; }
+
+        public int MaxPlayers { get; set; }
+
+        public string DiscordServerId { get; set; }
         
         public int GameFps { get; set; }
         

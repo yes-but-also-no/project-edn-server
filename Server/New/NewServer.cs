@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reflection;
 using Network;
 using Swan.Logging;
@@ -30,6 +31,11 @@ namespace GameServer.New
         public static DateTime StartedStamp { get; private set; }
 
         /// <summary>
+        /// Number of active players
+        /// </summary>
+        public int ActivePlayerCount => Clients.Count(c => c.UserId != 0);
+
+        /// <summary>
         /// Server Time
         /// </summary>
         public static int RunningMs => (int)(DateTime.UtcNow - StartedStamp).TotalMilliseconds;
@@ -42,7 +48,7 @@ namespace GameServer.New
             
             // Assign to static instance
             Instance ??= this;
-            
+
             // Mark start time
             StartedStamp = DateTime.UtcNow;
         }

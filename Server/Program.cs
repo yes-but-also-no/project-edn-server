@@ -1,4 +1,4 @@
-﻿#define LEGACY
+﻿//#define LEGACY
 
 using System;
 using System.Drawing;
@@ -288,6 +288,10 @@ namespace GameServer
         
         private static Task RunServers(CancellationToken token)
         {
+            var webServer = AccountServer.CreateWebServer($"http://*:{ServerConfig.Configuration.Global.WebPort}/");
+            
+            var webTask = webServer.RunAsync(token);
+            
             var gameServer =  new NewServer(ServerConfig.Configuration.Global.GameHost, Convert.ToInt32(ServerConfig.Configuration.Global.GamePort));
         
             var gameTask = Task.Run(async () =>
@@ -302,7 +306,7 @@ namespace GameServer
                 gameServer.Stop();
             }, token);
         
-            return Task.WhenAll(gameTask);
+            return Task.WhenAll(webTask, gameTask);
         }
         
         #region UTIL

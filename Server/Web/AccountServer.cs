@@ -40,6 +40,8 @@ namespace GameServer.Web
                     m.WithController<AccountController>())
                 .WithWebApi("/char", m => 
                     m.WithController<CharacterController>())
+                .WithWebApi("/launcher", m => 
+                    m.WithController<LauncherController>())
                 .WithStaticFolder("/", HtmlRootPath, true, m => m
                     .WithContentCaching(true)); // Add static files after other modules to avoid conflicts
                 
