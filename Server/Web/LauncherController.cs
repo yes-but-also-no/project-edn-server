@@ -38,7 +38,7 @@ namespace GameServer.Web
             // Create the dto
             var dto = new StatusDto
             {
-                ServerStatus = 0,
+                ServerStatus = 1,
                 RoomCount = 0,
                 PlayerCount = NewServer.Instance.ActivePlayerCount
             };

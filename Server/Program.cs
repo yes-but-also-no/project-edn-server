@@ -1,15 +1,19 @@
 ﻿//#define LEGACY
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Numerics;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using CsvHelper;
 using Data.Configuration;
 using Engine;
 using Game;
@@ -30,6 +34,9 @@ namespace GameServer
     {
         private static readonly AutoResetEvent WaitHandle = new AutoResetEvent(false);
 
+        private static GameServer _server;
+        public static bool IsSimulating;
+        
         static void Main(string[] args)
         {
             // Load config
@@ -75,9 +82,9 @@ namespace GameServer
             "Done!".Info();
             
             "Reading map data...".Info();
-            
+            /*
             GeoEngine.GeoEngine.LoadAllMaps();
-            
+            */
             #endif
             
             "Done!".Info();
@@ -202,56 +209,57 @@ namespace GameServer
             
 
             // Wait
-            WaitHandle.WaitOne();
+            //WaitHandle.WaitOne();
 
-            /*
+            var builder = new StringBuilder();
+            
             // Perform text input
             for (;;)
             {
                 string line = Console.ReadLine();
+
+                if (line[0] == 'p')
+                {
+                    IsSimulating = true;
+                    BeginPacketReplay(line.Remove(0, 1));
+                }
+
                 if (string.IsNullOrEmpty(line))
-                    break;
+                {
+                    Console.WriteLine("You said");
+                    Console.WriteLine(builder.ToString());
+
+                    var bytes = builder.ToString().Remove(0, 2)
+                        .Split("\\x").Select(b => Byte.Parse(b, System.Globalization.NumberStyles.AllowHexSpecifier)).ToArray();
+                    
+                    builder.Clear();
+                    
+                    // Send to all
+                    _server.Multicast(bytes);
+                    
+                    continue;
+                }
+
+                if (line.Contains("\" \\"))
+                    line = line.Remove(line.Length - 3, 3);
+                else
+                    line = line.Remove(line.Length - 1, 1);
+                
+                
+                builder.Append(line.Remove(0, 1));
+                
+                // if (string.IsNullOrEmpty(line))
+                //     break;
 
                 // Restart the server
                 if (line == "!")
                 {
                     Console.Write("Server restarting...");
-                    server.Restart();
+                    
                     Console.WriteLine("Done!");
                     continue;
                 }
-                
-                // Multicast admin message to all sessions
-                // TODO: Handle admin commands
-
-                if (line[0] == '/')
-                {
-                    var data = Regex.Matches(line, @"[\""].+?[\""]|[^ ]+")
-                        .Select(x => x.Value.Trim('"'))
-                        .ToList();
-
-                    switch (data[0])
-                    {
-                        case "/chat":
-                            //sessionServer.Multicast(new Message(data[1], data[2], Convert.ToInt32(data[3]),
-                                //Convert.ToInt32(data[4])).Write());
-                            
-                            server.Multicast(new Message(data[1], data[2], Convert.ToInt32(data[3]),
-                                Convert.ToInt32(data[4])).Write());
-                            break;
-                        
-                        case "/notice":
-                            ChatManager.BroadcastAll("🔽🔽🔽🔽🔽🔽🔽🔽🔽🔽🔽");
-                            ChatManager.BroadcastAll("🔽🔽〈🔔〉NOTICE〈🔔〉🔽🔽");
-                            ChatManager.BroadcastAll("🔽🔽🔽🔽🔽🔽🔽🔽🔽🔽🔽");
-                            
-                            ChatManager.BroadcastAll(data[1]);
-                            
-                            server.Multicast(new Message("〈🔔〉NOTICE〈🔔〉", data[1]).Write());
-                            break;
-                    }
-                }
-            }*/
+            }
 
             // Stop the server
             "Server stopping...".Info();
@@ -267,20 +275,20 @@ namespace GameServer
             
             var webTask = webServer.RunAsync(token);
             
-            var gameServer =  new GameServer(IPAddress.Any, Convert.ToInt32(ServerConfig.Configuration.Global.GamePort));
+            _server =  new GameServer(IPAddress.Any, Convert.ToInt32(ServerConfig.Configuration.Global.GamePort));
         
-            gameServer.OptionNoDelay = true;
+            _server.OptionNoDelay = true;
         
             var gameTask = Task.Run(async () =>
             {
-                gameServer.Start();
+                _server.Start();
                 while (!token.IsCancellationRequested)
                 {
                     // Wait
                     await Task.Delay(10, token);
                 }
                 // Calling stop
-                gameServer.Stop();
+                _server.Stop();
             }, token);
         
             return Task.WhenAll(webTask, gameTask);
@@ -307,6 +315,96 @@ namespace GameServer
             }, token);
         
             return Task.WhenAll(webTask, gameTask);
+        }
+
+        private static void DoPacket(BinaryReader reader)
+        {
+            
+
+            // Read packet size
+            var len = reader.ReadInt16();
+
+            // Data
+            var data = new List<byte>(reader.ReadBytes(len - 2));
+                    
+            // Insert size
+            data.InsertRange(0, BitConverter.GetBytes((short)len));
+                    
+            // Send
+            _server.Multicast(data.ToArray());
+        }
+        
+        private static void BeginPacketReplay(string fileName)
+        {
+            Console.WriteLine("Beginning packet read");
+            
+            
+            
+
+            var pos = 0;
+
+            using (var csvreader = new StreamReader(Path.Combine(
+                Directory.GetCurrentDirectory(), "Packets/", $"{fileName}.csv")))
+            using (var csv = new CsvReader(csvreader, CultureInfo.InvariantCulture))
+            using (var reader = new BinaryReader(File.Open(Path.Combine(
+                Directory.GetCurrentDirectory(), "Packets/", $"{fileName}.bin"), FileMode.Open)))
+            {
+                csv.Configuration.Comment = ';';
+                csv.Configuration.AllowComments = true;
+                csv.Configuration.HeaderValidated = null;
+                csv.Configuration.MissingFieldFound = null;
+                
+                csv.Read();
+                csv.ReadHeader();
+
+                for (;;)
+                {
+                    string line = Console.ReadLine();
+                    
+                    // var anonymousTypeDefinition = new
+                    // {
+                    //     No = default(int),
+                    //     Time = default(float)
+                    // };
+                    // var records = csv.GetRecords(anonymousTypeDefinition);
+
+                    csv.Read();
+
+                    var time = csv.GetField<double>("Time");
+
+                    if (line != "play")
+                    {
+                        DoPacket(reader);
+                        
+                        // Log
+                        Console.WriteLine($"Sent packet number {pos} - time {time}.");
+
+                        // Increment
+                        pos++;
+                    }
+                    else
+                    {
+                        // Log
+                        Console.WriteLine("Starting playback. Have fun!");
+
+                        while (csv.Read())
+                        {
+                            time = csv.GetField<double>("Time");
+                            
+                            DoPacket(reader);
+                            
+                            // Log
+                            Console.WriteLine($"Sent packet number {pos} - time {time}.");
+
+                            // Increment
+                            pos++;
+                            
+                            // Sleep
+                            Thread.Sleep((int)(1000 * time));
+                        }
+                    }
+                }
+            }
         }
         
         #region UTIL

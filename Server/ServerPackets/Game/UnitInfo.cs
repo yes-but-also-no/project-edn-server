@@ -38,7 +38,7 @@ namespace GameServer.ServerPackets.Game
             var team = _unit.Team;
 
             // Deathmatch? no teams?
-            if (team == 0xffffffff)
+            if (_session != null && team == 0xffffffff)
             {
                 // We will write 0 for this user, 1 for others
                 team = _session.UserId == _unit.Owner.UserId ? (uint) 0 : (uint) 1;

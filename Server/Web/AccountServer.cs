@@ -35,6 +35,8 @@ namespace GameServer.Web
                     .WithUrlPrefix(url)
                     .WithMode(HttpListenerMode.EmbedIO))
 
+                .WithCors()
+                
                 // First, we will configure our web server by adding Modules.
                 .WithWebApi("/api", m => 
                     m.WithController<AccountController>())

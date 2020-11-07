@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Drawing;
@@ -9,6 +10,11 @@ using Data.Model.Items;
 using EmbedIO;
 using EmbedIO.Routing;
 using EmbedIO.WebApi;
+using GameServer.Handlers;
+using Network;
+using Network.Packets.Server.Core;
+using Swan.Formatters;
+using Swan.Logging;
 
 namespace GameServer.Web
 {
@@ -20,35 +26,40 @@ namespace GameServer.Web
             // Validate some stuff
             var user = data["username"].Trim();
             var pass = data["password"].Trim();
-            var callsign = data["callsign"].Trim();
+            var callsign = user; // Temp
             
             // TODO: Valid no usage of stuff like GM, Admin, no brackets, etc
+            if (user.ToLower().Contains("gm") || user.ToLower().Contains("admin") || user.Contains("[") ||
+                user.Contains("]"))
+            {
+                Response.StatusCode = 400;
+                return "YOUR USERNAME CONTAINS INVALID CHARACTERS";
+            }
 
             if (string.IsNullOrEmpty(user) || user.Length < 3 || user.Length > 10)
             {
+                Response.StatusCode = 400;
                 return "YOUR USERNAME HAS TO BE BETWEEN 3 AND 10 CHARACTERS";
             }
             
             if (string.IsNullOrEmpty(pass) || pass.Length < 3 || pass.Length > 10)
             {
+                Response.StatusCode = 400;
                 return "YOUR PASSWORD HAS TO BE BETWEEN 3 AND 10 CHARACTERS";
             }
-            
-            if (string.IsNullOrEmpty(callsign) || callsign.Length < 3 || callsign.Length > 10)
-            {
-                return "YOUR CALLSIGN HAS TO BE BETWEEN 3 AND 10 CHARACTERS";
-            }
-            
+
             // Now validate against db
             using (var db = new ExteelContext())
             {
                 if (db.Users.Any(u => u.Username == user))
                 {
+                    Response.StatusCode = 400;
                     return "THAT USERNAME IS ALREADY TAKEN";
                 }
                 
                 if (db.Users.Any(u => u.Callsign == callsign))
                 {
+                    Response.StatusCode = 400;
                     return "THAT CALLSIGN IS ALREADY TAKEN";
                 }
                 
@@ -223,6 +234,107 @@ namespace GameServer.Web
             }
 
             return "OK YOURE SIGNED UP";
+        }
+
+        [Route(HttpVerbs.Post, "/login")]
+        public string Login([FormData] NameValueCollection data)
+        {
+            // Validate some stuff
+            var username = data["username"].Trim();
+            var password = data["password"].Trim();
+            
+            if (string.IsNullOrEmpty(username) || username.Length < 3 || username.Length > 10)
+            {
+                Response.StatusCode = 400;
+                return "USERNAME HAS TO BE BETWEEN 3 AND 10 CHARACTERS";
+            }
+            
+            if (string.IsNullOrEmpty(password) || password.Length < 3 || password.Length > 10)
+            {
+                Response.StatusCode = 400;
+                return "PASSWORD HAS TO BE BETWEEN 3 AND 10 CHARACTERS";
+            }
+            
+            // Log
+            $"Log in attempt with Username {username} : {password}".Debug();
+            
+            // TODO: Verify not banned / locked out
+
+            // Attempt to find user in database
+            using (var db = new ExteelContext())
+            {               
+                // Find user
+                var user = db.Users.SingleOrDefault(u => u.Username == username);
+                
+                // If not user?
+                if (user == null)
+                {
+                    Response.StatusCode = 400;
+                    return "USER NOT FOUND";
+                }
+                
+                // If password wrong?
+                if (user.Password != password)
+                {
+                    Response.StatusCode = 400;
+                    return "PASSWORD INCORRECT";
+                }
+
+                // Success
+                return "Success";
+            }
+        }
+        
+        [Route(HttpVerbs.Post, "/launch")]
+        public LaunchDto Launch([FormData] NameValueCollection data)
+        {
+            // Validate some stuff
+            var username = data["username"].Trim();
+            var password = data["password"].Trim();
+            
+            if (string.IsNullOrEmpty(username) || username.Length < 3 || username.Length > 10)
+            {
+                Response.StatusCode = 400;
+                return new LaunchDto();
+            }
+            
+            if (string.IsNullOrEmpty(password) || password.Length < 3 || password.Length > 10)
+            {
+                Response.StatusCode = 400;
+                return new LaunchDto();
+            }
+            
+            // Log
+            $"Log in attempt with Username {username} : {password}".Debug();
+            
+            // TODO: Verify not banned / locked out
+
+            // Attempt to find user in database
+            using (var db = new ExteelContext())
+            {               
+                // Find user
+                var user = db.Users.SingleOrDefault(u => u.Username == username);
+                
+                // If not user?
+                if (user == null)
+                {
+                    Response.StatusCode = 400;
+                    return new LaunchDto();
+                }
+                
+                // If password wrong?
+                if (user.Password != password)
+                {
+                    Response.StatusCode = 400;
+                    return new LaunchDto();
+                }
+
+                // Success
+                return new LaunchDto
+                {
+                    SessionId = LoginHandler.GetNewSessionKey(user.Id).ToString().Replace("-", "")
+                };
+            }
         }
     }
 }

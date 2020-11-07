@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Swan.Logging;
 using Sylver.Network.Data;
 
@@ -17,14 +18,17 @@ namespace Network.Packets.Client.Core
 
         public void Deserialize(GamePacket packet)
         {
-            // Get the session-id size
-            var size = packet.Read<short>();
+            // Throw away
+            packet.Read<short>();
 
-            // Read the bytes
-            var bytes = packet.Read<byte>(size);
+            // Read guid
+            var a = packet.Read<byte>(4).Reverse();
+            var b = packet.Read<byte>(2).Reverse();
+            var c = packet.Read<byte>(2).Reverse();
+            var bytes = packet.Read<byte>(8);
             
             // Convert to GUID
-            SessionKey = new Guid(bytes);
+            SessionKey = new Guid(a.Concat(b).Concat(c).Concat(bytes).ToArray());
         }
 
     }

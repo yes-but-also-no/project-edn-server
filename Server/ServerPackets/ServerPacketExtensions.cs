@@ -278,7 +278,7 @@ namespace GameServer.ServerPackets
             
             
             packet.WriteBool(user.IsReady); // Unknown - ready?
-            packet.WriteBool(user.Id == room.MasterId);
+            packet.WriteBool(user.Id == room?.MasterId);
             
             for (var i = 0; i < 13; i++)
             {

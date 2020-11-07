@@ -35,7 +35,7 @@ namespace GameServer.ServerPackets.Game
 
         protected override void WriteImpl()
         {
-            this.WriteRoomUserInfo(_room.RoomInstance, _user);
+            this.WriteRoomUserInfo(_room?.RoomInstance, _user);
         }
     }
 }

@@ -49,7 +49,7 @@ namespace GameServer.Web
         /// <summary>
         /// Server status
         /// </summary>
-        public int ServerStatus { get; set; } // 0 = Online, 1 = Maintenance
+        public int ServerStatus { get; set; } // 1 = Online, 2 = Maintenance
         
         /// <summary>
         /// Active players
@@ -60,5 +60,16 @@ namespace GameServer.Web
         /// Active room count
         /// </summary>
         public int RoomCount { get; set; }
+    }
+    
+    /// <summary>
+    /// This object contains account dto
+    /// </summary>
+    public class LaunchDto
+    {
+        /// <summary>
+        /// A unique session id for this client
+        /// </summary>
+        public string SessionId { get; set; }
     }
 }
