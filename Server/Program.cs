@@ -1,4 +1,4 @@
-﻿//#define LEGACY
+﻿#define LEGACY
 
 using System;
 using System.Collections.Generic;
@@ -209,8 +209,10 @@ namespace GameServer
             
 
             // Wait
-            //WaitHandle.WaitOne();
+            WaitHandle.WaitOne();
 
+            #if LEGACY
+            
             var builder = new StringBuilder();
             
             // Perform text input
@@ -261,6 +263,8 @@ namespace GameServer
                 }
             }
 
+#endif
+
             // Stop the server
             "Server stopping...".Info();
             
@@ -300,7 +304,7 @@ namespace GameServer
             
             var webTask = webServer.RunAsync(token);
             
-            var gameServer =  new NewServer(ServerConfig.Configuration.Global.GameHost, Convert.ToInt32(ServerConfig.Configuration.Global.GamePort));
+            var gameServer =  new NewServer("0.0.0.0", Convert.ToInt32(ServerConfig.Configuration.Global.GamePort));
         
             var gameTask = Task.Run(async () =>
             {
