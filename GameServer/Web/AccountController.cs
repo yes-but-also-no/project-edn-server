@@ -9,11 +9,98 @@ using Data.Model.Items;
 using EmbedIO;
 using EmbedIO.Routing;
 using EmbedIO.WebApi;
+using System.Text.RegularExpressions;
+using GameServer.Managers;
 
 namespace GameServer.Web
 {
+     public class Room
+    {
+        public int id { get; set; }
+        public int gameType { get; set; }
+        public string name { get; set; }
+        public int capacity { get; set; }
+        public int playerCount { get; set; }
+        public int status { get; set; }
+    }
+
+    public class Channel
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+        public int userCount { get; set; }
+    }
+
+    public class ServerStatus
+    {
+        public int usersOnlineCount
+        {
+            // get { return this.usersInLobbyCount + this.usersPlayingNowCount; }
+            // players are still in the lobby when they go into a game room
+            get { return this.usersInLobbyCount + this.usersPlayingNowCount; }
+        }
+        public int usersInLobbyCount
+        {
+            get { return this.channelList.Aggregate(0, (acc, channel) => acc + channel.userCount); }
+        }
+        public int usersInWaitingRoomCount
+        {
+            get
+            { return this.roomList.Aggregate(0, (acc, room) => acc + (room.status == 0 ? room.playerCount : 0));
+            }
+        }
+        public int usersPlayingNowCount
+        {
+            get { return this.roomList.Aggregate(0, (acc, room) => acc + (room.status == 1 ? room.playerCount : 0)); }
+        }
+        public int roomCount
+        {
+            get { return this.roomList.Count; }
+        }
+        public int channelCount
+        {
+            get { return this.channelList.Count; }
+        }
+        public List<Room> roomList { get; set; } = new List<Room>();
+        public List<Channel> channelList { get; set; } = new List<Channel>();
+        public ServerStatus()
+        {
+            var channels = ChatManager.Channels;
+            foreach( KeyValuePair<int, ChatChannel> kvp in channels )
+            {
+                var channelInstance = new Channel{
+                    id = kvp.Value.Id,
+                    name = kvp.Value.Name,
+                    userCount = kvp.Value.Users.Count,
+                };
+                this.channelList.Add(channelInstance);
+            }
+            var rooms = RoomManager.GetRooms();
+            var roomCount = rooms.Count;
+            foreach (var room in rooms)
+            {
+                var roomInstance = new Room{
+                    id = room.Id,
+                    gameType = (int)room.GameType,
+                    name = room.Name,
+                    capacity = room.Capacity,
+                    playerCount = room.Users.Count(),
+                    status = (int)room.GameStatus,
+                };
+                roomInstance.name = Regex.Replace(roomInstance.name, @"[\u0000-\u0008\u000A-\u001F\u0100-\uFFFF]", "");
+                this.roomList.Add(roomInstance);
+            }
+        }
+    }
     public class AccountController : WebApiController
     {
+        [Route(HttpVerbs.Get, "/online")]
+        public async Task GetOnline()
+        {
+            ServerStatus serverStatus = new ServerStatus();
+            await HttpContext.SendDataAsync(serverStatus);
+        }
+
         [Route(HttpVerbs.Post, "/signup")]
         public async Task<string> PostData([FormData] NameValueCollection data) 
         {
