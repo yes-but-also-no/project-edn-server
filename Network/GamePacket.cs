@@ -2,6 +2,7 @@ using System.IO;
 using System.Numerics;
 using System.Text;
 using Data.Model;
+using Data.Model.Items;
 using Network.Packets.Server;
 using Sylver.Network.Data;
 
@@ -171,6 +172,84 @@ namespace Network
             Write((byte)0); // NOTE: Not sure why everything after here is offset by one, so i am just doing 3 bytes instead of 4 here
             Write((byte)0);
             Write((byte)0);
+        }
+
+        /// <summary>
+        /// Writes a part into the packet
+        /// </summary>
+        /// <param name="part"></param>
+        public void WritePartInfo(PartRecord part)
+        {
+            if (part != null)
+            {
+                Write(part.Id);
+                Write(part.TemplateId);
+
+                Write((ushort) 0x86a0); // Parameter - Possibly for permanent / cannot delete items?
+                Write((ushort) 0); // Type? - Zero in packets
+
+                Write(part.Color.R);
+                Write(part.Color.G);
+                Write(part.Color.B);
+
+                // 0 - Head
+                // 1 - Chest
+                // 2 - Arm
+                // 3 - Leg
+                // 4 - Backpack
+                // 5 - Fist
+                // 6 - Gun
+                // 7 - Shield
+
+                // Quick and dirty, get first digit
+                var partsType = part.TemplateId;
+                while (partsType >= 10)
+                    partsType /= 10;
+
+                partsType--;
+
+                Write((byte) partsType); // Looks like 0 indexed version of part type 
+                Write((byte) 0); // Unknown
+
+                Write(0); // Unknown
+
+                // FArray - Unknown
+                Write(0); // Array size
+
+                // Array contents would go here
+
+                Write(-1); // Expiry time / current durability
+                Write(0x14997000); // Max Durability - Value from server packet capture
+                Write(2); // If 1, durability, if 2, expired?
+                Write(0); // Unknown
+            }
+            else
+            {
+                Write(-1);
+                Write(0);
+
+                Write((ushort)0);
+                Write((ushort)0);
+
+                Write((byte)0);
+                Write((byte)0);
+                Write((byte)0);
+
+                Write((byte)0); // Unknown
+                Write((byte)0); // Unknown
+
+                Write(0); // Unknown
+
+                // FArray - Unknown
+                Write(0); // Array size
+
+                // Array contents would go here
+
+                Write(0); // Unknown
+                Write(0); // Unknown
+                Write(0); // If 1, durability, if 2, expired?
+                Write(0); // Unknown
+            }
         }
         
         #endregion
