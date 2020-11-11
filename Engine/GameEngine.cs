@@ -14,7 +14,7 @@ namespace Engine
     /// This is the master game engine. It is instantiated for each game and handles all
     /// game engine logic
     /// </summary>
-    public class GameEngine
+    public class GameEngine : IDisposable
     {
         #region PROPERTIES
         
@@ -122,10 +122,7 @@ namespace Engine
         {
             // Stop loop
             await _looper.ShutdownAsync(TimeSpan.Zero);
-            
-            // TODO: Do we need to call this?
-            _looper.Dispose();
-            
+
             // Dispatch
             SignalHub.Get<EngineSignals.Stop>().Dispatch();
             
@@ -263,6 +260,12 @@ namespace Engine
         public override string ToString()
         {
             return $"[GameEngine]<{Id}>";
+        }
+
+        public void Dispose()
+        {
+            Stop();
+            _looper?.Dispose();
         }
     }
 }

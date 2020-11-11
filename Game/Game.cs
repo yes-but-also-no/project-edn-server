@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using Core;
+using Data.Configuration;
 using Engine;
 using Engine.Entities;
 using NLua;
@@ -12,12 +13,12 @@ namespace Game
     /// This is the Exteel specific game instance. This will interface with this engine,
     /// Handle game modes, and interpret lua script
     /// </summary>
-    public class Game
+    public class Game : IDisposable
     {
         /// <summary>
         /// The game engine reference
         /// </summary>
-        internal readonly GameEngine Engine = new GameEngine {TickRate = 30};
+        internal readonly GameEngine Engine;
         
         /// <summary>
         /// The main script reference for this game
@@ -27,10 +28,13 @@ namespace Game
         /// <summary>
         /// Game specific signal hub
         /// </summary>
-        internal SignalHub SignalHub = new SignalHub();
+        internal readonly SignalHub SignalHub = new SignalHub();
 
         public Game()
         {
+            // Create engine
+            Engine = new GameEngine {TickRate = ServerConfig.Configuration.Global.GameFps};
+            
             // Create state
             _lua = new Lua();
             
@@ -54,6 +58,12 @@ namespace Game
 
             // TEMP: Create an entity
             //_engine.CreateEntity("TestEntity", "my_test_entity");
+        }
+
+        public void Dispose()
+        {
+            Engine?.Dispose();
+            _lua?.Dispose();
         }
     }
 }
