@@ -19,10 +19,13 @@ using Engine;
 using Game;
 using Console = Colorful.Console;
 using GameServer.Game;
+using GameServer.Handlers;
 using GameServer.Managers;
 using GameServer.New;
 using GameServer.ServerPackets.Chat;
 using GameServer.Web;
+using Hangfire;
+using Hangfire.SQLite;
 using Microsoft.Extensions.Configuration;
 using Swan;
 using Swan.Configuration;
@@ -42,6 +45,9 @@ namespace GameServer
             // Load config
             ServerConfig.Configuration.ConfigurationFilePath =
                 Path.Combine(Directory.GetCurrentDirectory(), "Config/server.json");
+            
+            // Setup hangfire
+            GlobalConfiguration.Configuration.UseSQLiteStorage("Data Source=db/hangfire.db;");
 
             // Write welcome banner
             WriteBanner();
@@ -103,6 +109,9 @@ namespace GameServer
             #else
 
             RunServers(token);
+            
+            // Setup recurring jobs
+            RecurringJob.AddOrUpdate("prune-session-keys", () => LoginHandler.PruneSessionKeys(), Cron.Hourly);
 
             #endif
             
@@ -305,7 +314,7 @@ namespace GameServer
             var webTask = webServer.RunAsync(token);
             
             var gameServer =  new NewServer("0.0.0.0", Convert.ToInt32(ServerConfig.Configuration.Global.GamePort));
-        
+
             var gameTask = Task.Run(async () =>
             {
                 gameServer.Start();
@@ -317,8 +326,20 @@ namespace GameServer
                 // Calling stop
                 gameServer.Stop();
             }, token);
+            
+            var hangfireTask = Task.Run(async () =>
+            {
+                var hangfire = new BackgroundJobServer();
+                while (!token.IsCancellationRequested)
+                {
+                    // Wait
+                    await Task.Delay(10, token);
+                }
+                // Calling stop
+                hangfire.Dispose();
+            }, token);
         
-            return Task.WhenAll(webTask, gameTask);
+            return Task.WhenAll(webTask, gameTask, hangfireTask);
         }
 
         private static void DoPacket(BinaryReader reader)

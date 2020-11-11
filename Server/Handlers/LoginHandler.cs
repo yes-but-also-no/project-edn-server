@@ -21,7 +21,7 @@ namespace GameServer.Handlers
         /// <summary>
         /// Dict for storing sessions
         /// </summary>
-        private static Dictionary<Guid, (int, DateTime)> _sessions = new Dictionary<Guid, (int, DateTime)>();
+        private static readonly Dictionary<Guid, (int, DateTime)> _sessions = new Dictionary<Guid, (int, DateTime)>();
 
         /// <summary>
         /// Generates a timed session key for a login
@@ -36,8 +36,43 @@ namespace GameServer.Handlers
             // They have 5 minutes to log in
             _sessions.Add(key, (userId, DateTime.Now.AddMinutes(5)));
             
+            // Log
+            $"Generated session key for user {userId} - {key}".Debug("LoginHandler");
+            
             // Return
             return key;
+        }
+
+        /// <summary>
+        /// Prunes expired session keys. This runs every hour using hangifre
+        /// </summary>
+        public static void PruneSessionKeys()
+        {
+            // Log
+            $"Pruning session keys".Debug("LoginHandler");
+            
+            // Keep track
+            var totalRemoved = 0;
+
+            // Remove expired ones
+            foreach (var kvp in _sessions)
+            {
+                if (kvp.Value.Item2 < DateTime.Now)
+                {
+                    // Remove it
+                    _sessions.Remove(kvp.Key);
+                    
+                    // Increment
+                    totalRemoved++;
+                }
+            }
+            
+            // If we removed some
+            if (totalRemoved > 0)
+            {
+                // Log
+                $"Pruned {totalRemoved} session keys".Debug("[LoginHandler]");
+            }
         }
         
         /// <summary>
@@ -59,12 +94,27 @@ namespace GameServer.Handlers
             // Check for user
             if (_sessions.ContainsKey(packet.SessionKey))
             {
-                // Attempt to find user in database
-                using (var db = new ExteelContext())
-                {               
+                // If its its expired 
+                if (_sessions[packet.SessionKey].Item2 < DateTime.Now)
+                {
+                    // Log
+                    $"User tried to log in with expired session key {packet.SessionKey}".Debug(client.ToString());
+                    
+                    // Remove it
+                    _sessions.Remove(packet.SessionKey);
+                    
+                    // Fail
+                    result.ResultCode = ConnectResultCode.UserNotFound;
+                }
+                else
+                {
+
+                    // Attempt to find user in database
+                    using var db = new ExteelContext();
+
                     // Find user
                     var user = db.Users.SingleOrDefault(u => u.Id == _sessions[packet.SessionKey].Item1);
-                
+
                     // If not user?
                     if (user == null)
                         result.ResultCode = ConnectResultCode.UserNotFound;
@@ -74,17 +124,17 @@ namespace GameServer.Handlers
                     {
                         // Add to client
                         client.UserId = user.Id;
-                    
+
                         // Pull from database
                         client.UpdateUserFromDatabase();
-            
+
                         // Add to packet
                         result.User = client.User;
-            
+
                         // Check for new user who has not done tutorial yet
                         if (string.IsNullOrEmpty(client.User.Callsign))
                             result.ResultCode = ConnectResultCode.SuccessNewAccount;
-                        
+
                         // Remove session
                         _sessions.Remove(packet.SessionKey);
                     }
