@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Reflection;
 using Network;
 using Swan.Logging;
 using Sylver.Network.Server;
@@ -42,7 +41,6 @@ namespace GameServer.New
 
         public NewServer(string host, int port)
         {
-            PacketHandler<GameClient>.RegisterAssembly(Assembly.GetCallingAssembly());
             PacketProcessor = new GamePacketProcessor();
             ServerConfiguration = new NetServerConfiguration(host, port, ClientBacklog, ClientBufferSize);
             

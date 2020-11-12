@@ -11,7 +11,7 @@ using Swan.Logging;
 using Sylver.Network.Data;
 using Sylver.Network.Server;
 
-namespace GameServer.New
+namespace Network
 {
     /// <summary>
     /// This represents a single connect net client

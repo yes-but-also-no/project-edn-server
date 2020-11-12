@@ -12,6 +12,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Data\Data.csproj" />
       <ProjectReference Include="..\Engine\Engine.csproj" />
+      <ProjectReference Include="..\Network\Network.csproj" />
     </ItemGroup>
 
     <ItemGroup>

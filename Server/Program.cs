@@ -27,6 +27,7 @@ using GameServer.Web;
 using Hangfire;
 using Hangfire.SQLite;
 using Microsoft.Extensions.Configuration;
+using Network;
 using Swan;
 using Swan.Configuration;
 using Swan.Logging;
@@ -312,6 +313,9 @@ namespace GameServer
             var webServer = AccountServer.CreateWebServer($"http://*:{ServerConfig.Configuration.Global.WebPort}/");
             
             var webTask = webServer.RunAsync(token);
+            
+            PacketHandler<GameClient>.RegisterAssembly(Assembly.GetCallingAssembly());
+            PacketHandler<GameClient>.RegisterAssembly(GameAssembly.Value);
             
             var gameServer =  new NewServer("0.0.0.0", Convert.ToInt32(ServerConfig.Configuration.Global.GamePort));
 
