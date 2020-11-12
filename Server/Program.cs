@@ -73,8 +73,6 @@ namespace GameServer
             
             "Done!".Info();
             
-            #if LEGACY
-            
             "Reading spawn data...".Info();
             
             SpawnDataReader.LoadAllSpawns();
@@ -87,6 +85,8 @@ namespace GameServer
             
             "Done!".Info();
             
+            #if LEGACY
+
             "Reading map data...".Info();
             /*
             GeoEngine.GeoEngine.LoadAllMaps();

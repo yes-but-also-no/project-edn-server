@@ -66,4 +66,18 @@ namespace Game
             _lua?.Dispose();
         }
     }
+    
+    /// <summary>
+    /// Temp enum, until we can see if game status can hold this info
+    /// </summary>
+    public enum GameState
+    {
+        WaitingRoom = 0,
+        WaitingForPlayers = 1,
+        AllPlayersReady = 2,
+        WaitingToStart = 3,
+        InGame = 4,
+        GameOver = 5,
+        Destroyed = 6,
+    }
 }

@@ -238,14 +238,6 @@ namespace Engine
 
             // Dispatch
             SignalHub.Get<EngineSignals.Tick>().Dispatch(ctx.ElapsedTimeFromPreviousFrame.TotalMilliseconds);
-            
-            // Tick entities
-            // TODO: Do this as an event?
-            // foreach (var kvp in _entities)
-            // {
-            //     if (kvp.Value.TickEnabled && kvp.Value.State != EntityState.Unknown)
-            //         kvp.Value.Tick(ctx.ElapsedTimeFromPreviousFrame.TotalMilliseconds);
-            // }
 
             // Return true to keep going
             return true;

@@ -25,6 +25,12 @@ namespace Network.Packets.Server
 
         #endregion
         
+        #region LOBBY
+        
+        GameCreated = 0x32,
+        
+        #endregion
+        
         #region SHOP
         
         SendGoodsDataStart = 0x90,

@@ -1,6 +1,8 @@
 using System.IO;
 using System.Numerics;
 using System.Text;
+using Data.Configuration;
+using Data.Configuration.Poo;
 using Data.Model;
 using Data.Model.Items;
 using Network.Packets.Server;
@@ -250,6 +252,51 @@ namespace Network
                 Write(0); // If 1, durability, if 2, expired?
                 Write(0); // Unknown
             }
+        }
+
+        public void WriteRoomInfo(RoomRecord record, GameStats stats, ExteelUser master, int playerCount, int gameStatus)
+        {
+            WriteGameString(ServerConfig.Configuration.Global.GameHost); // Room server... If this does not match current server, it does a switch
+            
+            Write(record.Id); // Room Id
+            Write(master?.Id ?? 0); // Unknown - maybe master?
+            Write((int)stats.GameType); // Game type
+
+            
+            WriteGameString(record.Name);
+            WriteGameString(record.Password); // Unknown - Empty in packet
+            WriteGameString(stats.MapFileName); // Map name?
+            WriteGameString(master != null ? master.Callsign : "UNKNOWN");
+  
+            Write(stats.MaxPlayers);
+            Write(playerCount);
+  
+            Write(!string.IsNullOrEmpty(record.Password)); // Is Game private
+            WriteByte(1); // Unknown
+
+            Write(gameStatus); // Status?
+            Write(record.TemplateId); // Not sure why this is sent twice?
+            Write(record.TemplateId); // This was supposed to be adhoc id
+
+            Write(record.SdMode); // SD Battle
+
+            Write(0); // Unknown - zero on packet
+            Write(0x000927c0); // Unknown - zero on packet
+            Write(0x000668a0); // Unknown
+            Write(0x000927c0); // Unknown
+            Write(0); // Unknown
+  
+            Write(record.Balance); // Unknown
+
+            Write(stats.GameType == GameType.defensivebattle ? record.Difficulty : -1); // Unknown
+ 
+            Write(record.FiveMinute); // Unknown
+            
+            Write(record.MaxLevel); // max level
+            Write(record.MinLevel); // min Level
+            Write(0); // Unknown
+            Write(0); // Unknown
+            Write(0); // Unknown
         }
         
         #endregion
