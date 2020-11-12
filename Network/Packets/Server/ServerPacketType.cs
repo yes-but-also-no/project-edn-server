@@ -9,6 +9,12 @@ namespace Network.Packets.Server
         ClientValidated = 0x01,
         ConnectResult = 0x02,
         ServerTime = 0x04,
+        
+        #region ROOM
+        
+        RoomUserEnter = 0x0a,
+        
+        #endregion
 
         #region INVENTORY
 

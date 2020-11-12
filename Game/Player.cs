@@ -15,7 +15,21 @@ namespace Game
         /// </summary>
         public readonly Guid Id = new Guid();
 
+        /// <summary>
+        /// User reference
+        /// </summary>
         private readonly WeakReference<ExteelUser> _user;
+        
+        /// <summary>
+        /// Gets the user for this player
+        /// </summary>
+        public ExteelUser GetUser()
+        {
+            // Try and get
+            _user.TryGetTarget(out var user);
+
+            return user;
+        }
 
         internal Player(ExteelUser user)
         {

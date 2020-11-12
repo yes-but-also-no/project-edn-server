@@ -88,9 +88,9 @@ namespace GameServer
             #if LEGACY
 
             "Reading map data...".Info();
-            /*
+            
             GeoEngine.GeoEngine.LoadAllMaps();
-            */
+            
             #endif
             
             "Done!".Info();

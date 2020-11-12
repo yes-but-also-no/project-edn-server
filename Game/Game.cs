@@ -7,6 +7,7 @@ using Data.Configuration;
 using Data.Model;
 using Engine;
 using Engine.Entities;
+using Game.Signals;
 using NLua;
 
 namespace Game
@@ -99,6 +100,9 @@ namespace Game
             // Add
             Players.Add(ply.Id, ply);
 
+            // Dispatch
+            SignalHub.Get<GameSignals.PlayerJoin>().Dispatch(ply);
+            
             // Return Id
             return ply.Id;
         }

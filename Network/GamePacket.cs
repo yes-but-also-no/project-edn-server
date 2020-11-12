@@ -255,6 +255,14 @@ namespace Network
             }
         }
 
+        /// <summary>
+        /// Writes room info into a packet
+        /// </summary>
+        /// <param name="record"></param>
+        /// <param name="stats"></param>
+        /// <param name="master"></param>
+        /// <param name="playerCount"></param>
+        /// <param name="gameStatus"></param>
         public void WriteRoomInfo(RoomRecord record, GameStats stats, ExteelUser master, int playerCount, GameStatus gameStatus)
         {
             WriteGameString(ServerConfig.Configuration.Global.GameHost); // Room server... If this does not match current server, it does a switch
@@ -298,6 +306,83 @@ namespace Network
             Write(0); // Unknown
             Write(0); // Unknown
             Write(0); // Unknown
+        }
+
+        /// <summary>
+        /// Writes a user into the packet
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="isMaster"></param>
+        /// <param name="isReady"></param>
+        public void WriteRoomUserInfo(ExteelUser user, bool isMaster, bool isReady)
+        {
+            WriteGameString(user.Callsign); // Unknown - Looks like 2x callsign from packet cap
+            WriteGameString(user.Callsign);
+            WriteGameString(""); // Clan name
+            
+            Write(0); // Unknown
+            Write(0); // Unknown - clan id?
+            
+            Write(user.Id);
+            Write(user.Team);
+            
+            Write(user.Rank); // Unknown
+            Write(0); // Unknown
+            Write(0); // Unknown
+            Write(0); // Unknown
+            Write(0); // Unknown
+            Write(0); // Unknown
+            
+            
+            Write(isReady); // Unknown - ready?
+            Write(isMaster);
+            
+            for (var i = 0; i < 13; i++)
+            {
+                Write(0); // Unknown
+            }
+            
+            for (var i = 0; i < 12; i++)
+            {
+                Write(0); // Unknown
+            }
+            
+            for (var i = 0; i < 13; i++)
+            {
+                Write(0); // Unknown
+            }
+            
+            for (var i = 0; i < 14; i++)
+            {
+                Write(0); // Unknown
+            }
+            
+            for (var i = 0; i < 11; i++)
+            {
+                Write(0); // Unknown
+            }
+            
+            for (var i = 0; i < 11; i++)
+            {
+                Write(0); // Unknown
+            }
+            
+            // Unknown struct
+            Write(0); // 
+            Write(0); // 
+            Write(0); // 
+            Write(0); // 
+            Write(0); // 
+            Write(0); // 
+            Write(0); // 
+            Write(0); // 
+            
+            // Another unknown struct. Seems to be an array?
+            Write(0); // Size
+            
+            
+            
+            WritePilotInfo(user.PilotInfo);
         }
         
         #endregion

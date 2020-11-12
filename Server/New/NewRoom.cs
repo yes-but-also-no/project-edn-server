@@ -8,6 +8,10 @@ using Data.Configuration.Poo;
 using Data.Model;
 using Game;
 using Game.Signals;
+using GameServer.ServerPackets.Room;
+using Network;
+using Network.Packets;
+using Network.Packets.Server.Room;
 
 namespace GameServer.New
 {
@@ -138,9 +142,23 @@ namespace GameServer.New
         /// <param name="player"></param>
         public void PlayerJoin(Player player)
         {
-            
+            SendToAllClients(new RoomUserEnterPacket
+            {
+                User = player.GetUser(),
+                IsMaster = player.GetUser()?.Id == MasterId,
+                IsReady = player.Ready
+            });
         }
 
+        #endregion
+        
+        #region MESSAGING
+
+        private void SendToAllClients(IPacketSerializer packet)
+        {
+            NewServer.Instance.SendTo(Clients, PacketFactory.CreatePacket(packet));
+        }
+        
         #endregion
         
         public void Dispose()
