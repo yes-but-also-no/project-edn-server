@@ -1,3 +1,4 @@
+using Data;
 using Data.Configuration;
 using Data.Configuration.Poo;
 using Data.Model;
@@ -43,7 +44,7 @@ namespace Network.Packets.Server.Lobby
             {
                 packet.Write(RoomRecord.Id); // Id
                 
-                packet.WriteRoomInfo(RoomRecord, GameStats, Master, 0, (int) GameStatus.Waiting); // Boilerplate
+                packet.WriteRoomInfo(RoomRecord, GameStats, Master, 0, GameStatus.Waiting); // Boilerplate
                 
                 packet.WriteGameString(ServerConfig.Configuration.Global.GameHost); // Host?
             }
@@ -59,15 +60,5 @@ namespace Network.Packets.Server.Lobby
     {
         Success = 0,
         Failed = 1
-    }
-    
-    /// <summary>
-    /// Game status code
-    /// There is more, i just havent reversed them all
-    /// </summary>
-    public enum GameStatus : int
-    {
-        Waiting = 0,
-        InPlay = 1
     }
 }

@@ -28,6 +28,7 @@ namespace Network.Packets.Server
         #region LOBBY
         
         GameCreated = 0x32,
+        GameEntered = 0x33,
         
         #endregion
         

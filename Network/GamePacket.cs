@@ -1,6 +1,7 @@
 using System.IO;
 using System.Numerics;
 using System.Text;
+using Data;
 using Data.Configuration;
 using Data.Configuration.Poo;
 using Data.Model;
@@ -254,7 +255,7 @@ namespace Network
             }
         }
 
-        public void WriteRoomInfo(RoomRecord record, GameStats stats, ExteelUser master, int playerCount, int gameStatus)
+        public void WriteRoomInfo(RoomRecord record, GameStats stats, ExteelUser master, int playerCount, GameStatus gameStatus)
         {
             WriteGameString(ServerConfig.Configuration.Global.GameHost); // Room server... If this does not match current server, it does a switch
             
@@ -274,7 +275,7 @@ namespace Network
             Write(!string.IsNullOrEmpty(record.Password)); // Is Game private
             WriteByte(1); // Unknown
 
-            Write(gameStatus); // Status?
+            Write((int)gameStatus); // Status?
             Write(record.TemplateId); // Not sure why this is sent twice?
             Write(record.TemplateId); // This was supposed to be adhoc id
 

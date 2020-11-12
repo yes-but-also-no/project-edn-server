@@ -1,5 +1,8 @@
 namespace Data
 {
+    /// <summary>
+    /// Ifto type codes
+    /// </summary>
     public enum IfoType
     {
         ifo_none = 0,
@@ -9,6 +12,10 @@ namespace Data
         ifo_simple = 4
     }
     
+    /// <summary>
+    /// Weapon type codes
+    /// Not all are used
+    /// </summary>
     public enum WeaponType
     {
         machingun = 0,
@@ -25,5 +32,15 @@ namespace Data
         knuckle = 12,
         spanner = 13,
         shield = 20
+    }
+    
+    /// <summary>
+    /// Game status code
+    /// There is more, i just havent reversed them all
+    /// </summary>
+    public enum GameStatus : int
+    {
+        Waiting = 0,
+        InPlay = 1
     }
 }

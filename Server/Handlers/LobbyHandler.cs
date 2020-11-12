@@ -11,6 +11,8 @@ using Network.Packets.Client.Inventory;
 using Network.Packets.Client.Lobby;
 using Network.Packets.Server.Lobby;
 using Swan.Logging;
+using GameState = Game.GameState;
+using GameStatus = Data.GameStatus;
 
 namespace GameServer.Handlers
 {
@@ -65,6 +67,54 @@ namespace GameServer.Handlers
             
             // Log
             $"Created room {room}. Result is {result.ResultCode}".Debug(client.ToString());
+        }
+
+        /// <summary>
+        /// Sent when the client would like to enter a game
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="packet"></param>
+        [PacketHandler(ClientPacketType.EnterGame)]
+        public static void OnTryEnterGame(GameClient client, EnterGamePacket packet)
+        {
+            // Hold our result packet here
+            var result = new GameEnteredPacket
+            {
+                ResultCode = GameEnteredResult.NotAvailable,
+            };
+            
+            // Get room
+            var room = GetRoomById(packet.RoomId);
+            
+            // If room doesnt exist
+            if (room != null)
+            {
+                // If game is full
+                if (room.Clients.Count() >= room.Capacity)
+                {
+                    result.ResultCode = GameEnteredResult.Full;
+                }
+                else
+                {
+                    // TODO: Other checks, too early, banned, no units, etc
+                }
+            
+                // Success condition
+                result.ResultCode = GameEnteredResult.Success;
+
+                // Fill in packet
+                result.Master = room.Master;
+                result.GameStats = room.GameStats;
+                result.RoomRecord = room.RoomRecord;
+                result.PlayerCount = room.Clients.Count();
+                result.GameStatus = room.GameStatus == GameState.WaitingRoom ? GameStatus.Waiting : GameStatus.InPlay;
+            }
+            
+            // Send to them
+            client.Send(PacketFactory.CreatePacket(result));
+            
+            // Log
+            $"Tried to join room {room}. Result is {result.ResultCode}".Debug(client.ToString());
         }
 
         /// <summary>
