@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Core;
 using Data.Configuration;
+using Data.Model;
 using Engine;
 using Engine.Entities;
 using NLua;
@@ -15,6 +17,9 @@ namespace Game
     /// </summary>
     public class Game : IDisposable
     {
+        
+        #region PRIVATE
+        
         /// <summary>
         /// The game engine reference
         /// </summary>
@@ -28,7 +33,23 @@ namespace Game
         /// <summary>
         /// Game specific signal hub
         /// </summary>
-        internal readonly SignalHub SignalHub = new SignalHub();
+        public readonly SignalHub SignalHub = new SignalHub();
+        
+        /// <summary>
+        /// Dictionary for storing players
+        /// </summary>
+        internal readonly Dictionary<Guid, Player> Players = new Dictionary<Guid, Player>();
+        
+        #endregion
+        
+        #region STATE
+        
+        /// <summary>
+        /// The status of this game
+        /// </summary>
+        public GameState GameStatus { get; set; } = GameState.WaitingRoom;
+        
+        #endregion
 
         public Game()
         {
@@ -52,7 +73,7 @@ namespace Game
             Engine.RegisterSignalHub(SignalHub);
             
             // TEMP: Start the engine
-            Engine.Start();
+            //Engine.Start();
 
             _lua.DoFile(Path.Combine(Directory.GetCurrentDirectory(), "Scripts", "init.lua"));
 
@@ -64,6 +85,22 @@ namespace Game
         {
             Engine?.Dispose();
             _lua?.Dispose();
+        }
+
+        /// <summary>
+        /// Adds a player to this game
+        /// </summary>
+        /// <returns></returns>
+        public Guid AddPlayer(ExteelUser user)
+        {
+            // Create them
+            var ply = new Player(user);
+            
+            // Add
+            Players.Add(ply.Id, ply);
+
+            // Return Id
+            return ply.Id;
         }
     }
     

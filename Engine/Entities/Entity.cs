@@ -170,7 +170,7 @@ namespace Engine.Entities
             OnTick(delta);
             
             // Dispatch event
-            Engine.SignalHub.Get<EntitySignals.Tick>().Dispatch(EngineId, delta);
+            //Engine.SignalHub.Get<EntitySignals.Tick>().Dispatch(EngineId, delta);
         }
         
         #endregion

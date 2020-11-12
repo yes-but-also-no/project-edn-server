@@ -108,11 +108,14 @@ namespace GameServer.Handlers
                 result.RoomRecord = room.RoomRecord;
                 result.PlayerCount = room.Clients.Count();
                 result.GameStatus = room.GameStatus == GameState.WaitingRoom ? GameStatus.Waiting : GameStatus.InPlay;
+                
+                // Call into room to join player
+                room.AddPlayer(client);
             }
             
             // Send to them
             client.Send(PacketFactory.CreatePacket(result));
-            
+
             // Log
             $"Tried to join room {room}. Result is {result.ResultCode}".Debug(client.ToString());
         }
@@ -125,7 +128,11 @@ namespace GameServer.Handlers
         /// <param name="id"></param>
         public static void DeleteRoom(int id)
         {
-            Rooms.Remove(id);
+            // Remove
+            Rooms.Remove(id, out var room);
+            
+            // Dispose
+            room?.Dispose();
         }
 
         /// <summary>

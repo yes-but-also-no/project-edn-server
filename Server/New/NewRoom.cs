@@ -2,10 +2,12 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using Core;
 using Data.Configuration;
 using Data.Configuration.Poo;
 using Data.Model;
 using Game;
+using Game.Signals;
 
 namespace GameServer.New
 {
@@ -19,7 +21,25 @@ namespace GameServer.New
         /// <summary>
         /// The game instance for this room
         /// </summary>
-        public global::Game.Game Game { get; private set; }
+        private readonly global::Game.Game _game = new global::Game.Game();
+
+        /// <summary>
+        /// Storage of all players in this game
+        /// </summary>
+        private readonly Dictionary<int, GameClient> _clients = new Dictionary<int, GameClient>();
+
+        /// <summary>
+        /// Signal hub reference
+        /// </summary>
+        public SignalHub SignalHub => _game.SignalHub;
+
+        public NewRoom()
+        {
+            // Subscriptions
+            SignalHub.Get<GameSignals.PlayerJoin>().AddListener(PlayerJoin);
+        }
+        
+        #region ROOM PROPERTIES
         
         /// <summary>
         /// The room record for this room
@@ -30,13 +50,6 @@ namespace GameServer.New
         /// The game template stats for this game
         /// </summary>
         public GameStats GameStats { get; private set; }
-        
-        /// <summary>
-        /// Storage of all players in this game
-        /// </summary>
-        private readonly Dictionary<int, GameClient> _clients = new Dictionary<int, GameClient>();
-        
-        #region ROOM PROPERTIES
         
         /// <summary>
         /// The master of this room
@@ -61,7 +74,7 @@ namespace GameServer.New
         /// <summary>
         /// The status of this game
         /// </summary>
-        public GameState GameStatus { get; set; } = GameState.WaitingRoom;
+        public GameState GameStatus => _game.GameStatus;
 
         /// <summary>
         /// The max number of users who can be in this room
@@ -103,9 +116,39 @@ namespace GameServer.New
         
         #endregion
         
+        #region JOINING / LEAVING
+
+        /// <summary>
+        /// Called when a client joins this room
+        /// </summary>
+        /// <param name="client"></param>
+        public void AddPlayer(GameClient client)
+        {
+            // Join into game
+            _game.AddPlayer(client.User);
+        }
+        
+        #endregion
+
+        #region HOOKS
+
+        /// <summary>
+        /// When a player joins
+        /// </summary>
+        /// <param name="player"></param>
+        public void PlayerJoin(Player player)
+        {
+            
+        }
+
+        #endregion
+        
         public void Dispose()
         {
-            Game?.Dispose();
+            // Unsubscribe
+            SignalHub.Get<GameSignals.PlayerJoin>().RemoveListener(PlayerJoin);
+            
+            _game?.Dispose();
         }
         
         public override string ToString()

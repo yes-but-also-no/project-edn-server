@@ -21,7 +21,7 @@ namespace Engine.Signals
         /// <summary>
         /// Sent when an entity is ticked
         /// </summary>
-        public class Tick : ASignal<Guid, double> {}
+        //public class Tick : ASignal<Guid, double> {}
         
         /// <summary>
         /// Sent when an entity is de-spawned

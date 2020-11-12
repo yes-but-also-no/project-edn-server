@@ -152,6 +152,15 @@ namespace GameServer.New
         
         #endregion
         
+        #region PLAYER
+        
+        /// <summary>
+        /// This users player id. Only used in room and game
+        /// </summary>
+        public Guid PlayerId { get; set; }
+        
+        #endregion
+        
         public override string ToString()
         {
             return $"[GameClient]<{Id}><{GetUserName()}>";

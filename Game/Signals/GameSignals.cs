@@ -1,3 +1,6 @@
+using System;
+using Core;
+
 namespace Game.Signals
 {
     /// <summary>
@@ -5,6 +8,9 @@ namespace Game.Signals
     /// </summary>
     public static class GameSignals
     {
-        
+        /// <summary>
+        /// Sent when a player joins a game
+        /// </summary>
+        public class PlayerJoin : ASignal<Player> {}
     }
 }
