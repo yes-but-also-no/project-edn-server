@@ -1,12 +1,12 @@
 {
-  "GameHost": "127.0.0.1",
+  "GameHost": "test-server-0a685dc2f56ea67b.elb.eu-west-1.amazonaws.com",
   "GamePort": 15152,
-  "WebPort": 15180,
+  "WebPort": 80,
   "ProtocolVersion": 407,
-  "ServerName": "Exteel.Net Dev Server",
+  "ServerName": "Test Server",
   "GameFps": 30,
   "UpdateFrameInterval": 10,
-  "ConsoleLogLevel": "Debug",
+  "ConsoleLogLevel": 4,
   "LogAllPackets": false,
   "WriteCharacterImages": false
 }
